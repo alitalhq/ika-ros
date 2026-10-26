@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>İKA Kontrol</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>İKA Kontrol</h1>
+      <span id="mode-badge" class="badge mode-idle">—</span>
+    </div>
+    <div class="conn">
+      <input id="host" aria-label="robot adresi" title="robot adresi (port verilmezse 9090)" spellcheck="false">
+      <button id="connect">Bağlan</button>
+      <span id="conn-state" class="dot off" title="bağlantı"></span>
+    </div>
+    <button id="estop" class="estop" title="Boşluk tuşu">ACİL DURDUR</button>
+    <button id="release" class="release hidden">Acil durdurmayı kaldır</button>
+  </header>
+
+  <main>
+    <section class="panel map-panel">
+      <div class="panel-head">
+        <h2>Harita</h2>
+        <label class="toggle"><input type="checkbox" id="goal-mode"> Tıkla → hedef</label>
+      </div>
+      <canvas id="map"></canvas>
+      <p id="map-info" class="muted">Harita bekleniyor (SLAM açık mı?)</p>
+    </section>
+
+    <div class="side">
+      <section class="panel">
+        <h2>Mod</h2>
+        <div class="modes">
+          <button data-mode="idle">Boşta</button>
+          <button data-mode="manual">Manuel</button>
+          <button data-mode="line">Çizgi izle</button>
+        </div>
+        <p class="muted">Nav: haritada hedefe tıklayınca otomatik. Herhangi bir modda sürüş tuşuna basmak manuele geçirir.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Sürüş</h2>
+        <div class="pad">
+          <button class="key" data-v="1" data-w="0" style="grid-area:up">▲</button>
+          <button class="key" data-v="0" data-w="1" style="grid-area:left">◀</button>
+          <button class="key" data-v="-1" data-w="0" style="grid-area:down">▼</button>
+          <button class="key" data-v="0" data-w="-1" style="grid-area:right">▶</button>
+        </div>
+        <label>Hız <span id="v-max-label"></span>
+          <input id="v-max" type="range" min="0.05" max="0.5" step="0.01" value="0.2"></label>
+        <label>Dönüş <span id="w-max-label"></span>
+          <input id="w-max" type="range" min="0.2" max="3.0" step="0.1" value="1.2"></label>
+        <p class="muted">W A S D / oklar · gamepad sol çubuk · Boşluk = acil durdur</p>
+      </section>
+
+      <section class="panel">
+        <h2>Durum</h2>
+        <dl class="stats">
+          <dt>Hız</dt><dd id="speed">—</dd>
+          <dt>Engel</dt><dd id="obstacle">—</dd>
+          <dt>Konum</dt><dd id="pose">—</dd>
+          <dt>Çizgi</dt><dd id="line-status">—</dd>
+        </dl>
+        <div id="line-sensors" class="sensors"></div>
+        <p id="line-raw" class="muted raw"></p>
+      </section>
+
+      <section class="panel">
+        <h2>Harita kaydet</h2>
+        <div class="row">
+          <input id="map-name" placeholder="isim (boş = tarih)" spellcheck="false">
+          <button id="save-map">Kaydet</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <section class="panel log-panel">
+    <h2>Kayıt</h2>
+    <div id="log"></div>
+  </section>
+
+  <script src="vendor/roslib.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

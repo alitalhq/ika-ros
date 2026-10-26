@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot name="ika" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Ölçüler config/robot.yaml'dan okunur; burada sabit sayı yazmayın. -->
+  <xacro:property name="cfg" value="${xacro.load_yaml('$(find ika_description)/config/robot.yaml')}"/>
+  <xacro:property name="wheel_radius" value="${cfg['wheel_radius']}"/>
+  <xacro:property name="wheel_separation" value="${cfg['wheel_separation']}"/>
+  <xacro:property name="wheel_width" value="${cfg['wheel_width']}"/>
+  <xacro:property name="chassis" value="${cfg['chassis']}"/>
+  <xacro:property name="caster" value="${cfg['caster']}"/>
+  <xacro:property name="imu" value="${cfg['imu']}"/>
+  <xacro:property name="lidar" value="${cfg['lidar']}"/>
+  <xacro:property name="line_sensor" value="${cfg['line_sensor']}"/>
+
+  <material name="ika_gray"><color rgba="0.6 0.6 0.6 1.0"/></material>
+  <material name="ika_black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+  <material name="ika_blue"><color rgba="0.2 0.4 0.9 1.0"/></material>
+
+  <link name="base_link"/>
+
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="base_footprint"/>
+    <origin xyz="0 0 ${-wheel_radius}"/>
+  </joint>
+
+  <link name="chassis_link">
+    <visual>
+      <geometry><box size="${chassis['length']} ${chassis['width']} ${chassis['height']}"/></geometry>
+      <material name="ika_gray"/>
+    </visual>
+    <collision>
+      <geometry><box size="${chassis['length']} ${chassis['width']} ${chassis['height']}"/></geometry>
+    </collision>
+  </link>
+  <joint name="chassis_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="chassis_link"/>
+    <origin xyz="${chassis['x']} 0 ${chassis['z']}"/>
+  </joint>
+
+  <!-- Tahrik tekerleri: ika_base_node /joint_states ile açılarını yayınlar. -->
+  <xacro:macro name="drive_wheel" params="side y_sign">
+    <link name="${side}_wheel_link">
+      <visual>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+        <material name="ika_black"/>
+      </visual>
+      <collision>
+        <origin rpy="${pi/2} 0 0"/>
+        <geometry><cylinder radius="${wheel_radius}" length="${wheel_width}"/></geometry>
+      </collision>
+    </link>
+    <joint name="${side}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${side}_wheel_link"/>
+      <origin xyz="0 ${y_sign * wheel_separation / 2.0} 0"/>
+      <axis xyz="0 1 0"/>
+    </joint>
+  </xacro:macro>
+
+  <xacro:drive_wheel side="left" y_sign="1"/>
+  <xacro:drive_wheel side="right" y_sign="-1"/>
+
+  <link name="caster_link">
+    <visual>
+      <geometry><sphere radius="${caster['radius']}"/></geometry>
+      <material name="ika_black"/>
+    </visual>
+  </link>
+  <joint name="caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_link"/>
+    <origin xyz="${caster['x']} 0 ${caster['radius'] - wheel_radius}"/>
+  </joint>
+
+  <link name="imu_link"/>
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="imu_link"/>
+    <origin xyz="${imu['x']} ${imu['y']} ${imu['z']}" rpy="${imu['roll']} ${imu['pitch']} ${imu['yaw']}"/>
+  </joint>
+
+  <link name="lidar_link">
+    <visual>
+      <geometry><cylinder radius="0.035" length="0.04"/></geometry>
+      <material name="ika_blue"/>
+    </visual>
+  </link>
+  <joint name="lidar_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="lidar_link"/>
+    <origin xyz="${lidar['x']} ${lidar['y']} ${lidar['z']}" rpy="0 0 ${lidar['yaw']}"/>
+  </joint>
+
+  <link name="line_sensor_link"/>
+  <joint name="line_sensor_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="line_sensor_link"/>
+    <origin xyz="${line_sensor['x']} ${line_sensor['y']} ${line_sensor['z']}"/>
+  </joint>
+
+</robot>

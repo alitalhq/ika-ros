@@ -1,0 +1,21 @@
+# Robot üzerinde:  docker compose up -d        (log: docker compose logs -f)
+# Donanımsız:      IKA_ARGS="backend:=mock" docker compose up
+services:
+  ika:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    image: ika-ros:jazzy
+    container_name: ika
+    network_mode: host        # host'taki tarayıcı / ROS 2 doğrudan erişsin
+    ipc: host                 # DDS paylaşımlı bellek
+    privileged: true          # GPIO, SPI (IMU), sysfs PWM, seri port
+    volumes:
+      - /dev:/dev
+      - /sys:/sys
+      - ./src:/ika_ws/src/ika                     # kodu konteyneri yeniden kurmadan düzenle
+      - ${HOME}/ika_maps:/root/ika_maps           # kaydedilen haritalar
+    environment:
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+    command: bash -c "ros2 launch ika_bringup robot.launch.py $${IKA_ARGS:-}"
+    restart: unless-stopped

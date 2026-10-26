@@ -1,0 +1,27 @@
+mode_manager_node:
+  ros__parameters:
+    rate: 20.0
+    cmd_timeout: 0.5
+    teleop_takeover: true            # başka moddayken teleop -> manual
+    safety:
+      enabled: true
+      stop_distance: 0.20            # base_link'ten [m]; robot yarıçapı + pay
+      slow_distance: 0.45
+      half_angle_deg: 25.0
+      scan_timeout: 0.5
+
+line_follower_node:
+  ros__parameters:
+    speed: 0.15
+    kp: 12.0                         # [rad/s / m]
+    kd: 0.4
+    max_angular: 2.5
+    min_speed_ratio: 0.3             # en keskin hatada hızın kalacağı oran
+    half_width: 0.03                 # bu hatada hız min_speed_ratio'ya iner
+    search_angular: 1.5
+    lost_timeout: 1.5
+    intersection_action: straight    # straight | stop
+
+map_manager_node:
+  ros__parameters:
+    map_dir: ~/ika_maps

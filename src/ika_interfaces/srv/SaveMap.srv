@@ -1,0 +1,9 @@
+# SLAM haritasını robot üzerinde kaydeder (ika_navigation/map_manager_node).
+# Hem görüntü (.pgm/.yaml, Nav2 map_server için) hem pose graph
+# (.posegraph/.data, slam_toolbox localization modu için) yazılır.
+
+string name   # boşsa zaman damgasından üretilir
+---
+bool success
+string message
+string path   # uzantısız kayıt yolu

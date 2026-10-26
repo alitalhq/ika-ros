@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>ika_bringup</name>
+  <version>0.1.0</version>
+  <description>
+    İKA robotunu tek launch ile başlatır; tüm pin/donanım ayarları config/hardware.yaml'da.
+  </description>
+  <maintainer email="alitlhq@icloud.com">Ali Talha</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>ika_base</exec_depend>
+  <exec_depend>ika_control</exec_depend>
+  <exec_depend>ika_description</exec_depend>
+  <exec_depend>ika_gcs</exec_depend>
+  <exec_depend>ika_hal</exec_depend>
+  <exec_depend>ika_imu</exec_depend>
+  <exec_depend>ika_line</exec_depend>
+  <exec_depend>ika_navigation</exec_depend>
+  <exec_depend>robot_localization</exec_depend>
+  <exec_depend>sllidar_ros2</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

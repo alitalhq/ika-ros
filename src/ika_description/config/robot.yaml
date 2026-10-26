@@ -1,0 +1,43 @@
+# Robot geometrisi için TEK kaynak.
+#
+# Hem URDF (urdf/ika.urdf.xacro) hem de ika_base_node (kinematik/odometri)
+# bu dosyayı okur; teker ölçüsünü yalnızca burada değiştirin.
+#
+# base_link: iki tahrik tekerinin aks ortası (zeminden wheel_radius kadar
+# yukarıda). x ileri, y sol, z yukarı. Birimler: metre / radyan.
+#
+# DİKKAT: Değerler yer tutucudur, yeni şasi üzerinde ölçülmeli.
+
+wheel_radius: 0.0425       # Orta Boy Arazi Tekerleği 85 mm; lastik yük altında
+                           # ezildiği için 1 m düz sürüş testiyle düzeltin
+wheel_separation: 0.17     # YER TUTUCU: iki teker ortası arası (temas noktaları) ölçülecek
+wheel_width: 0.038
+
+chassis:
+  length: 0.26
+  width: 0.18
+  height: 0.07
+  x: 0.04                  # şasi merkezinin base_link'e göre konumu
+  z: 0.02
+
+caster:
+  radius: 0.015
+  x: 0.11
+
+# Sensör montaj konumları (base_link'e göre).
+imu:                       # Gemstone kartı üzerindeki ICM-20948
+  x: 0.0
+  y: 0.0
+  z: 0.04
+  roll: 0.0
+  pitch: 0.0
+  yaw: 0.0
+lidar:                     # RPLIDAR A1 dönen kafanın merkezi
+  x: 0.0
+  y: 0.0
+  z: 0.12
+  yaw: 0.0                 # lidar 0° okunun base_link x eksenine açısı
+line_sensor:               # çizgi sensörü dizisinin merkezi
+  x: 0.12
+  y: 0.0
+  z: -0.025
