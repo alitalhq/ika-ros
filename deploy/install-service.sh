@@ -6,9 +6,14 @@
 set -euo pipefail
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ID="${1:?kullanım: sudo bash deploy/install-service.sh <robot-no (1-101)>}"
-[[ "$ID" =~ ^[0-9]+$ ]] && [ "$ID" -ge 0 ] && [ "$ID" -le 101 ] \
-  || { echo "robot-no 0-101 arası bir sayı olmalı" >&2; exit 1; }
-[ "$(id -u)" -eq 0 ] || { echo "sudo ile çalıştırın" >&2; exit 1; }
+if ! [[ "$ID" =~ ^[0-9]+$ ]] || [ "$ID" -gt 101 ]; then
+  echo "robot-no 0-101 arası bir sayı olmalı" >&2
+  exit 1
+fi
+if [ "$(id -u)" -ne 0 ]; then
+  echo "sudo ile çalıştırın" >&2
+  exit 1
+fi
 
 if [ -f /etc/default/ika ]; then
   sed -i "s/^ROS_DOMAIN_ID=.*/ROS_DOMAIN_ID=$ID/" /etc/default/ika
