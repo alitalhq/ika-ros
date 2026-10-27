@@ -1,0 +1,16 @@
+[Unit]
+Description=IKA ROS 2 robot and web interface
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/gemstone/ika-ros
+ExecStart=/bin/bash /home/gemstone/ika-start-native.sh
+Restart=on-failure
+RestartSec=5
+KillSignal=SIGINT
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

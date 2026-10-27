@@ -25,10 +25,10 @@ ika_base_node:
       in1: "GPIO24"                  # pin 18 -> IN3
       in2: "GPIO25"                  # pin 22 -> IN4
       pwm: "epwm1:1"                 # GPIO13, pin 33 -> ENB
-      invert: false                  # aynalı montajda sağ motor genelde ters döner; hw_check söyler
+      invert: true                   # aynalı sağ motor: fiziksel ileri yönü düzeltildi
       enc_a: "GPIO27"                # pin 13 <- enkoder C1
       enc_b: "GPIO23"                # pin 16 <- enkoder C2
-      enc_invert: false
+      enc_invert: true                # motor yönüyle birlikte geri bildirim işareti düzeltildi
 
     encoder:
       mode: x4
