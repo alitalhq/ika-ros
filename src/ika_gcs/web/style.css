@@ -106,6 +106,10 @@ main {
 .muted { color: var(--muted); font-size: 12px; margin: 8px 0 0; }
 
 .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.modes.two { grid-template-columns: repeat(2, 1fr); }
+button:disabled { opacity: .5; cursor: wait; }
+.muted.ok { color: var(--ok); }
+.muted.warn { color: var(--warn); }
 
 .pad {
   display: grid;

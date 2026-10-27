@@ -67,8 +67,8 @@ ros2 launch ika_bringup robot.launch.py [argüman:=değer ...]
 | `hardware` | `config/hardware.yaml` | başka bir pin dosyası |
 | `imu` / `fusion` | `true` / `true` | `fusion:=false` → odom TF'i teker odometrisinden |
 | `lidar` | `true` | |
-| `lidar_port` | — | boşsa `hardware.yaml` (`/dev/ttyS3`); USB adaptör: `/dev/ttyUSB0` |
-| `lidar_motor` | `true` | lidar motorunu Gemstone PWM'i sürer; USB adaptörde `false` |
+| `lidar_source` | — | `usb` / `gpio`; boşsa arayüzde seçilip kaydedilen, o da yoksa `usb` |
+| `lidar_port` | — | seri portu elle ver; boşsa USB adaptör kendiliğinden bulunur, GPIO'da `/dev/ttyS3` |
 | `line` | `true` | çizgi sensörü + izleyici |
 | `slam` / `slam_mode` / `map` | `true` / `mapping` / — | `slam_mode:=localization map:=~/ika_maps/salon` |
 | `nav` | `false` | Nav2 |

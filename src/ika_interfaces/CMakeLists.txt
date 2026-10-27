@@ -7,8 +7,10 @@ find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/LineState.msg"
+  "msg/LidarStatus.msg"
   "srv/SetMode.srv"
   "srv/SaveMap.srv"
+  "srv/SetLidar.srv"
   DEPENDENCIES std_msgs
 )
 

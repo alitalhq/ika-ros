@@ -104,10 +104,15 @@ ros2 topic echo /ika_base_node/wheels    # [hedef_sol, ölçülen_sol, duty_sol,
 ros2 launch ika_bringup robot.launch.py line:=false slam:=false
 ```
 
-- [ ] Lidar başı dönüyor (motor PWM'i `ecap2`, %85)
-- [ ] `ros2 topic hz /scan` ≈ 5–8 Hz. "operation timeout" alıyorsanız TX/RX
-      çapraz mı (lidar TX → pin 10) ve `/dev/ttyS3` var mı kontrol edin;
-      sürerse `duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
+Bağlantı arayüzdeki **Lidar** panelinden seçilir (varsayılan USB). Panel
+portu ve tarama hızını gösterir; seçim robotta saklanır.
+
+- [ ] Lidar başı dönüyor, panelde ≈ 5–8 Hz (ya da `ros2 topic hz /scan`)
+- [ ] **USB:** panel "lidar portu yok" diyorsa `ls /dev/serial/by-id/` boş
+      olabilir; minimal imajda CP210x sürücüsü eksiktir (`lsmod | grep cp210x`)
+- [ ] **GPIO:** "operation timeout" alıyorsanız TX/RX çapraz mı (lidar TX →
+      pin 10), `/dev/ttyS3` var mı ve `ecap2` overlay'i açık mı kontrol edin;
+      sürerse `gpio.duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
 - [ ] Robotun **tam önüne** bir kutu koyup ileri sürünce robot ~0.20 m'de duruyor.
       Durmuyorsa (veya yandaki engel yüzünden duruyorsa) lidarın montaj açısı
       yanlış girilmiştir: `robot.yaml` → `lidar.yaw` (eski robotta 2.068 rad idi)

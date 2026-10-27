@@ -17,7 +17,7 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 | L298N + 2 × Waveshare DCGM-3865 (12 V, 1:42, 240 rpm) | IN1–IN4 (GPIO), ENA/ENB (PWM) | `ika_base` |
 | Motor enkoderleri (hall, AB, 546 PPR çıkış milinde, dahili pull-up) | 4 × GPIO | `ika_base` |
 | ICM-20948 IMU | kart üzerinde, SPI `/dev/spidev0.3` | `ika_imu` |
-| RPLIDAR A1 | UART `/dev/ttyS3` + motor PWM | `sllidar_ros2`, `ika_hal` |
+| RPLIDAR A1 | USB adaptör (varsayılan) **veya** UART `/dev/ttyS3` + motor PWM | `sllidar_ros2`, `ika_hal` |
 | Pololu QTR-8RC (6 kanal bağlı) | 6 × GPIO | `ika_line` |
 | 3S Li-Po (11.1 V) | L298N +12V; tüm GND'ler ortak | — |
 
@@ -29,13 +29,13 @@ Fiziksel pin = kart üzerindeki numara. Motor ve enkoder satırları kablolama
 | Pin | Sinyal | Bağlantı | `hardware.yaml` |
 |---|---|---|---|
 | 1 | 3V3 | Motor 1 enkoder VCC, QTR VCC | — |
-| 2, 4 | 5V | Lidar 5V | — |
+| 2, 4 | 5V | Lidar V5 ve VMOTO (yalnız GPIO bağlantısı) | — |
 | 6 | GND | ortak GND | — |
 | 7 | GPIO4 | Motor 1 enkoder C1 | `left.enc_a` |
-| 8 | GPIO14 (UART1 TX) | Lidar RX | `sllidar_node.serial_port: /dev/ttyS3` |
-| 10 | GPIO15 (UART1 RX) | Lidar TX | 〃 |
+| 8 | GPIO14 (UART1 TX) | Lidar RX (yalnız GPIO bağlantısı) | `lidar_manager_node.gpio.port: /dev/ttyS3` |
+| 10 | GPIO15 (UART1 RX) | Lidar TX (yalnız GPIO bağlantısı) | 〃 |
 | 11 | GPIO17 | L298N IN2 | `left.in2` |
-| 12 | GPIO18 (ecap2) | Lidar motor CTRL_MOTO | `lidar_motor_node.pwm: ecap2` |
+| 12 | GPIO18 (ecap2) | Lidar MOTOCTL (yalnız GPIO bağlantısı) | `lidar_manager_node.gpio.pwm: ecap2` |
 | 13 | GPIO27 | Motor 2 enkoder C1 | `right.enc_a` |
 | 15 | GPIO22 | L298N IN1 | `left.in1` |
 | 16 | GPIO23 | Motor 2 enkoder C2 | `right.enc_b` |
@@ -58,6 +58,31 @@ SPI0 veriyolunu kullanır. `gpioinfo` bu iki hattı "unused" gösterirse QTR'nin
 1. ve 8. kanalları bunlara bağlanıp `pins` listesinin başına/sonuna eklenebilir.
 GPIO2/3 (I2C) uygun değildir: kart üzerindeki pull-up dirençleri RC ölçümünü bozar.
 
+## Lidar bağlantısı: USB veya GPIO
+
+İki yol vardır; arayüzdeki **Lidar** panelinden seçilir, seçim robotta
+(`~/.ika/lidar_source`) saklanır. Varsayılan USB'dir.
+
+**USB (varsayılan):** Lidarı kendi adaptör kartıyla Gemstone'un USB portuna
+takın; başka kablo gerekmez. Port `/dev/serial/by-id/` altında kendiliğinden
+bulunur, motoru adaptör sürer. Minimal Gemstone imajında CP210x USB-seri
+sürücüsü eksik olabilir: `lsusb` adaptörü gösterip `/dev/ttyUSB0` oluşmuyorsa
+T3 apt deposundan `sudo apt install kernel-module-cp210x-$(uname -r)` ile
+kurup `sudo modprobe cp210x` çalıştırın.
+
+**GPIO:** Adaptör olmadan lidarın 7 pinli kablosu doğrudan header'a bağlanır:
+
+| Lidar | Gemstone |
+|---|---|
+| V5, VMOTO | pin 2, pin 4 (5V) |
+| GND (ikisi) | herhangi bir GND |
+| TX | pin 10 (GPIO15, UART RX) |
+| RX | pin 8 (GPIO14, UART TX) |
+| MOTOCTL | pin 12 (GPIO18, `ecap2` PWM) |
+
+Bu yol için `ecap2` overlay'i açık olmalı ve `/dev/ttyS3` bulunmalıdır.
+Motor PWM'i yalnızca GPIO seçiliyken sürülür.
+
 ## Overlay'ler (`/boot/uEnv.txt`)
 
 PWM kanalları `overlays=` satırına eklenen overlay'lerle açılır
@@ -65,7 +90,7 @@ PWM kanalları `overlays=` satırına eklenen overlay'lerle açılır
 
 ```
 k3-am67a-t3-gem-o1-pwm-ecap0-gpio12     # ENA
-k3-am67a-t3-gem-o1-pwm-ecap2-gpio18     # lidar motoru
+k3-am67a-t3-gem-o1-pwm-ecap2-gpio18     # lidar motoru (yalnız GPIO lidar bağlantısı)
 k3-am67a-t3-gem-o1-pwm-epwm1-gpio13     # ENB
 ```
 

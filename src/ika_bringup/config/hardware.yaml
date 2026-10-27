@@ -75,17 +75,22 @@ ika_imu_node:
     rate: 100.0
     calibration_samples: 300         # açılışta ~1.5 sn robotu oynatmayın
 
-sllidar_node:
+lidar_manager_node:
   ros__parameters:
-    channel_type: serial
-    serial_port: /dev/ttyS3          # UART-MAIN1: Gemstone TX GPIO14 (pin 8), RX GPIO15 (pin 10)
-    serial_baudrate: 115200          # A1
+    # usb : lidarın kendi USB adaptörü (varsayılan); motoru adaptör sürer
+    # gpio: adaptörsüz, Gemstone UART'ı + motor PWM'i (docs/donanim.md)
+    # Arayüzdeki Lidar panelinden değiştirilince seçim state_file'a kaydedilir
+    # ve buradaki değerin önüne geçer.
+    source: usb
+    state_file: ~/.ika/lidar_source
+    baudrate: 115200                 # A1
     frame_id: lidar_link
     inverted: false
     angle_compensate: true
-
-lidar_motor_node:
-  ros__parameters:
-    pwm: "ecap2"                     # GPIO18, pin 12 -> lidar CTRL_MOTO
-    period_ns: 1000000
-    duty_percent: 85.0               # %100'de motor gürültüsü UART'ı bozuyordu (eski robot)
+    usb:
+      port: ""                       # boş: /dev/serial/by-id altındaki CP210x, yoksa /dev/ttyUSB*
+    gpio:
+      port: /dev/ttyS3               # UART-MAIN1: Gemstone TX GPIO14 (pin 8), RX GPIO15 (pin 10)
+      pwm: "ecap2"                   # GPIO18, pin 12 -> lidar MOTOCTL
+      period_ns: 1000000
+      duty_percent: 85.0             # %100'de motor gürültüsü UART'ı bozuyordu (eski robot)

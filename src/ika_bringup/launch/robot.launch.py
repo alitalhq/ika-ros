@@ -11,9 +11,10 @@ Argümanlar:
   imu          true | false     ICM-20948
   fusion       true | false     EKF (teker + IMU) odom TF'ini yayınlar;
                                 false ise ika_base_node yayınlar
-  lidar        true | false     RPLIDAR A1 (sllidar_ros2)
-  lidar_port   <boş>            boşsa hardware.yaml'daki serial_port (/dev/ttyS3)
-  lidar_motor  true | false     lidar motorunu Gemstone PWM'i sürsün (USB adaptörde false)
+  lidar        true | false     RPLIDAR A1 (sllidar_ros2, lidar_manager_node üzerinden)
+  lidar_source <boş> | usb | gpio  boşsa arayüzde seçilip kaydedilen, o da yoksa
+                                hardware.yaml'daki (usb) bağlantı
+  lidar_port   <boş>            seri portu elle ver (ör. /dev/ttyUSB1)
   line         true | false     çizgi sensörü + çizgi izleme
   slam         true | false     slam_toolbox + harita kaydetme servisi
   slam_mode    mapping | localization
@@ -37,8 +38,8 @@ ARGS = {
     'imu': 'true',
     'fusion': 'true',
     'lidar': 'true',
+    'lidar_source': '',
     'lidar_port': '',
-    'lidar_motor': 'true',
     'line': 'true',
     'slam': 'true',
     'slam_mode': 'mapping',
@@ -93,12 +94,13 @@ def _setup(context):
             output='screen', parameters=[os.path.join(bringup, 'config', 'ekf.yaml')]))
 
     if flag('lidar') and not mock:
-        port = {'serial_port': arg['lidar_port']} if arg['lidar_port'] else {}
-        actions.append(Node(package='sllidar_ros2', executable='sllidar_node', name='sllidar_node',
-                            output='screen', parameters=[hardware, port]))
-        if flag('lidar_motor'):
-            actions.append(Node(package='ika_hal', executable='lidar_motor_node', output='screen',
-                                parameters=[hardware, {'backend': backend}]))
+        actions.append(Node(
+            package='ika_hal', executable='lidar_manager_node', output='screen',
+            parameters=[hardware, {
+                'backend': backend,
+                'source_override': arg['lidar_source'],
+                'port_override': arg['lidar_port'],
+            }]))
 
     if flag('line'):
         actions.append(Node(package='ika_line', executable='line_sensor_node', output='screen',

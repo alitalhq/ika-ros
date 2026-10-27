@@ -1,0 +1,9 @@
+# Lidar bağlantısını değiştirir ve seçimi robotta saklar (ika_hal/lidar_manager_node).
+
+string USB=usb    # lidarın kendi USB adaptörü; motoru adaptör sürer
+string GPIO=gpio  # doğrudan Gemstone UART'ı (/dev/ttyS3) + motor PWM'i (pin 12)
+
+string source
+---
+bool success
+string message
