@@ -103,7 +103,7 @@ colcon test && colcon test-result --verbose
 
 # ROS'suz birim testleri (herhangi bir makinede):
 PYTHONPATH=src/ika_hal:src/ika_base:src/ika_line:src/ika_control pytest src/*/test
-flake8 src
+python3 -m flake8 src
 ```
 
 Üçüncü parti kaynak paketleri `ika.repos` içinde (`vcs import src < ika.repos`).

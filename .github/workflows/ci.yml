@@ -13,7 +13,7 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           path: src/ika
       - name: Bağımlılıklar
@@ -24,7 +24,7 @@ jobs:
             -t build -t buildtool -t build_export -t buildtool_export -t test
           apt-get install -y python3-flake8
       - name: flake8
-        run: flake8 --config src/ika/.flake8 src/ika/src
+        run: python3 -m flake8 --config src/ika/.flake8 src/ika/src
       - name: Build
         run: |
           source /opt/ros/jazzy/setup.bash
