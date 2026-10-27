@@ -19,7 +19,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lidar_motor_node = ika_hal.lidar_motor_node:main',
+            'lidar_manager_node = ika_hal.lidar_manager_node:main',
         ],
     },
 )

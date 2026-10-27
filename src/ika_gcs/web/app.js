@@ -19,14 +19,19 @@ const API = {
   setMode: ['/ika/set_mode', 'ika_interfaces/srv/SetMode'],
   estop: ['/ika/estop', 'std_srvs/srv/SetBool'],
   saveMap: ['/ika/save_map', 'ika_interfaces/srv/SaveMap'],
+  lidar: ['/ika/lidar', 'ika_interfaces/msg/LidarStatus'],
+  setLidar: ['/ika/set_lidar', 'ika_interfaces/srv/SetLidar'],
 };
 const ROSBRIDGE_PORT = 9090;
-const OUR_NODES = /mode_manager|map_manager|line_follower|ika_base|ika_imu|line_sensor/;
+const OUR_NODES = /mode_manager|map_manager|line_follower|ika_base|ika_imu|line_sensor|lidar_manager/;
 
 const $ = (id) => document.getElementById(id);
 let ros = null;
 let connected = false;
-const state = { mode: 'idle', estop: false, map: null, pose: null, plan: [], goal: null, obstacleAt: 0 };
+const state = {
+  mode: 'idle', estop: false, map: null, pose: null, plan: [], goal: null, obstacleAt: 0,
+  lidar: null, lidarBusy: false,
+};
 
 // --- kayıt ---------------------------------------------------------------
 function log(text, level = 'info') {
@@ -68,10 +73,10 @@ function topic([name, type], options = {}) {
   return new ROSLIB.Topic({ ros, name, messageType: type, ...options });
 }
 
-function call([name, type], request, done) {
+function call([name, type], request, done, failed = () => {}) {
   const service = new ROSLIB.Service({ ros, name, serviceType: type });
   service.callService(new ROSLIB.ServiceRequest(request), done,
-    (err) => log(`${name}: ${err}`, 'error'));
+    (err) => { log(`${name}: ${err}`, 'error'); failed(); });
 }
 
 function subscribeAll() {
@@ -98,6 +103,7 @@ function subscribeAll() {
   });
   topic(API.line, { throttle_rate: 100 }).subscribe(renderLine);
   topic(API.lineStatus).subscribe((m) => { $('line-status').textContent = m.data; });
+  topic(API.lidar).subscribe((m) => { state.lidar = m; renderLidar(); });
   topic(API.rosout, { queue_length: 20 }).subscribe((m) => {
     if (m.level >= 30 || (m.level >= 20 && OUR_NODES.test(m.name))) {
       log(`${m.name}: ${m.msg}`, m.level >= 40 ? 'error' : m.level >= 30 ? 'warn' : 'info');
@@ -127,6 +133,37 @@ function setEstop(active) {
   if (!connected) return;
   if (active) publishTwist(0, 0);
   call(API.estop, { data: active }, () => {});
+}
+
+// --- lidar ---------------------------------------------------------------
+const LIDAR_NAMES = { usb: 'USB', gpio: 'GPIO (UART)' };
+
+function renderLidar() {
+  const s = state.lidar;
+  document.querySelectorAll('[data-lidar]').forEach((b) => {
+    b.classList.toggle('active', !!s && b.dataset.lidar === s.source);
+    b.disabled = state.lidarBusy;
+  });
+  const el = $('lidar-status');
+  if (!s) { el.textContent = '—'; el.className = 'muted'; return; }
+  const ok = s.running && s.rate_hz > 1;
+  el.textContent = s.running
+    ? `${s.port} · ${s.rate_hz.toFixed(1)} Hz${ok ? '' : ' (veri bekleniyor)'}`
+    : `çalışmıyor: ${s.message}`;
+  el.className = `muted ${ok ? 'ok' : 'warn'}`;
+}
+
+function setLidar(source) {
+  if (!connected || state.lidarBusy) return;
+  if (state.lidar && state.lidar.source === source && state.lidar.running) return;
+  state.lidarBusy = true;
+  renderLidar();
+  log(`lidar: ${LIDAR_NAMES[source]} seçiliyor...`);
+  const done = () => { state.lidarBusy = false; renderLidar(); };
+  call(API.setLidar, { source }, (res) => {
+    done();
+    log(res.message, res.success ? 'info' : 'warn');
+  }, done);
 }
 
 // --- sürüş ---------------------------------------------------------------
@@ -354,6 +391,9 @@ $('estop').addEventListener('click', () => setEstop(true));
 $('release').addEventListener('click', () => setEstop(false));
 document.querySelectorAll('[data-mode]').forEach((b) => {
   b.addEventListener('click', () => setMode(b.dataset.mode));
+});
+document.querySelectorAll('[data-lidar]').forEach((b) => {
+  b.addEventListener('click', () => setLidar(b.dataset.lidar));
 });
 $('goal-mode').addEventListener('change', (e) => canvas.classList.toggle('goal', e.target.checked));
 $('save-map').addEventListener('click', () => {

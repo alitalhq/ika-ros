@@ -4,9 +4,9 @@
 
 | Paket | Tür | Görev |
 |---|---|---|
-| `ika_interfaces` | msg/srv | `LineState`, `SetMode`, `SaveMap` |
+| `ika_interfaces` | msg/srv | `LineState`, `LidarStatus`, `SetMode`, `SaveMap`, `SetLidar` |
 | `ika_description` | URDF | Robot modeli; geometri için tek kaynak `config/robot.yaml` |
-| `ika_hal` | Python lib | GPIO (libgpiod v1/v2, hat adıyla çözme), sysfs PWM (modül adıyla), `mock`; `lidar_motor_node` |
+| `ika_hal` | Python lib | GPIO (libgpiod v1/v2, hat adıyla çözme), sysfs PWM (modül adıyla), `mock`; `lidar_manager_node` (USB / GPIO lidar seçimi) |
 | `ika_base` | Python | Enkoder geri beslemeli teker hız kontrolü, teker odometrisi, `hw_check` |
 | `ika_imu` | C++ | ICM-20948 SPI sürücüsü, jiroskop sapma kalibrasyonu |
 | `ika_line` | Python | QTR-8RC (RC zamanlama) veya dijital sensör dizisi, PD çizgi izleme, `line_check` |
@@ -69,7 +69,8 @@ base_link ──▶ base_footprint, chassis_link, left/right_wheel_link,
 | `/ika_base_node/wheels` | `std_msgs/Float32MultiArray` | ika_base_node (PID ayarı için) |
 | `/imu/data_raw` | `sensor_msgs/Imu` | ika_imu_node |
 | `/odometry/filtered` | `nav_msgs/Odometry` | ekf_filter_node |
-| `/scan` | `sensor_msgs/LaserScan` | sllidar_node |
+| `/scan` | `sensor_msgs/LaserScan` | sllidar_node (lidar_manager_node başlatır) |
+| `/ika/lidar` | `ika_interfaces/LidarStatus` (latched) | lidar_manager_node |
 | `/line/state` | `ika_interfaces/LineState` | line_sensor_node |
 | `/line_follower/status` | `std_msgs/String` | line_follower_node |
 | `/ika/mode` | `std_msgs/String` (latched) | mode_manager_node |
@@ -79,6 +80,7 @@ base_link ──▶ base_footprint, chassis_link, left/right_wheel_link,
 | `/ika/set_mode` | `ika_interfaces/SetMode` | mode_manager_node |
 | `/ika/estop` | `std_srvs/SetBool` | mode_manager_node |
 | `/ika/save_map` | `ika_interfaces/SaveMap` | map_manager_node |
+| `/ika/set_lidar` | `ika_interfaces/SetLidar` | lidar_manager_node |
 
 ## Eski repodan farklar
 

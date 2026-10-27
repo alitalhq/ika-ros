@@ -15,6 +15,7 @@ services:
       - /sys:/sys
       - ./src:/ika_ws/src/ika                     # kodu konteyneri yeniden kurmadan düzenle
       - ${HOME}/ika_maps:/root/ika_maps           # kaydedilen haritalar
+      - ${HOME}/.ika:/root/.ika                   # arayüzde seçilen ayarlar (lidar bağlantısı)
     environment:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
     command: bash -c "ros2 launch ika_bringup robot.launch.py $${IKA_ARGS:-}"
