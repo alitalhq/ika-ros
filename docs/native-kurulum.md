@@ -115,8 +115,13 @@ sudo systemctl stop ika-native
 sudo journalctl -u ika-native -f
 ```
 
-Servis çalışırken ayrıca ikinci bir `ros2 launch` başlatmayın. Servis
-yeniden başlatıldığında tarayıcıdaki sayfayı yenileyin veya Bağlan'a basın.
+Servis çalışırken ayrıca ikinci bir `ros2 launch` başlatmayın. Arayüz,
+rosbridge geç açılırsa veya bağlantı koparsa 1 saniyeden başlayıp en fazla
+10 saniyeye çıkan aralıklarla kendiliğinden yeniden bağlanır. Bağlantı
+koptuğunda basılı sürüş girişleri temizlenir; önceki hareket komutu
+yeniden bağlantıda otomatik tekrarlanmaz. Sonraki manuel komutlar yeni
+WebSocket üzerinden gönderilir. Eski arayüz açıkken bu güncellemeyi almak
+için sayfayı bir kez yenileyin.
 ROS günlükleri `/var/log/ika-native` altındadır. Bu servis profilinde
 harita kaydetme dizini mevcut `~/ika_maps` ayarı nedeniyle `/root/ika_maps`
 olarak çözülür.
@@ -147,4 +152,12 @@ birim testi geçti. GPIO/PWM pinleri çakışmasız çözüldü. Canlı kontrold
 odometri ve lidar verisi alındı; lidar yaklaşık 6.8 Hz'de 1080 nokta/tarama
 üretti. SLAM haritası, `map` → `lidar_link` dönüşümü ve webde haritanın
 çizilmesi doğrulandı. Kalıcı servis `enabled` ve `active` olarak doğrulandı;
-servis etkinleştirildikten sonra ayrıca reboot testi yapılmadı.
+sonraki kart açılışında servisin otomatik başladığı da gözlendi.
+
+WebSocket başlangıç hatası, sınırlı geri çekilme ile yeniden deneme, elle
+adres değişiminde eski bağlantıyı yok sayma ve yeniden bağlantıda eski
+sürüş komutunu tekrarlamama davranışları ayrıca test edilir:
+
+```bash
+node --test src/ika_gcs/test/connection.test.cjs
+```

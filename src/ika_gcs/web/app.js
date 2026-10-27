@@ -26,6 +26,8 @@ const OUR_NODES = /mode_manager|map_manager|line_follower|ika_base|ika_imu|line_
 const $ = (id) => document.getElementById(id);
 let ros = null;
 let connected = false;
+let reconnectTimer = null;
+let reconnectDelay = 1000;
 const state = { mode: 'idle', estop: false, map: null, pose: null, plan: [], goal: null, obstacleAt: 0 };
 
 // --- kayıt ---------------------------------------------------------------
@@ -47,21 +49,65 @@ function storedHost() {
 function connect() {
   const host = $('host').value.trim() || 'localhost';
   try { localStorage.setItem('ika-host', host); } catch (e) { /* gizli pencere */ }
+  reconnectDelay = 1000;
+  connectTo(host);
+}
+
+function resetTeleop() {
+  teleopTopic = null;
+  wasMoving = false;
+  heldKeys.clear();
+  heldPads.clear();
+  document.querySelectorAll('.key.pressed').forEach((b) => b.classList.remove('pressed'));
+}
+
+function retryConnection(activeRos, host) {
+  if (ros !== activeRos || reconnectTimer !== null) return;
+  reconnectTimer = setTimeout(() => {
+    reconnectTimer = null;
+    connectTo(host);
+  }, reconnectDelay);
+  reconnectDelay = Math.min(reconnectDelay * 2, 10000);
+}
+
+function connectTo(host) {
+  if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+  reconnectTimer = null;
   const url = `ws://${host.includes(':') ? host : `${host}:${ROSBRIDGE_PORT}`}`;
-  if (ros) ros.close();
-  ros = new ROSLIB.Ros({ url });
-  ros.on('connection', () => {
+  const previous = ros;
+  const activeRos = new ROSLIB.Ros();
+  ros = activeRos;
+  connected = false;
+  $('conn-state').className = 'dot off';
+  resetTeleop();
+  if (previous) previous.close();
+  activeRos.on('connection', () => {
+    if (ros !== activeRos || connected) return;
+    if (reconnectTimer !== null) clearTimeout(reconnectTimer);
+    reconnectTimer = null;
+    reconnectDelay = 1000;
     connected = true;
     $('conn-state').className = 'dot on';
     log(`bağlandı: ${host}`);
     subscribeAll();
   });
-  ros.on('close', () => {
-    if (connected) log('bağlantı koptu', 'warn');
+  activeRos.on('close', () => {
+    if (ros !== activeRos) return;
+    if (connected) log('bağlantı koptu; yeniden bağlanılacak', 'warn');
     connected = false;
+    resetTeleop();
     $('conn-state').className = 'dot off';
+    retryConnection(activeRos, host);
   });
-  ros.on('error', () => log(`rosbridge'e ulaşılamadı: ${url}`, 'error'));
+  activeRos.on('error', () => {
+    if (ros !== activeRos) return;
+    if (reconnectTimer === null) log(`rosbridge'e ulaşılamadı: ${url}; yeniden denenecek`, 'error');
+    connected = false;
+    resetTeleop();
+    $('conn-state').className = 'dot off';
+    retryConnection(activeRos, host);
+  });
+  activeRos.connect(url);
 }
 
 function topic([name, type], options = {}) {

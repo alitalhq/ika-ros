@@ -22,7 +22,9 @@ jobs:
           rosdep update --rosdistro jazzy
           rosdep install --from-paths src --ignore-src -y \
             -t build -t buildtool -t build_export -t buildtool_export -t test
-          apt-get install -y python3-flake8
+          apt-get install -y python3-flake8 nodejs
+      - name: Web connection tests
+        run: node --test src/ika/src/ika_gcs/test/connection.test.cjs
       - name: flake8
         run: python3 -m flake8 --config src/ika/.flake8 src/ika/src
       - name: Build
