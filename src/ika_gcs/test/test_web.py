@@ -1,5 +1,6 @@
 import os
 import re
+from urllib.parse import urlsplit
 
 WEB = os.path.join(os.path.dirname(__file__), '..', 'web')
 
@@ -12,7 +13,7 @@ def _read(name):
 def test_scripts_and_styles_exist():
     html = _read('index.html')
     for ref in re.findall(r'(?:src|href)="([^"]+)"', html):
-        assert os.path.isfile(os.path.join(WEB, ref)), ref
+        assert os.path.isfile(os.path.join(WEB, urlsplit(ref).path)), ref
 
 
 def test_app_element_ids_exist_in_html():

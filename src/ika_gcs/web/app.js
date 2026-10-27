@@ -172,7 +172,7 @@ function teleopTick() {
   const moving = v !== 0 || w !== 0;
   if (state.estop) return;
   if (moving) {
-    publishTwist(v * parseFloat($('v-max').value), w * parseFloat($('w-max').value));
+    publishTwist(v * parseFloat($('v-max').value), -w * parseFloat($('w-max').value));
   } else if (wasMoving) {
     publishTwist(0, 0);
   }
