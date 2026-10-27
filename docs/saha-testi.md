@@ -13,6 +13,20 @@ docker compose run --rm ika bash          # test kabuğu
 HW=/ika_ws/src/ika/ika_bringup/config/hardware.yaml
 ```
 
+Docker'sız kurulumda ([native-kurulum.md](native-kurulum.md)) servisi durdurup
+root kabuğunda aynı ortamı kurun:
+
+```bash
+sudo systemctl stop ika
+sudo -i
+source /opt/ros/jazzy/setup.bash && source ~gemstone/ika-ros/install/setup.bash
+export PYTHONPATH=~gemstone/ika-gpio-venv/lib/python3.12/site-packages:$PYTHONPATH
+HW=~gemstone/ika-ros/src/ika_bringup/config/hardware.yaml
+```
+
+(`gemstone` yerine kendi kullanıcı adınızı yazın.) Testler bitince
+`sudo systemctl start ika`.
+
 `./src` konteynere bağlı olduğu için `hardware.yaml`'ı host'ta düzenleyince
 değişiklik hemen geçerli olur. Yeni Python dosyası veya C++ değişikliğinden
 sonra konteynerde `colcon build --symlink-install` çalıştırın.
