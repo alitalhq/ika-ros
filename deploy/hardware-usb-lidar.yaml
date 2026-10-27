@@ -53,7 +53,7 @@ ika_base_node:
 
 line_sensor_node:
   ros__parameters:
-    type: qtr_rc                     # Yer tutucu: takili D1-D8 kartin cikis tipi henuz dogrulanmadi.
+    type: digital                    # Yalniz giris okuma; takili kartin cikis tipi henuz dogrulanmadi.
     # Soldan sağa (robotun arkasından, ileri bakarak). 40 pinde 6 boş GPIO
     # kaldığı için QTR'nin ortadaki 6 kanalı (2-7) bağlanır; GPIO7/GPIO8
     # boşsa (gpioinfo "unused") 1 ve 8. kanallar da eklenebilir.
@@ -67,6 +67,9 @@ line_sensor_node:
     spacing: 0.009525                # QTR-8RC kanal aralığı (9.525 mm)
     rate: 100.0
     line_is_dark: true               # beyaz zeminde siyah çizgi
+    digital:
+      line_level: 1                 # Siyah/beyaz denemesiyle kalibre edilecek.
+      bias: as-is
     qtr:
       threshold_us: 1000             # /line/state raw değerlerine bakıp ayarlayın
       timeout_us: 2500
