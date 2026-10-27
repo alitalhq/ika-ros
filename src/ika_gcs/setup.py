@@ -21,6 +21,7 @@ setup(
     maintainer_email='alitlhq@icloud.com',
     description='Tarayıcı tabanlı host kontrol arayüzü (rosbridge)',
     license='Apache-2.0',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'robot_pose_node = ika_gcs.robot_pose_node:main',

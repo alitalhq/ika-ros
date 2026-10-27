@@ -20,6 +20,7 @@ setup(
     maintainer_email='alitlhq@icloud.com',
     description='slam_toolbox + Nav2 yapılandırması ve harita kaydetme servisi',
     license='Apache-2.0',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'map_manager_node = ika_navigation.map_manager_node:main',
