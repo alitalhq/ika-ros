@@ -1,0 +1,11 @@
+# Robotun sürüş modunu değiştirir (ika_control/mode_manager_node).
+
+string IDLE=idle      # motorlar durur, hiçbir kaynak /cmd_vel'e yazamaz
+string MANUAL=manual  # host'tan teleop (/cmd_vel/teleop)
+string LINE=line      # çizgi izleme (/cmd_vel/line)
+string NAV=nav        # Nav2 hedefe gitme (/cmd_vel/nav)
+
+string mode
+---
+bool success
+string message

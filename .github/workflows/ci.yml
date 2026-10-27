@@ -1,0 +1,36 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    runs-on: ubuntu-24.04
+    container: ros:jazzy-ros-base
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: src/ika
+      - name: Bağımlılıklar
+        run: |
+          apt-get update
+          rosdep update --rosdistro jazzy
+          rosdep install --from-paths src --ignore-src -y \
+            -t build -t buildtool -t build_export -t buildtool_export -t test
+          apt-get install -y python3-flake8
+      - name: flake8
+        run: python3 -m flake8 --config src/ika/.flake8 src/ika/src
+      - name: Build
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          colcon build --base-paths src/ika/src --event-handlers console_cohesion-
+      - name: Test
+        run: |
+          source install/setup.bash
+          colcon test --base-paths src/ika/src --event-handlers console_cohesion-
+          colcon test-result --verbose

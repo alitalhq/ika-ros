@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 100
+exclude = build,install,log
+# ROS imajındaki ament eklentileri (docstring, import sırası, tırnak) bu projenin
+# stili değil; yalnızca pycodestyle + pyflakes + mccabe denetlenir.
+select = E,W,F,C90
+extend-ignore = W503,W504
