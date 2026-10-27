@@ -34,6 +34,37 @@ sudo bash ~/ika-ros/deploy/start-native.sh
 Bu profil motor/enkoder, dahili IMU, EKF, USB lidar, SLAM ve web arayüzünü
 açar. Çizgi sensörü ve Nav2 kapalıdır. Başlangıç modu `idle` olur.
 
+Donanım dosyası `deploy/hardware-usb-lidar.yaml` olarak seçilir. Bu kartta
+fiziksel pin 40 başka bağlantıda olduğundan çizgi sensörünün D7 çıkışı
+fiziksel pin 12 / GPIO18'e ayrılmıştır. D2–D6 sırasıyla fiziksel
+31, 35, 37, 36, 38 pinlerine gider. GPIO18 bu profilde lidar motor PWM'i
+olarak kullanılamaz; `lidar_motor:=false` korunmalıdır. Sensörün çıkış türü
+doğrulanana kadar çizgi okuma kapalı kalır. UART lidarın motor PWM'ini
+kullanan standart `hardware.yaml` dosyası değiştirilmemiştir.
+
+### Sensör girişlerini hareket vermeden kontrol etme
+
+Takılı D1–D8 etiketli kartın RC, dijital veya analog çıkış türü henüz
+kesinleşmemiştir. Profildeki `type: qtr_rc` kalıtılan yer tutucudur;
+çıkış türünü doğrulamadan `line:=true` kullanmayın. Analog çıkışlı
+varyantta ADC gerekir; GPIO'da bir seviye görmek tek başına uygunluğu
+kanıtlamaz. Sensör VCC/IR bağlantıları 3.3 V, GND ortak olmalıdır.
+
+`line:=false` durumunda yalnız GPIO girişlerini okuyarak test edin:
+
+```bash
+cd ~/ika-ros
+sudo env PYTHONPATH="$HOME/ika-gpio-venv/lib/python3.12/site-packages:$PWD/src/ika_hal" \
+  python3 deploy/check-line-inputs.py --seconds 30
+```
+
+Araç pinlere çıkış sürmez. Sensörün altına önce beyaz, sonra siyah yüzey
+yaklaştırın; ham seviyeleri ve kanal başına geçiş sayısını kontrol edin.
+Bu robotun ilk 120 saniyelik testinde altı kanal da yalnız `1` okudu ve
+geçiş sayıları sıfır kaldı. Kullanıcı beyaz/siyah denemesini ve IR/VCC/GND
+bağlantısını doğruladı. Bu sonuç sensörün çalıştığını doğrulamaz; kartın
+diğer yüzünden çıkış devresi/tipi ve gerekirse gerilimler incelenmelidir.
+
 USB lidarın varsayılan kalıcı aygıt yolu:
 
 ```text

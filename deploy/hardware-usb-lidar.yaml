@@ -1,0 +1,94 @@
+# USB lidar profili: lidar_motor:=false ile kullanilir.
+# Fiziksel pin 40 baska baglantida; D7 fiziksel pin 12 / GPIO18.
+# GPIO18 ayni anda lidar motor PWM cikisi olarak kullanilamaz.
+# Robotun TÜM donanım bağlantıları bu dosyada (pin tablosu: docs/donanim.md).
+#
+# Pin  : Gemstone hat adı ("GPIO22") ya da "gpiochipN:line".
+# PWM  : modül adı ("ecap0", "epwm1:1"); pwmchip numaraları overlay'lere göre
+#        değiştiği için numara yerine modül adı kullanın.
+# İlk iş: `ros2 run ika_base hw_check pins --config <bu dosya>` her pini çözüp listeler.
+#
+# ROS 2 kuralı: float parametrelere ondalıklı değer yazın (1 değil 1.0).
+
+ika_base_node:
+  ros__parameters:
+    motor_driver: in_in_pwm          # L298N: IN1/IN2 yön, ENA/ENB PWM (jumper'lar çıkarılmış)
+    brake_on_stop: false
+    pwm_period_ns: 1000000           # 1 kHz; ENB'nin epwm1 kanalı GPIO6 ile periyot paylaşır
+
+    left:                            # Motor 1 (L298N OUT1/OUT2)
+      in1: "GPIO22"                  # pin 15 -> IN1
+      in2: "GPIO17"                  # pin 11 -> IN2
+      pwm: "ecap0"                   # GPIO12, pin 32 -> ENA
+      invert: false
+      enc_a: "GPIO4"                 # pin 7  <- enkoder C1
+      enc_b: "GPIO5"                 # pin 29 <- enkoder C2
+      enc_invert: false
+    right:                           # Motor 2 (L298N OUT3/OUT4)
+      in1: "GPIO24"                  # pin 18 -> IN3
+      in2: "GPIO25"                  # pin 22 -> IN4
+      pwm: "epwm1:1"                 # GPIO13, pin 33 -> ENB
+      invert: true                   # aynalı sağ motor: fiziksel ileri yönü düzeltildi
+      enc_a: "GPIO27"                # pin 13 <- enkoder C1
+      enc_b: "GPIO23"                # pin 16 <- enkoder C2
+      enc_invert: true                # motor yönüyle birlikte geri bildirim işareti düzeltildi
+
+    encoder:
+      mode: x4
+      bias: as-is                    # enkoder kartında dahili pull-up var
+      ppr: 546.0                     # Waveshare DCGM-3865: 13 PPR x 1:42, çıkış milinde
+
+    max_wheel_speed: 0.8             # %100 duty'de teker hızı [m/s]; tahmin: ~180 rpm x 85 mm.
+                                     # hw_check sweep ile ölçün
+    max_accel: 1.0
+    control_rate: 50.0
+    cmd_timeout: 0.5
+    speed_filter_alpha: 0.5
+    pid:
+      kp: 60.0
+      ki: 300.0
+      kff: 1.0
+      min_duty: 0.0                  # tekerin kalktığı duty — hw_check sweep
+      max_duty: 100.0
+
+line_sensor_node:
+  ros__parameters:
+    type: qtr_rc                     # Yer tutucu: takili D1-D8 kartin cikis tipi henuz dogrulanmadi.
+    # Soldan sağa (robotun arkasından, ileri bakarak). 40 pinde 6 boş GPIO
+    # kaldığı için QTR'nin ortadaki 6 kanalı (2-7) bağlanır; GPIO7/GPIO8
+    # boşsa (gpioinfo "unused") 1 ve 8. kanallar da eklenebilir.
+    pins: ["GPIO6",                  # pin 31 <- QTR 2
+           "GPIO19",                 # pin 35 <- QTR 3
+           "GPIO26",                 # pin 37 <- QTR 4
+           "GPIO16",                 # pin 36 <- QTR 5
+           "GPIO20",                 # pin 38 <- QTR 6
+           "GPIO18"]                 # pin 12 <- D7; pin 40 baska baglantida
+    emitter_pin: ""                  # QTR LEDON; boş = kartta pull-up ile hep açık
+    spacing: 0.009525                # QTR-8RC kanal aralığı (9.525 mm)
+    rate: 100.0
+    line_is_dark: true               # beyaz zeminde siyah çizgi
+    qtr:
+      threshold_us: 1000             # /line/state raw değerlerine bakıp ayarlayın
+      timeout_us: 2500
+      charge_us: 10
+
+ika_imu_node:
+  ros__parameters:
+    spi_device: /dev/spidev0.3       # Gemstone dahili ICM-20948
+    rate: 100.0
+    calibration_samples: 300         # açılışta ~1.5 sn robotu oynatmayın
+
+sllidar_node:
+  ros__parameters:
+    channel_type: serial
+    serial_port: /dev/ttyS3          # UART-MAIN1: Gemstone TX GPIO14 (pin 8), RX GPIO15 (pin 10)
+    serial_baudrate: 115200          # A1
+    frame_id: lidar_link
+    inverted: false
+    angle_compensate: true
+
+lidar_motor_node:
+  ros__parameters:
+    pwm: "ecap2"                     # GPIO18, pin 12 -> lidar CTRL_MOTO
+    period_ns: 1000000
+    duty_percent: 85.0               # %100'de motor gürültüsü UART'ı bozuyordu (eski robot)
