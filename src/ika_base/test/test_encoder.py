@@ -77,3 +77,69 @@ def test_reader_orders_edges_across_chips():
         assert reader.errors() == [0]
     finally:
         reader.close()
+
+
+class _PipeLines:
+    """libgpiod v2 isteği gibi fd veren sahte olay kuyruğu (select yolu için)."""
+
+    def __init__(self):
+        import os
+        from collections import deque
+        self._r, self._w = os.pipe()
+        self.queue = deque()
+        self.levels = {}
+
+    def push(self, offset, level):
+        import os
+        from ika_hal.gpio import Edge
+        self.levels[offset] = level
+        self.queue.append(Edge(offset, level, time.monotonic_ns()))
+        os.write(self._w, b'x')
+
+    def fileno(self):
+        return self._r
+
+    def wait(self, timeout_s):
+        return bool(self.queue)
+
+    def read(self):
+        import os
+        edges = list(self.queue)
+        self.queue.clear()
+        os.read(self._r, 4096)
+        return edges
+
+    def get(self, offset):
+        return self.levels.get(offset, 0)
+
+    def release(self):
+        import os
+        os.close(self._r)
+        os.close(self._w)
+
+
+class _PipeChip:
+    def __init__(self):
+        self.lines = _PipeLines()
+
+    def request_edges(self, offsets, bias='as-is'):
+        return self.lines
+
+
+def test_reader_orders_edges_across_chips_with_select():
+    chips = {'gpiochip1': _PipeChip(), 'gpiochip2': _PipeChip()}
+    reader = EncoderReader(chips.__getitem__, [(('gpiochip1', 4), ('gpiochip2', 5), False)])
+    try:
+        for _ in range(250):
+            for ch, level in FORWARD:
+                if ch == 'a':
+                    chips['gpiochip1'].lines.push(4, level)
+                else:
+                    chips['gpiochip2'].lines.push(5, level)
+        deadline = time.monotonic() + 2.0
+        while reader.counts()[0] != 1000 and time.monotonic() < deadline:
+            time.sleep(0.01)
+        assert reader.counts() == [1000]
+        assert reader.errors() == [0]
+    finally:
+        reader.close()

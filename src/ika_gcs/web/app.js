@@ -96,7 +96,9 @@ function subscribeAll() {
     const t = m.twist.twist;
     $('speed').textContent = `${t.linear.x.toFixed(2)} m/s · ${t.angular.z.toFixed(2)} rad/s`;
   });
-  topic(API.map, { throttle_rate: 2000 }).subscribe((m) => { setMap(m); });
+  // CBOR: harita JSON'a çevrilmeden (ikili) gelir; JSON çevirisi rosbridge'i
+  // saniyelerce meşgul edip sürüş komutlarını geciktiriyordu.
+  topic(API.map, { throttle_rate: 2000, compression: 'cbor' }).subscribe((m) => { setMap(m); });
   topic(API.plan, { throttle_rate: 500 }).subscribe((m) => {
     state.plan = m.poses.map((p) => p.pose.position);
     drawMap();

@@ -115,6 +115,9 @@ def _setup(context):
             'footprint.front': float(chassis['x'] + chassis['length'] / 2),
             'footprint.rear': float(chassis['length'] / 2 - chassis['x']),
             'footprint.half_width': float(chassis['width'] / 2),
+            'lidar.x': float(geometry['lidar']['x']),
+            'lidar.y': float(geometry['lidar']['y']),
+            'lidar.yaw': float(geometry['lidar']['yaw']),
         }]))
 
     if flag('slam'):
