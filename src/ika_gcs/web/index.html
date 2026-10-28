@@ -25,7 +25,10 @@
     <section class="panel map-panel">
       <div class="panel-head">
         <h2>Harita</h2>
-        <label class="toggle"><input type="checkbox" id="goal-mode"> Tıkla → hedef</label>
+        <div class="row">
+          <label class="toggle"><input type="checkbox" id="goal-mode"> Tıkla → hedef</label>
+          <button id="reset-map" title="Haritayı ve robotun konumunu sıfırlar">Haritayı sıfırla</button>
+        </div>
       </div>
       <canvas id="map"></canvas>
       <p id="map-info" class="muted">Harita bekleniyor (SLAM açık mı?)</p>

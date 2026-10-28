@@ -1,4 +1,9 @@
-"""map_manager_node: /ika/save_map ile SLAM haritasını robot üzerine kaydeder.
+"""map_manager_node: SLAM haritasını kaydeder ve sıfırlar.
+
+/ika/save_map  (ika_interfaces/SaveMap): haritayı robot üzerine kaydeder.
+/ika/reset_map (std_srvs/Trigger): EKF konumunu (odom) sıfırlar, mapping
+               modunda slam_toolbox haritasını da sıfırlar; robot elle başka
+               yere taşınınca kullanılır.
 
 Tek çağrıda iki dosya grubu yazılır (map_dir altında, uzantısız `name`):
   name.pgm / name.yaml        -> görüntü harita (Nav2 map_server, paylaşım)
@@ -15,8 +20,10 @@ import rclpy
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
 from rclpy.node import Node
-from slam_toolbox.srv import SaveMap, SerializePoseGraph
+from robot_localization.srv import SetPose
+from slam_toolbox.srv import Reset, SaveMap, SerializePoseGraph
 from std_msgs.msg import String
+from std_srvs.srv import Trigger
 
 from ika_interfaces.srv import SaveMap as IkaSaveMap
 
@@ -29,6 +36,8 @@ class MapManagerNode(Node):
         super().__init__('map_manager_node')
         self.declare_parameter('map_dir', '~/ika_maps')
         self.declare_parameter('timeout', 10.0)
+        self.declare_parameter('slam_mode', 'mapping')
+        self.declare_parameter('odom_frame', 'odom')
         self.map_dir = os.path.expanduser(self.get_parameter('map_dir').value)
         self.timeout = self.get_parameter('timeout').value
         os.makedirs(self.map_dir, exist_ok=True)
@@ -38,7 +47,11 @@ class MapManagerNode(Node):
             SaveMap, 'slam_toolbox/save_map', callback_group=group)
         self.serialize_client = self.create_client(
             SerializePoseGraph, 'slam_toolbox/serialize_map', callback_group=group)
+        self.reset_client = self.create_client(
+            Reset, 'slam_toolbox/reset', callback_group=group)
+        self.set_pose_client = self.create_client(SetPose, 'set_pose', callback_group=group)
         self.create_service(IkaSaveMap, 'ika/save_map', self._on_save, callback_group=group)
+        self.create_service(Trigger, 'ika/reset_map', self._on_reset, callback_group=group)
         self.get_logger().info(f'haritalar: {self.map_dir}')
 
     def _call(self, client, request):
@@ -74,6 +87,31 @@ class MapManagerNode(Node):
         response.message = (f'kaydedildi: {path}' if not problems else
                             'kaydedilemedi: ' + ', '.join(problems) +
                             ' (slam_toolbox çalışıyor mu?)')
+        log = self.get_logger().info if response.success else self.get_logger().error
+        log(response.message)
+        return response
+
+    def _on_reset(self, request, response):
+        problems = []
+        # Önce konum: yeni harita robotun şu anki yerinden başlasın.
+        pose = SetPose.Request()
+        pose.pose.header.frame_id = self.get_parameter('odom_frame').value
+        pose.pose.header.stamp = self.get_clock().now().to_msg()
+        pose.pose.pose.pose.orientation.w = 1.0
+        if self._call(self.set_pose_client, pose) is None:
+            problems.append('konum (EKF set_pose)')
+
+        if self.get_parameter('slam_mode').value == 'mapping':
+            result = self._call(self.reset_client, Reset.Request())
+            if result is None or result.result != Reset.Response.RESULT_SUCCESS:
+                problems.append('harita (slam_toolbox reset)')
+            what = 'harita ve konum'
+        else:
+            what = 'konum (lokalizasyon modunda kayıtlı harita korunur)'
+
+        response.success = not problems
+        response.message = (f'{what} sıfırlandı' if not problems
+                            else 'sıfırlanamadı: ' + ', '.join(problems))
         log = self.get_logger().info if response.success else self.get_logger().error
         log(response.message)
         return response

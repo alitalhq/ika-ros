@@ -19,6 +19,7 @@ const API = {
   setMode: ['/ika/set_mode', 'ika_interfaces/srv/SetMode'],
   estop: ['/ika/estop', 'std_srvs/srv/SetBool'],
   saveMap: ['/ika/save_map', 'ika_interfaces/srv/SaveMap'],
+  resetMap: ['/ika/reset_map', 'std_srvs/srv/Trigger'],
   lidar: ['/ika/lidar', 'ika_interfaces/msg/LidarStatus'],
   setLidar: ['/ika/set_lidar', 'ika_interfaces/srv/SetLidar'],
 };
@@ -415,6 +416,38 @@ document.querySelectorAll('[data-lidar]').forEach((b) => {
   b.addEventListener('click', () => setLidar(b.dataset.lidar));
 });
 $('goal-mode').addEventListener('change', (e) => canvas.classList.toggle('goal', e.target.checked));
+// İki adımlı onay (tarayıcı diyaloğu yok): ilk tıklama butonu "Emin misin?"
+// yapar, 3 sn içinde ikinci tıklama sıfırlar.
+let resetArmed = null;
+$('reset-map').addEventListener('click', () => {
+  const btn = $('reset-map');
+  if (!connected) return;
+  if (!resetArmed) {
+    btn.textContent = 'Emin misin? Tekrar tıkla';
+    btn.classList.add('armed');
+    resetArmed = setTimeout(() => {
+      resetArmed = null;
+      btn.textContent = 'Haritayı sıfırla';
+      btn.classList.remove('armed');
+    }, 3000);
+    return;
+  }
+  clearTimeout(resetArmed);
+  resetArmed = null;
+  btn.textContent = 'Haritayı sıfırla';
+  btn.classList.remove('armed');
+  log('harita sıfırlanıyor...');
+  call(API.resetMap, {}, (res) => {
+    log(res.message, res.success ? 'info' : 'error');
+    if (!res.success) return;
+    state.map = null;
+    state.plan = [];
+    state.goal = null;
+    $('map-info').textContent = 'Harita bekleniyor (robotu biraz hareket ettirin)';
+    drawMap();
+  });
+});
+
 $('save-map').addEventListener('click', () => {
   if (!connected) return;
   log('harita kaydediliyor...');
