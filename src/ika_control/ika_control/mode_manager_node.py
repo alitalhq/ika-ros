@@ -2,7 +2,8 @@
 
 Girdiler   : /cmd_vel/teleop, /cmd_vel/line, /cmd_vel/nav, /scan, /goal_pose
 Çıktılar   : /cmd_vel, /ika/mode (latched String), /ika/estop_active (latched Bool),
-             /ika/obstacle_distance (Float32, hareket yönündeki en yakın engel)
+             /ika/obstacle_distance (Float32, hareket yönündeki koridorda en yakın
+             engelin gövdeye uzaklığı)
 Servisler  : /ika/set_mode (ika_interfaces/SetMode), /ika/estop (std_srvs/SetBool)
 
 /goal_pose'a (GCS veya RViz) hedef gelince otomatik 'nav' moduna geçilir.
@@ -25,7 +26,7 @@ from std_srvs.srv import SetBool
 from tf2_ros import Buffer, TransformException, TransformListener
 
 from ika_control.mux import CommandMux
-from ika_control.safety import limit_linear, sector_min
+from ika_control.safety import corridor_gap, Footprint, LidarPose, limit_linear
 from ika_interfaces.srv import SetMode
 
 LATCHED = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
@@ -40,10 +41,14 @@ class ModeManagerNode(Node):
         self.declare_parameter('teleop_takeover', True)
         self.declare_parameter('base_frame', 'base_link')
         self.declare_parameter('safety.enabled', True)
-        self.declare_parameter('safety.stop_distance', 0.20)
-        self.declare_parameter('safety.slow_distance', 0.45)
-        self.declare_parameter('safety.half_angle_deg', 25.0)
+        self.declare_parameter('safety.stop_distance', 0.10)
+        self.declare_parameter('safety.slow_distance', 0.35)
+        self.declare_parameter('safety.side_margin', 0.01)
         self.declare_parameter('safety.scan_timeout', 0.5)
+        # Gövde sınırları; robot.launch.py robot.yaml'dan doldurur.
+        self.declare_parameter('footprint.front', 0.17)
+        self.declare_parameter('footprint.rear', 0.09)
+        self.declare_parameter('footprint.half_width', 0.09)
         p = lambda name: self.get_parameter(name).value  # noqa: E731
 
         self.mux = CommandMux(p('cmd_timeout'), p('teleop_takeover'))
@@ -51,11 +56,13 @@ class ModeManagerNode(Node):
         self.safety = p('safety.enabled')
         self.stop_distance = p('safety.stop_distance')
         self.slow_distance = p('safety.slow_distance')
-        self.half_angle = math.radians(p('safety.half_angle_deg'))
+        self.side_margin = p('safety.side_margin')
         self.scan_timeout = p('safety.scan_timeout')
+        self.body = Footprint(p('footprint.front'), p('footprint.rear'),
+                              p('footprint.half_width'))
         self.scan = None
         self.scan_time = 0.0
-        self.lidar_yaw = None
+        self.lidar = None
 
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -113,15 +120,15 @@ class ModeManagerNode(Node):
     def _on_scan(self, msg: LaserScan):
         self.scan = msg
         self.scan_time = time.monotonic()
-        if self.lidar_yaw is None:
+        if self.lidar is None:
             try:
                 tf = self.tf_buffer.lookup_transform(
                     self.base_frame, msg.header.frame_id, Time(), Duration(seconds=0.0))
-                q = tf.transform.rotation
-                self.lidar_yaw = math.atan2(2.0 * (q.w * q.z + q.x * q.y),
-                                            1.0 - 2.0 * (q.y * q.y + q.z * q.z))
             except TransformException:
-                pass
+                return
+            t, q = tf.transform.translation, tf.transform.rotation
+            self.lidar = LidarPose(t.x, t.y, math.atan2(2.0 * (q.w * q.z + q.x * q.y),
+                                                        1.0 - 2.0 * (q.y * q.y + q.z * q.z)))
 
     def _on_goal(self, msg: PoseStamped):
         if self.mux.estop:
@@ -167,11 +174,10 @@ class ModeManagerNode(Node):
     def _obstacle_distance(self, forward: bool):
         if self.scan is None or time.monotonic() - self.scan_time > self.scan_timeout:
             return None   # lidar yoksa fren devre dışı (ör. mock)
-        heading = 0.0 if forward else math.pi
-        center = heading - (self.lidar_yaw or 0.0)
         s = self.scan
-        return sector_min(s.ranges, s.angle_min, s.angle_increment, center, self.half_angle,
-                          s.range_min, s.range_max)
+        return corridor_gap(s.ranges, s.angle_min, s.angle_increment,
+                            self.lidar or LidarPose(), self.body, forward,
+                            self.side_margin, s.range_min, s.range_max)
 
 
 def main(args=None):
