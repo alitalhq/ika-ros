@@ -91,6 +91,7 @@ base_link ──▶ base_footprint, chassis_link, left/right_wheel_link,
 | `/ika/set_mode` | `ika_interfaces/SetMode` | mode_manager_node |
 | `/ika/estop` | `std_srvs/SetBool` | mode_manager_node |
 | `/ika/save_map` | `ika_interfaces/SaveMap` | map_manager_node |
+| `/ika/reset_map` | `std_srvs/Trigger` | map_manager_node (EKF konumu + mapping'de slam haritası) |
 | `/ika/set_lidar` | `ika_interfaces/SetLidar` | lidar_manager_node |
 
 ## Eski repodan farklar

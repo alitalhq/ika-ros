@@ -93,6 +93,9 @@ main {
 .side { display: flex; flex-direction: column; gap: 12px; }
 .panel-head { display: flex; justify-content: space-between; align-items: center; }
 .toggle { color: var(--muted); display: flex; gap: 6px; align-items: center; margin-bottom: 10px; }
+.panel-head .row { align-items: center; gap: 12px; }
+#reset-map { margin-bottom: 10px; }
+#reset-map.armed { background: var(--warn); border-color: var(--warn); color: #241600; }
 
 #map {
   width: 100%;

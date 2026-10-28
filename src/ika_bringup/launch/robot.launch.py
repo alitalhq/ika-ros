@@ -124,7 +124,8 @@ def _setup(context):
         actions.append(_include('ika_navigation', 'slam.launch.py', context,
                                 slam_mode=arg['slam_mode'], map=arg['map']))
         actions.append(Node(package='ika_navigation', executable='map_manager_node',
-                            output='screen', parameters=[control]))
+                            output='screen',
+                            parameters=[control, {'slam_mode': arg['slam_mode']}]))
     if flag('nav'):
         actions.append(_include('ika_navigation', 'nav.launch.py', context, odom_topic=odom_topic))
     if flag('gcs'):
