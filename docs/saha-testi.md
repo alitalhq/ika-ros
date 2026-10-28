@@ -95,6 +95,11 @@ ros2 run ika_base hw_check encoders --config $HW
 ros2 run ika_base hw_check sweep --config $HW
 ```
 
+**Pil dolu iken** ölçün (3S: 12.0–12.6 V). Zayıf pilde motorlar aynı duty'de
+çok daha yavaş döner ve yük altında voltaj çöküp iki teker birden durabilir;
+o ölçümle ayarlanan değerler pil dolunca yanlış olur. 3S LiPo'yu 10.5 V'un
+altına indirmeyin.
+
 - [ ] `pid.min_duty` ← tekerin kalktığı duty
 - [ ] `max_wheel_speed` ← %100'de **iki tekerin yavaş olanının** hızı
 

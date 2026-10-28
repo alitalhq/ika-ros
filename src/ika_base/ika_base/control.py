@@ -32,10 +32,14 @@ class WheelSpeedController:
     - min_duty: motorun yerinden kalkması için gereken en düşük duty
       (statik sürtünme); hw_check ile ölçülür.
     - Doyumdayken integral büyütülmez (anti-windup).
+    - i_limit: integralin duty'ye katkısı en fazla bu kadar [%]. Hız ölçümü
+      bir süre düşük kalırsa (pil voltajı çöker, enkoder susar) integral
+      duty'yi %100'e kilitleyip iki teker arasındaki farkı (dönüşü) yok
+      ediyordu; sınırla ileri besleme + küçük düzeltmede kalınır.
     """
 
     def __init__(self, kp: float, ki: float, kff: float, max_speed: float,
-                 min_duty: float = 0.0, max_duty: float = 100.0):
+                 min_duty: float = 0.0, max_duty: float = 100.0, i_limit: float = 30.0):
         if max_speed <= 0.0:
             raise ValueError('max_wheel_speed pozitif olmalı')
         self.kp = kp
@@ -44,6 +48,7 @@ class WheelSpeedController:
         self.max_speed = max_speed
         self.min_duty = min_duty
         self.max_duty = max_duty
+        self.i_limit = i_limit
         self.integral = 0.0
 
     def reset(self):
@@ -63,6 +68,9 @@ class WheelSpeedController:
         saturated = abs(unclamped) >= self.max_duty
         if not saturated or math.copysign(1.0, error) != math.copysign(1.0, unclamped):
             self.integral += error * dt
+        if self.ki > 0.0:
+            bound = self.i_limit / self.ki
+            self.integral = max(-bound, min(bound, self.integral))
 
         duty = feedforward + self.kp * error + self.ki * self.integral
         duty = max(-self.max_duty, min(self.max_duty, duty))

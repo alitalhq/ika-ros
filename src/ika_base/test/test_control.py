@@ -48,3 +48,23 @@ def test_closed_loop_converges_on_simple_motor():
         effective = 0.0 if abs(duty) < 8 else duty
         speed += (effective / 100 * 0.45 - speed) * 0.2
     assert speed == pytest.approx(0.3, abs=0.01)
+
+
+def test_integral_authority_is_limited_when_measurement_drops():
+    # Hız ölçümü 2 s sıfır kalır (pil çöktü / enkoder sustu): duty hedefin
+    # gerektirdiği ileri beslemenin en fazla kp*hata + i_limit üstüne çıkar.
+    pid = WheelSpeedController(60, 300, 1.0, 0.8, i_limit=30.0)
+    for _ in range(100):
+        duty = pid.update(0.3, 0.0, 0.02)
+    assert pid.ki * pid.integral == pytest.approx(30.0)
+    assert duty == pytest.approx(37.5 + 60 * 0.3 + 30.0)   # %85.5, %100 değil
+
+
+def test_turn_survives_measurement_dropout():
+    # W + A: sol 0.30, sağ 0.50 hedef; ölçüm düşükken bile duty'ler farklı kalır.
+    left = WheelSpeedController(60, 300, 1.0, 0.8, i_limit=30.0)
+    right = WheelSpeedController(60, 300, 1.0, 0.8, i_limit=30.0)
+    for _ in range(100):
+        dl = left.update(0.30, 0.0, 0.02)
+        dr = right.update(0.50, 0.0, 0.02)
+    assert dr - dl > 10.0

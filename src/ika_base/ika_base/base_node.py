@@ -54,7 +54,7 @@ class BaseNode(Node):
         self.filters = [LowPassFilter(cfg['speed_filter_alpha']) for _ in range(2)]
         self.pids = [WheelSpeedController(
             cfg['pid.kp'], cfg['pid.ki'], cfg['pid.kff'], self.max_speed,
-            cfg['pid.min_duty'], cfg['pid.max_duty']) for _ in range(2)]
+            cfg['pid.min_duty'], cfg['pid.max_duty'], cfg['pid.i_limit']) for _ in range(2)]
 
         self.cmd = Twist()
         self.cmd_time = None

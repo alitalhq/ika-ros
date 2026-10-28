@@ -40,7 +40,7 @@ ika_base_node:
 
     max_wheel_speed: 0.8             # %100 duty'de teker hızı [m/s]; tahmin: ~180 rpm x 85 mm.
                                      # hw_check sweep ile ölçün
-    max_accel: 1.0
+    max_accel: 0.6                   # kalkış/duruş ivmesi [m/s^2]; 1.0 sert hissediliyordu
     control_rate: 50.0
     cmd_timeout: 0.5
     speed_filter_alpha: 0.5
@@ -50,6 +50,7 @@ ika_base_node:
       kff: 1.0
       min_duty: 0.0                  # tekerin kalktığı duty — hw_check sweep
       max_duty: 100.0
+      i_limit: 30.0                  # integral katkısı sınırı [%]; ölçüm düşünce %100'e kilitlenmesin
 
 line_sensor_node:
   ros__parameters:
