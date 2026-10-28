@@ -54,22 +54,29 @@ ika_base_node:
 
 line_sensor_node:
   ros__parameters:
-    type: qtr_rc                     # Pololu QTR-8RC
-    # Soldan sağa (robotun arkasından, ileri bakarak). 40 pinde 6 boş GPIO
-    # kaldığı için QTR'nin ortadaki 6 kanalı (2-7) bağlanır; GPIO7/GPIO8
-    # boşsa (gpioinfo "unused") 1 ve 8. kanallar da eklenebilir.
-    pins: ["GPIO6",                  # pin 31 <- QTR 2
-           "GPIO19",                 # pin 35 <- QTR 3
-           "GPIO26",                 # pin 37 <- QTR 4
-           "GPIO16",                 # pin 36 <- QTR 5
-           "GPIO20",                 # pin 38 <- QTR 6
-           "GPIO21"]                 # pin 40 <- QTR 7
-    emitter_pin: ""                  # QTR LEDON; boş = kartta pull-up ile hep açık
-    spacing: 0.009525                # QTR-8RC kanal aralığı (9.525 mm)
+    # Kitteki sensör: "8路寻线模块" (8 kanallı, Pololu QTR-8 benzeri klon).
+    # Her kanal 10 kΩ ile VCC'ye çekili analog çıkış: beyaz ≈ 0 V, siyah ≈ VCC;
+    # GPIO eşiğiyle dijital okunur. Kartı yalnızca 3.3 V ile besleyin ve
+    # "3.3V" köprüsünü lehimleyin (docs/donanim.md). Pololu QTR-8RC için: type: qtr_rc
+    type: digital
+    # Soldan sağa (robotun arkasından, ileri bakarak) D1 ... D8.
+    pins: ["GPIO21",                 # pin 40 <- D1
+           "GPIO6",                  # pin 31 <- D2
+           "GPIO19",                 # pin 35 <- D3
+           "GPIO26",                 # pin 37 <- D4
+           "GPIO16",                 # pin 36 <- D5
+           "GPIO20",                 # pin 38 <- D6
+           "GPIO8",                  # pin 24 <- D7
+           "GPIO7"]                  # pin 26 <- D8
+    emitter_pin: ""                  # IR (LED) pini boşta: kartta LED'ler açık
+    spacing: 0.009525                # kanal aralığı (9.525 mm)
     rate: 100.0
     line_is_dark: true               # beyaz zeminde siyah çizgi
-    qtr:
-      threshold_us: 1000             # /line/state raw değerlerine bakıp ayarlayın
+    digital:
+      line_level: 1                  # siyah çizgi üstünde okunan seviye
+      bias: as-is                    # Gemstone pad'lerinde iç direnç yazılımdan açılamıyor
+    qtr:                             # yalnızca type: qtr_rc
+      threshold_us: 1000
       timeout_us: 2500
       charge_us: 10
 
