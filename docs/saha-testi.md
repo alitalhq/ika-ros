@@ -133,12 +133,11 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 - [ ] **GPIO:** "operation timeout" alıyorsanız TX/RX çapraz mı (lidar TX →
       pin 10), `/dev/ttyS3` var mı ve `ecap2` overlay'i açık mı kontrol edin;
       sürerse `gpio.duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
-- [ ] Robotun **tam önüne** bir kutu koyup ileri sürünce robot, ön ucu kutuya
-      ~0.10 m kalınca duruyor (arayüzde "Engel" bu boşluğu gösterir).
-      Durmuyorsa ya da arkadaki engel yüzünden duruyorsa lidarın montaj açısı
-      yanlış girilmiştir: `robot.yaml` → `lidar.yaw` (180° ters takılıysa 3.14159)
-- [ ] Bir duvara paralel, yanından geçerken robot yavaşlamıyor. Yavaşlıyorsa
-      `robot.yaml` → `chassis.width` gerçek genişlikten büyük girilmiştir
+- [ ] Lidarın açısı doğru: robotun tam önüne bir kutu koyunca `/scan`'de kutu
+      0° yönünde görünüyor (ters takılıysa `robot.yaml` → `lidar.yaw: 3.14159`).
+      Yanlışsa harita sürüş sırasında kayar ve dönerken dağılır
+- [ ] (İsteğe bağlı) Lidar freni: `control.yaml` → `safety.enabled: true` iken önde
+      kutuya ~0.10 m kala duruyor, yanından geçilen duvarda yavaşlamıyor
 
 ## 8. Çizgi sensörü (QTR-8RC) ve izleme
 

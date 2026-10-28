@@ -49,8 +49,8 @@ Donanımdan bağımsız mantık (kinematik, PID, enkoder çözme, çizgi konumu,
 | `nav` | `/cmd_vel/nav` | arayüzde haritaya tıklama veya `/goal_pose` |
 
 Acil durdurma tüm modların önündedir ve mod `idle`'a düşer. `nav`'dan
-çıkınca Nav2 hedefleri iptal edilir. Lidar freni her modda ileri/geri hızı
-kısar: engel yalnızca robotun gideceği koridorda (gövde genişliği + pay) aranır
+çıkınca Nav2 hedefleri iptal edilir. Lidar freni (varsayılan **kapalı**,
+`control.yaml` → `safety.enabled`) açıkken her modda ileri/geri hızı kısar: engel yalnızca robotun gideceği koridorda (gövde genişliği + pay) aranır
 ve mesafe gövdenin ön/arka ucundan ölçülür; yandaki duvar sürüşü engellemez,
 dönüş hiç kısıtlanmaz (`control.yaml` → `safety`, gövde ölçüleri `robot.yaml`).
 
