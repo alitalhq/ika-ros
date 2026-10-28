@@ -13,6 +13,20 @@ docker compose run --rm ika bash          # test kabuğu
 HW=/ika_ws/src/ika/ika_bringup/config/hardware.yaml
 ```
 
+Docker'sız kurulumda ([native-kurulum.md](native-kurulum.md)) servisi durdurup
+root kabuğunda aynı ortamı kurun:
+
+```bash
+sudo systemctl stop ika
+sudo -i
+source /opt/ros/jazzy/setup.bash && source ~gemstone/ika-ros/install/setup.bash
+export PYTHONPATH=~gemstone/ika-gpio-venv/lib/python3.12/site-packages:$PYTHONPATH
+HW=~gemstone/ika-ros/src/ika_bringup/config/hardware.yaml
+```
+
+(`gemstone` yerine kendi kullanıcı adınızı yazın.) Testler bitince
+`sudo systemctl start ika`.
+
 `./src` konteynere bağlı olduğu için `hardware.yaml`'ı host'ta düzenleyince
 değişiklik hemen geçerli olur. Yeni Python dosyası veya C++ değişikliğinden
 sonra konteynerde `colcon build --symlink-install` çalıştırın.
@@ -49,7 +63,13 @@ ros2 topic echo /imu/data_raw --field angular_velocity     # ikinci terminal
 ros2 run ika_base hw_check motors --config $HW --duty 50
 ```
 
-- [ ] Her teker sırayla ileri dönüyor. Dönmüyorsa önerilen `invert` düzeltmesini yapın
+Robotun arkasında durup öne (çizgi sensörüne) bakın. Araç önce `left`'i,
+sonra `right`'ı döndürür.
+
+- [ ] Önce **sol**, sonra **sağ** teker dönüyor. Ters sırayla dönüyorsa
+      `hardware.yaml`'da `left` ve `right` bloklarını (yön ayarlarıyla birlikte)
+      yer değiştirin; aksi halde ileri doğru gider ama sağ/sol dönüş ters olur
+- [ ] Her teker robotu ileri götürecek yönde dönüyor. Dönmüyorsa önerilen `invert` düzeltmesini yapın
 - [ ] Hiç dönmüyorsa: IN pinleri, PWM kanalı, EN jumper'ı, motor beslemesi
 
 ## 3. Enkoderler
@@ -113,12 +133,11 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 - [ ] **GPIO:** "operation timeout" alıyorsanız TX/RX çapraz mı (lidar TX →
       pin 10), `/dev/ttyS3` var mı ve `ecap2` overlay'i açık mı kontrol edin;
       sürerse `gpio.duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
-- [ ] Robotun **tam önüne** bir kutu koyup ileri sürünce robot, ön ucu kutuya
-      ~0.10 m kalınca duruyor (arayüzde "Engel" bu boşluğu gösterir).
-      Durmuyorsa ya da arkadaki engel yüzünden duruyorsa lidarın montaj açısı
-      yanlış girilmiştir: `robot.yaml` → `lidar.yaw` (180° ters takılıysa 3.14159)
-- [ ] Bir duvara paralel, yanından geçerken robot yavaşlamıyor. Yavaşlıyorsa
-      `robot.yaml` → `chassis.width` gerçek genişlikten büyük girilmiştir
+- [ ] Lidarın açısı doğru: robotun tam önüne bir kutu koyunca `/scan`'de kutu
+      0° yönünde görünüyor (ters takılıysa `robot.yaml` → `lidar.yaw: 3.14159`).
+      Yanlışsa harita sürüş sırasında kayar ve dönerken dağılır
+- [ ] (İsteğe bağlı) Lidar freni: `control.yaml` → `safety.enabled: true` iken önde
+      kutuya ~0.10 m kala duruyor, yanından geçilen duvarda yavaşlamıyor
 
 ## 8. Çizgi sensörü (QTR-8RC) ve izleme
 

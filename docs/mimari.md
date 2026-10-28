@@ -49,10 +49,19 @@ Donanımdan bağımsız mantık (kinematik, PID, enkoder çözme, çizgi konumu,
 | `nav` | `/cmd_vel/nav` | arayüzde haritaya tıklama veya `/goal_pose` |
 
 Acil durdurma tüm modların önündedir ve mod `idle`'a düşer. `nav`'dan
-çıkınca Nav2 hedefleri iptal edilir. Lidar freni her modda ileri/geri hızı
-kısar: engel yalnızca robotun gideceği koridorda (gövde genişliği + pay) aranır
+çıkınca Nav2 hedefleri iptal edilir. Lidar freni (varsayılan **kapalı**,
+`control.yaml` → `safety.enabled`) açıkken her modda ileri/geri hızı kısar: engel yalnızca robotun gideceği koridorda (gövde genişliği + pay) aranır
 ve mesafe gövdenin ön/arka ucundan ölçülür; yandaki duvar sürüşü engellemez,
 dönüş hiç kısıtlanmaz (`control.yaml` → `safety`, gövde ölçüleri `robot.yaml`).
+
+### Yön kuralı
+
+Tüm `/cmd_vel*` komutları ve kinematik REP-103'e uyar: `linear.x > 0` ileri,
+`angular.z > 0` yukarıdan bakınca saat yönünün tersine (sola) dönüş.
+**Tek istisna web arayüzünün tuş eşlemesidir:** geri giderken sol/sağ tuşları
+araba direksiyonu gibi davranır (sol tuşu aracın arkasını sola götürür →
+`angular.z < 0`). Bu çeviri yalnızca tarayıcıda yapılır (`app.js` → `steering`);
+robota giden komut yine REP-103'tür. Çizgi izleme ve Nav2 bu çeviriden geçmez.
 
 ## TF ağacı
 

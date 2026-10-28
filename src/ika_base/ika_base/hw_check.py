@@ -58,11 +58,15 @@ def _run(dt, side, duty, seconds):
 
 
 def cmd_motors(cfg, dt, args):
+    print('Robotun arkasında durup öne (çizgi sensörüne) bakın; sol/sağ sizin sol/sağınız.')
     for idx, side in enumerate(SIDES):
         input(f'\n[{SIDE_TR[side]}] Enter -> {args.seconds:.1f} sn '
               f'%{args.duty:.0f} ileri sürülecek...')
         delta = _run(dt, side, args.duty, args.seconds)
-        answer = input('Teker İLERİ yönde mi döndü? [e/h]: ').strip().lower()
+        answer = input(f'{SIDE_TR[side]} teker mi döndü? [e/h]: ').strip().lower()
+        if answer.startswith('h'):
+            print('  -> left ve right bloklarını (invert / enc_invert dahil) yer değiştirin')
+        answer = input('Teker robotu İLERİ götürecek yönde mi döndü? [e/h]: ').strip().lower()
         physical_forward = not answer.startswith('h')
         if not physical_forward:
             print(f'  -> {side}.invert değerini tersine çevirin (şu an {cfg[side + ".invert"]})')

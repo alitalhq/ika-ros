@@ -1,7 +1,8 @@
 # İKA ROS
 
 T3 Gemstone O1 üzerinde çalışan, modüler, kit olarak dağıtılabilecek
-diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy** (Docker).
+diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy**
+(doğrudan kurulum veya Docker).
 
 - Enkoder geri beslemeli motor hız kontrolü (teker başına PI + ileri besleme)
 - Teker odometrisi + Gemstone dahili IMU füzyonu (robot_localization EKF)
@@ -10,11 +11,21 @@ diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy** (Docke
 - Pololu QTR-8RC (veya dijital IR) çizgi sensörü ile çizgi izleme
 - Host'tan tarayıcıyla kontrol: manuel sürüş (klavye, ekran, gamepad), mod
   seçimi, acil durdurma, canlı harita, harita kaydetme, haritaya tıklayıp hedef verme
-- Lidar tabanlı çarpışma freni, `/cmd_vel` zaman aşımı, teleop devralma
+- `/cmd_vel` zaman aşımı, teleop devralma; isteğe bağlı lidar çarpışma freni (varsayılan kapalı)
 
 ## Hızlı başlangıç
 
-### Robot (Gemstone)
+### Robot: Docker'sız (Gemstone için önerilen)
+
+```bash
+git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros && cd ~/ika-ros
+bash deploy/install-native.sh                 # ROS 2 Jazzy + bağımlılıklar + derleme
+sudo bash deploy/install-service.sh 1         # açılışta başlat; robot no = ROS_DOMAIN_ID
+```
+
+Ayrıntılar, iki robot ve güncelleme: [Docker'sız kurulum](docs/native-kurulum.md).
+
+### Robot: Docker ile
 
 ```bash
 git clone <repo> ~/ika-ros && cd ~/ika-ros

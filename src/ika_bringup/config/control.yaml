@@ -4,7 +4,8 @@ mode_manager_node:
     cmd_timeout: 0.5
     teleop_takeover: true            # başka moddayken teleop -> manual
     safety:
-      enabled: true
+      # Kapalı: sahada manuel sürüşü kilitliyordu. Otonom sürüşte açmak için true.
+      enabled: false
       # Engel, robotun gideceği koridorda (gövde genişliği + side_margin)
       # aranır; mesafeler gövdenin ön (geri giderken arka) ucundan [m].
       # Gövde ölçüleri robot.yaml'dan gelir.

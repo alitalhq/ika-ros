@@ -22,9 +22,11 @@ jobs:
           rosdep update --rosdistro jazzy
           rosdep install --from-paths src --ignore-src -y \
             -t build -t buildtool -t build_export -t buildtool_export -t test
-          apt-get install -y python3-flake8
+          apt-get install -y python3-flake8 shellcheck
       - name: flake8
         run: python3 -m flake8 --config src/ika/.flake8 src/ika/src
+      - name: shellcheck
+        run: shellcheck -e SC1091 src/ika/deploy/*.sh src/ika/docker/*.sh
       - name: Build
         run: |
           source /opt/ros/jazzy/setup.bash
