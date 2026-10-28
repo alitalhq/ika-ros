@@ -34,7 +34,7 @@ sonra konteynerde `colcon build --symlink-install` çalıştırın.
 ## 0. Hazırlık
 
 - [ ] `/boot/uEnv.txt`'de üç PWM overlay'i açık, yasaklı olanlar kapalı ([donanim.md](donanim.md#overlayler-bootuenvtxt))
-- [ ] Enkoderler ve QTR **3.3 V** ile besleniyor; ENA/ENB jumper'ları çıkarılmış
+- [ ] Enkoderler ve çizgi sensörü **3.3 V** ile besleniyor (sensörde "3.3V" köprüsü lehimli); ENA/ENB jumper'ları çıkarılmış
 - [ ] Pinler çözülüyor ve çakışma yok:
 
 ```bash
@@ -150,19 +150,19 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 - [ ] (İsteğe bağlı) Lidar freni: `control.yaml` → `safety.enabled: true` iken önde
       kutuya ~0.10 m kala duruyor, yanından geçilen duvarda yavaşlamıyor
 
-## 8. Çizgi sensörü (QTR-8RC) ve izleme
+## 8. Çizgi sensörü ve izleme
 
 ```bash
 ros2 run ika_line line_check --config $HW
 ```
 
-Ekranda soldan sağa her kanalın boşalma süresi (µs) görünür.
+Ekranda soldan sağa D1 … D8 seviyeleri görünür (`type: digital`).
 
-- [ ] Sensör beyaz zemindeyken değerler kısa (tipik < 400), siyah çizgide uzun (> 1500)
-- [ ] `qtr.threshold_us` = zemin ile çizgi değerlerinin ortası
-- [ ] Çizgiyi soldan sağa kaydırınca `*` işareti soldan sağa ilerliyor.
+- [ ] Sensör beyaz zeminin 3–5 mm üstündeyken 8 kanal **0**, siyah bandın üstünde **1**
+- [ ] Hep 1 ise: sensör VCC pin 17'de mi, GND bağlı mı, "3.3V" köprüsü lehimli mi,
+      D kabloları takılı mı ([donanim.md](donanim.md#çizgi-sensörü))
+- [ ] Siyah bandı sensörün altında soldan sağa kaydırınca 1 soldan sağa ilerliyor.
       Ters ilerliyorsa `pins` listesini ters çevirin
-- [ ] Hep 2500 (timeout) görünüyorsa kanal LOW'a hiç düşmüyor: kablo, GND ve 3.3 V beslemeyi kontrol edin
 - [ ] Robot launch'ında `/line/state`: çizgi soldayken `position` **pozitif**
 - [ ] Pistte arayüzden **Çizgi izle**: önce `speed: 0.10` ile başlayın,
       sonra `kp` / `kd` / `speed` ayarlayın (`control.yaml`)

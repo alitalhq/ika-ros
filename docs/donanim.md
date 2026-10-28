@@ -18,13 +18,13 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 | Motor enkoderleri (hall, AB, 546 PPR çıkış milinde, dahili pull-up) | 4 × GPIO | `ika_base` |
 | ICM-20948 IMU | kart üzerinde, SPI `/dev/spidev0.3` | `ika_imu` |
 | RPLIDAR A1 | USB adaptör (varsayılan) **veya** UART `/dev/ttyS3` + motor PWM | `sllidar_ros2`, `ika_hal` |
-| Pololu QTR-8RC (6 kanal bağlı) | 6 × GPIO | `ika_line` |
+| 8 kanallı çizgi sensörü ("8路寻线模块", QTR-8 benzeri, analog çıkış) | 8 × GPIO | `ika_line` |
 | 3S Li-Po (11.1 V) | L298N +12V; tüm GND'ler ortak | — |
 
 ## 40 pin header
 
 Fiziksel pin = kart üzerindeki numara. Motor ve enkoder satırları kablolama
-şemasıyla birebir aynıdır; lidar ve QTR satırları şemada olmayan eklerdir.
+şemasıyla birebir aynıdır; lidar ve çizgi sensörü satırları şemada olmayan eklerdir.
 
 **Sol/sağ** robotun arkasından, çizgi sensörünün olduğu öne bakarak söylenir.
 Şemadaki Motor 1 (L298N OUT1/OUT2) robotun **sağ**, Motor 2 (OUT3/OUT4) **sol**
@@ -34,7 +34,7 @@ birlikte) yer değiştirir; doğrulamak için `hw_check motors` önce `left`'i d
 
 | Pin | Sinyal | Bağlantı | `hardware.yaml` |
 |---|---|---|---|
-| 1 | 3V3 | Motor 1 enkoder VCC, QTR VCC | — |
+| 1 | 3V3 | Motor 1 enkoder VCC | — |
 | 2, 4 | 5V | Lidar V5 ve VMOTO (yalnız GPIO bağlantısı) | — |
 | 6 | GND | ortak GND | — |
 | 7 | GPIO4 | Motor 1 (sağ teker) enkoder C1 | `right.enc_a` |
@@ -45,24 +45,47 @@ birlikte) yer değiştirir; doğrulamak için `hw_check motors` önce `left`'i d
 | 13 | GPIO27 | Motor 2 (sol teker) enkoder C1 | `left.enc_a` |
 | 15 | GPIO22 | L298N IN1 (sağ teker) | `right.in1` |
 | 16 | GPIO23 | Motor 2 (sol teker) enkoder C2 | `left.enc_b` |
-| 17 | 3V3 | Motor 2 enkoder VCC | — |
+| 17 | 3V3 | Motor 2 enkoder VCC, çizgi sensörü VCC | — |
 | 18 | GPIO24 | L298N IN3 (sol teker) | `left.in1` |
 | 22 | GPIO25 | L298N IN4 (sol teker) | `left.in2` |
+| 24 | GPIO8 | Çizgi D7 | `pins[6]` |
+| 26 | GPIO7 | Çizgi D8 | `pins[7]` |
 | 29 | GPIO5 | Motor 1 (sağ teker) enkoder C2 | `right.enc_b` |
-| 31 | GPIO6 | QTR kanal 2 | `pins[0]` |
+| 31 | GPIO6 | Çizgi D2 | `pins[1]` |
 | 32 | GPIO12 (ecap0) | L298N ENA (sağ teker) | `right.pwm: ecap0` |
 | 33 | GPIO13 (epwm1 B) | L298N ENB (sol teker) | `left.pwm: epwm1:1` |
-| 35 | GPIO19 | QTR kanal 3 | `pins[1]` |
-| 37 | GPIO26 | QTR kanal 4 | `pins[2]` |
-| 36 | GPIO16 | QTR kanal 5 | `pins[3]` |
-| 38 | GPIO20 | QTR kanal 6 | `pins[4]` |
-| 40 | GPIO21 | QTR kanal 7 | `pins[5]` |
+| 35 | GPIO19 | Çizgi D3 | `pins[2]` |
+| 36 | GPIO16 | Çizgi D5 | `pins[4]` |
+| 37 | GPIO26 | Çizgi D4 | `pins[3]` |
+| 38 | GPIO20 | Çizgi D6 | `pins[5]` |
+| 39 | GND | Çizgi sensörü GND | — |
+| 40 | GPIO21 | Çizgi D1 | `line_sensor_node.pins[0]` |
 
-**QTR neden 6 kanal:** motor, enkoder ve lidardan sonra header'da 6 serbest
-GPIO kalıyor. GPIO7/GPIO8 (pin 26/24) SPI0 chip-select pinleridir ve IMU aynı
-SPI0 veriyolunu kullanır. `gpioinfo` bu iki hattı "unused" gösterirse QTR'nin
-1. ve 8. kanalları bunlara bağlanıp `pins` listesinin başına/sonuna eklenebilir.
-GPIO2/3 (I2C) uygun değildir: kart üzerindeki pull-up dirençleri RC ölçümünü bozar.
+### Çizgi sensörü
+
+Kitteki sensör **"8路寻线模块 / 8 sensor lines follow"** etiketli 8 kanallı
+kart (Pololu QTR-8 tasarımının klonu). Her kanal 10 kΩ ile VCC'ye çekili bir
+fototransistör: beyaz zeminde çıkış ≈ 0 V, siyah çizgide ≈ VCC. Karşılaştırıcı
+yoktur; Gemstone GPIO'su bunu eşikle dijital okur (`type: digital`, siyah = 1).
+Kart zemine **3–6 mm** mesafede olmalı, 1 cm'nin üstünde okuma alamaz.
+
+| Sensör | Gemstone |
+|---|---|
+| VCC | pin 17 (**3.3 V**) |
+| GND | pin 39 |
+| IR | boşta (LED'ler açık) |
+| D1 … D8 | pin 40, 31, 35, 37, 36, 38, 24, 26 |
+
+- Kartın üstündeki **"3.3V" pedini lehimle birleştirin.** Köprü açıkken LED'ler
+  3.3 V'ta çok zayıf yanar ve her kanal "siyah" (1) okur.
+- **Asla 5 V vermeyin:** köprü lehimliyken LED'ler aşırı akımla yanar; ayrıca
+  çıkışlar VCC'ye çekili olduğu için 5 V Gemstone pinlerine zarar verir.
+- D1–D8 kablosu takılı değilken giriş boşta kalır ve 1 okuyabilir: Gemstone
+  pad'lerinde iç pull-up/down yazılımdan açılamıyor. "Hep 1" görülürse önce
+  VCC/GND ve D kablolarını kontrol edin.
+- D7/D8 için kullanılan GPIO8/GPIO7 (pin 24/26) SPI0 seçim pinleridir; Gemstone
+  imajında GPIO modundadır (IMU kart içinde ayrı bir seçim hattı kullanır).
+  Pin 12 GPIO lidar seçeneğine ayrılmıştır, çizgi sensörüne verilmez.
 
 ## Lidar bağlantısı: USB veya GPIO
 
@@ -110,8 +133,8 @@ Dosya uzantısı ve satır biçimi için kartta `ls /boot/overlays` ve mevcut
 | `uart-ttys6` | GPIO4 (enkoder), GPIO17 (IN2); ayrıca Bluetooth'u kapatır |
 | `uart-ttys0` | GPIO24 (IN3), GPIO7 |
 | `pwm-epwm0-gpio5`, `pwm-epwm0-gpio5-gpio14` | GPIO5 (enkoder); ikincisi lidar UART TX'ini de kapatır |
-| `pwm-ecap1-gpio16` | GPIO16 (QTR) |
-| `pwm-epwm1-gpio6`, `pwm-epwm1-gpio6-gpio13` | GPIO6 (QTR) |
+| `pwm-ecap1-gpio16` | GPIO16 (çizgi D5) |
+| `pwm-epwm1-gpio6`, `pwm-epwm1-gpio6-gpio13` | GPIO6 (çizgi D2) |
 
 Kontroller:
 
@@ -133,8 +156,8 @@ ve log'a uyarı yazar.
 
 - **Gemstone GPIO'ları 3.3 V'tur.** Enkoderler şemada 3V3'ten besleniyor;
   dahili pull-up'ları da 3.3 V'a çeker, doğru. 5 V'tan beslemeyin.
-- **QTR-8RC'yi 3.3 V ile besleyin** ve kartın 3.3 V bypass jumper'ını kısa
-  devre yapın (Pololu belgesi). LEDON boş kalabilir; kartta pull-up var, LED'ler hep açık.
+- **Çizgi sensörünü yalnızca 3.3 V ile besleyin** ve "3.3V" köprüsünü lehimleyin
+  (yukarıda). IR boş kalabilir.
 - Lidar 5 V ile beslenir ama UART sinyalleri 3.3 V'tur, doğrudan bağlanır.
   Lidar TX → Gemstone RX (pin 10), lidar RX → Gemstone TX (pin 8).
 - L298N'de ENA/ENB jumper'ları **çıkarılmış** olmalı (şemadaki gibi).
