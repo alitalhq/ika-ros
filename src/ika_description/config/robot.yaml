@@ -29,7 +29,9 @@ imu:                       # Gemstone kartı üzerindeki ICM-20948
   x: 0.0
   y: 0.0
   z: 0.04
-  roll: 0.0
+  # Kitte IMU ters yönde: robot sola dönerken /imu/data_raw z negatifti
+  # (2026-10-28, teker +1.07, IMU -0.93 rad/s). Doğrulama: saha-testi.md 1. adım.
+  roll: 3.14159
   pitch: 0.0
   yaw: 0.0
 lidar:                     # RPLIDAR A1 dönen kafanın merkezi

@@ -55,7 +55,11 @@ ros2 topic echo /imu/data_raw --field angular_velocity     # ikinci terminal
 - [ ] Açılışta "jiroskop sapması" satırı çıkıyor (robot o sırada hareketsiz)
 - [ ] Robot dururken `z` ≈ 0 (±0.01 rad/s)
 - [ ] Robotu yukarıdan bakınca **saat yönünün tersine** çevirince `z` **pozitif**.
-      Negatifse kart ters takılmıştır: `ika_description/config/robot.yaml` → `imu.roll: 3.14159`
+      Negatifse kart ters takılmıştır: `ika_description/config/robot.yaml` →
+      `imu.roll: 3.14159` (kitte böyledir). Düzeltme TF'te yapılır; ham
+      `/imu/data_raw` yine negatif görünür. Tam robotta doğrulayın: yerinde sola
+      dönerken `/wheel/odom` ve `/odometry/filtered` `angular.z` ikisi de pozitif
+      olmalı. Ters ise harita ayna görüntüsü gibi çıkar
 
 ## 2. Motor yönleri
 
