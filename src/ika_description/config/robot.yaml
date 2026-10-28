@@ -13,7 +13,7 @@ wheel_radius: 0.0425       # Orta Boy Arazi Tekerleği 85 mm; lastik yük altın
 wheel_separation: 0.17     # YER TUTUCU: iki teker ortası arası (temas noktaları) ölçülecek
 wheel_width: 0.038
 
-chassis:
+chassis:                   # lidar freni de bu ölçüleri kullanır (gövde ayak izi)
   length: 0.26
   width: 0.18
   height: 0.07

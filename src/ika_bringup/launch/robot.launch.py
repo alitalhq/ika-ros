@@ -108,8 +108,14 @@ def _setup(context):
         actions.append(Node(package='ika_line', executable='line_follower_node', output='screen',
                             parameters=[control]))
 
-    actions.append(Node(package='ika_control', executable='mode_manager_node', output='screen',
-                        parameters=[control]))
+    chassis = geometry['chassis']
+    actions.append(Node(
+        package='ika_control', executable='mode_manager_node', output='screen',
+        parameters=[control, {
+            'footprint.front': float(chassis['x'] + chassis['length'] / 2),
+            'footprint.rear': float(chassis['length'] / 2 - chassis['x']),
+            'footprint.half_width': float(chassis['width'] / 2),
+        }]))
 
     if flag('slam'):
         actions.append(_include('ika_navigation', 'slam.launch.py', context,

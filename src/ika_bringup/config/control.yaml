@@ -5,9 +5,12 @@ mode_manager_node:
     teleop_takeover: true            # başka moddayken teleop -> manual
     safety:
       enabled: true
-      stop_distance: 0.20            # base_link'ten [m]; robot yarıçapı + pay
-      slow_distance: 0.45
-      half_angle_deg: 25.0
+      # Engel, robotun gideceği koridorda (gövde genişliği + side_margin)
+      # aranır; mesafeler gövdenin ön (geri giderken arka) ucundan [m].
+      # Gövde ölçüleri robot.yaml'dan gelir.
+      stop_distance: 0.10
+      slow_distance: 0.35
+      side_margin: 0.01              # gövde kenarından pay; köşeler sürtüyorsa artırın
       scan_timeout: 0.5
 
 line_follower_node:
