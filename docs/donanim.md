@@ -26,26 +26,32 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 Fiziksel pin = kart üzerindeki numara. Motor ve enkoder satırları kablolama
 şemasıyla birebir aynıdır; lidar ve QTR satırları şemada olmayan eklerdir.
 
+**Sol/sağ** robotun arkasından, çizgi sensörünün olduğu öne bakarak söylenir.
+Şemadaki Motor 1 (L298N OUT1/OUT2) robotun **sağ**, Motor 2 (OUT3/OUT4) **sol**
+tekeridir; `hardware.yaml`'daki `left` / `right` buna göredir. Motorlar başka
+tarafa takılırsa kablo değil `left` ve `right` blokları (yön ayarlarıyla
+birlikte) yer değiştirir; doğrulamak için `hw_check motors` önce `left`'i döndürür.
+
 | Pin | Sinyal | Bağlantı | `hardware.yaml` |
 |---|---|---|---|
 | 1 | 3V3 | Motor 1 enkoder VCC, QTR VCC | — |
 | 2, 4 | 5V | Lidar V5 ve VMOTO (yalnız GPIO bağlantısı) | — |
 | 6 | GND | ortak GND | — |
-| 7 | GPIO4 | Motor 1 enkoder C1 | `left.enc_a` |
+| 7 | GPIO4 | Motor 1 (sağ teker) enkoder C1 | `right.enc_a` |
 | 8 | GPIO14 (UART1 TX) | Lidar RX (yalnız GPIO bağlantısı) | `lidar_manager_node.gpio.port: /dev/ttyS3` |
 | 10 | GPIO15 (UART1 RX) | Lidar TX (yalnız GPIO bağlantısı) | 〃 |
-| 11 | GPIO17 | L298N IN2 | `left.in2` |
+| 11 | GPIO17 | L298N IN2 (sağ teker) | `right.in2` |
 | 12 | GPIO18 (ecap2) | Lidar MOTOCTL (yalnız GPIO bağlantısı) | `lidar_manager_node.gpio.pwm: ecap2` |
-| 13 | GPIO27 | Motor 2 enkoder C1 | `right.enc_a` |
-| 15 | GPIO22 | L298N IN1 | `left.in1` |
-| 16 | GPIO23 | Motor 2 enkoder C2 | `right.enc_b` |
+| 13 | GPIO27 | Motor 2 (sol teker) enkoder C1 | `left.enc_a` |
+| 15 | GPIO22 | L298N IN1 (sağ teker) | `right.in1` |
+| 16 | GPIO23 | Motor 2 (sol teker) enkoder C2 | `left.enc_b` |
 | 17 | 3V3 | Motor 2 enkoder VCC | — |
-| 18 | GPIO24 | L298N IN3 | `right.in1` |
-| 22 | GPIO25 | L298N IN4 | `right.in2` |
-| 29 | GPIO5 | Motor 1 enkoder C2 | `left.enc_b` |
+| 18 | GPIO24 | L298N IN3 (sol teker) | `left.in1` |
+| 22 | GPIO25 | L298N IN4 (sol teker) | `left.in2` |
+| 29 | GPIO5 | Motor 1 (sağ teker) enkoder C2 | `right.enc_b` |
 | 31 | GPIO6 | QTR kanal 2 | `pins[0]` |
-| 32 | GPIO12 (ecap0) | L298N ENA | `left.pwm: ecap0` |
-| 33 | GPIO13 (epwm1 B) | L298N ENB | `right.pwm: epwm1:1` |
+| 32 | GPIO12 (ecap0) | L298N ENA (sağ teker) | `right.pwm: ecap0` |
+| 33 | GPIO13 (epwm1 B) | L298N ENB (sol teker) | `left.pwm: epwm1:1` |
 | 35 | GPIO19 | QTR kanal 3 | `pins[1]` |
 | 37 | GPIO26 | QTR kanal 4 | `pins[2]` |
 | 36 | GPIO16 | QTR kanal 5 | `pins[3]` |

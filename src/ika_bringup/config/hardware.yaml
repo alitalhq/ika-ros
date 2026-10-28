@@ -13,22 +13,25 @@ ika_base_node:
     brake_on_stop: false
     pwm_period_ns: 1000000           # 1 kHz; ENB'nin epwm1 kanalı GPIO6 ile periyot paylaşır
 
-    left:                            # Motor 1 (L298N OUT1/OUT2)
+    # Sol/sağ robotun arkasından, çizgi sensörüne (öne) bakarak. Bu robotta
+    # L298N'nin Motor 1 çıkışı (OUT1/OUT2) SAĞ tekere, Motor 2 çıkışı
+    # (OUT3/OUT4) SOL tekere bağlı; hw_check motors ile doğrulandı.
+    left:                            # Motor 2 (L298N OUT3/OUT4) -> sol teker
+      in1: "GPIO24"                  # pin 18 -> IN3
+      in2: "GPIO25"                  # pin 22 -> IN4
+      pwm: "epwm1:1"                 # GPIO13, pin 33 -> ENB
+      invert: true                   # aynalı montaj: bu motor ters yönde sarılı
+      enc_a: "GPIO27"                # pin 13 <- Motor 2 enkoder C1
+      enc_b: "GPIO23"                # pin 16 <- Motor 2 enkoder C2
+      enc_invert: true
+    right:                           # Motor 1 (L298N OUT1/OUT2) -> sağ teker
       in1: "GPIO22"                  # pin 15 -> IN1
       in2: "GPIO17"                  # pin 11 -> IN2
       pwm: "ecap0"                   # GPIO12, pin 32 -> ENA
       invert: false
-      enc_a: "GPIO4"                 # pin 7  <- enkoder C1
-      enc_b: "GPIO5"                 # pin 29 <- enkoder C2
+      enc_a: "GPIO4"                 # pin 7  <- Motor 1 enkoder C1
+      enc_b: "GPIO5"                 # pin 29 <- Motor 1 enkoder C2
       enc_invert: false
-    right:                           # Motor 2 (L298N OUT3/OUT4)
-      in1: "GPIO24"                  # pin 18 -> IN3
-      in2: "GPIO25"                  # pin 22 -> IN4
-      pwm: "epwm1:1"                 # GPIO13, pin 33 -> ENB
-      invert: true                   # aynalı sağ motor: fiziksel ileri yönü düzeltildi
-      enc_a: "GPIO27"                # pin 13 <- enkoder C1
-      enc_b: "GPIO23"                # pin 16 <- enkoder C2
-      enc_invert: true                # motor yönüyle birlikte geri bildirim işareti düzeltildi
 
     encoder:
       mode: x4

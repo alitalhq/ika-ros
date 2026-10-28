@@ -63,7 +63,13 @@ ros2 topic echo /imu/data_raw --field angular_velocity     # ikinci terminal
 ros2 run ika_base hw_check motors --config $HW --duty 50
 ```
 
-- [ ] Her teker sırayla ileri dönüyor. Dönmüyorsa önerilen `invert` düzeltmesini yapın
+Robotun arkasında durup öne (çizgi sensörüne) bakın. Araç önce `left`'i,
+sonra `right`'ı döndürür.
+
+- [ ] Önce **sol**, sonra **sağ** teker dönüyor. Ters sırayla dönüyorsa
+      `hardware.yaml`'da `left` ve `right` bloklarını (yön ayarlarıyla birlikte)
+      yer değiştirin; aksi halde ileri doğru gider ama sağ/sol dönüş ters olur
+- [ ] Her teker robotu ileri götürecek yönde dönüyor. Dönmüyorsa önerilen `invert` düzeltmesini yapın
 - [ ] Hiç dönmüyorsa: IN pinleri, PWM kanalı, EN jumper'ı, motor beslemesi
 
 ## 3. Enkoderler
