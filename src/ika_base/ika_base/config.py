@@ -26,7 +26,7 @@ DEFAULTS = {
     'wheel_radius': 0.0425,           # launch robot.yaml'dan geçirir
     'wheel_separation': 0.17,
     'max_wheel_speed': 0.5,           # %100 duty'deki teker hızı [m/s]
-    'max_accel': 1.0,                 # [m/s^2]
+    'max_accel': 0.6,                 # [m/s^2]
     'control_rate': 50.0,
     'state_rate': 10.0,          # /joint_states ve ~/wheels (yalnızca görselleştirme/ayar)
     'cmd_timeout': 0.5,
@@ -37,6 +37,7 @@ DEFAULTS = {
     'pid.kff': 1.0,
     'pid.min_duty': 0.0,
     'pid.max_duty': 100.0,
+    'pid.i_limit': 30.0,              # integralin duty katkısı üst sınırı [%]
 
     'odom_frame': 'odom',
     'base_frame': 'base_link',
