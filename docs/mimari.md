@@ -54,6 +54,15 @@ Acil durdurma tüm modların önündedir ve mod `idle`'a düşer. `nav`'dan
 ve mesafe gövdenin ön/arka ucundan ölçülür; yandaki duvar sürüşü engellemez,
 dönüş hiç kısıtlanmaz (`control.yaml` → `safety`, gövde ölçüleri `robot.yaml`).
 
+### Yön kuralı
+
+Tüm `/cmd_vel*` komutları ve kinematik REP-103'e uyar: `linear.x > 0` ileri,
+`angular.z > 0` yukarıdan bakınca saat yönünün tersine (sola) dönüş.
+**Tek istisna web arayüzünün tuş eşlemesidir:** geri giderken sol/sağ tuşları
+araba direksiyonu gibi davranır (sol tuşu aracın arkasını sola götürür →
+`angular.z < 0`). Bu çeviri yalnızca tarayıcıda yapılır (`app.js` → `steering`);
+robota giden komut yine REP-103'tür. Çizgi izleme ve Nav2 bu çeviriden geçmez.
+
 ## TF ağacı
 
 ```

@@ -196,6 +196,15 @@ function gamepadInput() {
   return [0, 0];
 }
 
+// Tuş/çubuk yönü -> açısal hız. İleri giderken sol = sola dönüş (+w).
+// Geri giderken araba direksiyonu gibi: sol tuşu aracın arkasını sola götürür,
+// bu da robotun saat yönünde dönmesi (-w) demektir. Bu çeviri YALNIZCA bu
+// arayüzün elle sürüşündedir; /cmd_vel/teleop'a giden komut ve tüm otonom
+// modlar (çizgi, Nav2) standart kurala (REP-103: +w = saat yönünün tersi) uyar.
+function steering(v, w) {
+  return v < 0 ? -w : w;
+}
+
 function teleopTick() {
   let v = 0;
   let w = 0;
@@ -209,7 +218,7 @@ function teleopTick() {
   const moving = v !== 0 || w !== 0;
   if (state.estop) return;
   if (moving) {
-    publishTwist(v * parseFloat($('v-max').value), w * parseFloat($('w-max').value));
+    publishTwist(v * parseFloat($('v-max').value), steering(v, w) * parseFloat($('w-max').value));
   } else if (wasMoving) {
     publishTwist(0, 0);
   }
@@ -386,7 +395,15 @@ canvas.addEventListener('click', (e) => {
 
 // --- olaylar -------------------------------------------------------------
 $('host').value = storedHost() || window.location.hostname || 'localhost';
-$('connect').addEventListener('click', connect);
+$('connect').addEventListener('click', () => { $('host').blur(); connect(); });
+// Yazı kutusundayken W/A/S/D yazıya gider; Enter/Esc odaktan çıkarıp sürüşe döner.
+document.querySelectorAll('input:not([type=range]):not([type=checkbox])').forEach((el) => {
+  el.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== 'Escape') return;
+    el.blur();
+    if (e.key === 'Enter' && el.id === 'host') connect();
+  });
+});
 $('estop').addEventListener('click', () => setEstop(true));
 $('release').addEventListener('click', () => setEstop(false));
 document.querySelectorAll('[data-mode]').forEach((b) => {
