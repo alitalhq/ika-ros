@@ -182,6 +182,9 @@ class _LinesV1:
     def to_input(self):
         self._bulk.set_direction_input()
 
+    def fileno(self):
+        return None     # v1'de hat başına ayrı olay fd'si var
+
     def wait(self, timeout_s: float) -> bool:
         sec = int(timeout_s)
         self._ready = self._bulk.event_wait(sec=sec, nsec=int((timeout_s - sec) * 1e9))
@@ -281,6 +284,9 @@ class _LinesV2:
     def to_input(self):
         self._req.reconfigure_lines(self._as_input)
 
+    def fileno(self):
+        return self._req.fd
+
     def wait(self, timeout_s: float) -> bool:
         return self._req.wait_edge_events(timeout_s)
 
@@ -362,6 +368,9 @@ class _MockLines:
 
     def to_input(self):
         pass
+
+    def fileno(self):
+        return None
 
     def wait(self, timeout_s: float) -> bool:
         deadline = time.monotonic() + timeout_s

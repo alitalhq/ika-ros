@@ -68,6 +68,9 @@ class BaseNode(Node):
         self.debug_pub = self.create_publisher(Float32MultiArray, '~/wheels', 10)
         self.tf_broadcaster = TransformBroadcaster(self) if cfg['publish_tf'] else None
         self.create_timer(1.0 / cfg['control_rate'], self._loop)
+        # /joint_states her TF'e dönüşür; kontrol hızında yayınlamak /tf'i boşuna doldurur.
+        self.state_every = max(1, round(cfg['control_rate'] / cfg['state_rate']))
+        self.loop_count = 0
 
         self.get_logger().info(
             f"başladı: backend={cfg['backend']} encoder={cfg['encoder.mode']} "
@@ -115,11 +118,14 @@ class BaseNode(Node):
                       for v in ramped]
 
         self.drivetrain.set_duty(duties[0], duties[1])
-        self._publish(now, dist, speeds)
-        self.debug_pub.publish(Float32MultiArray(data=[
-            ramped[0], speeds[0], duties[0], ramped[1], speeds[1], duties[1]]))
+        self.loop_count += 1
+        state = self.loop_count % self.state_every == 0
+        self._publish(now, dist, speeds, state)
+        if state:
+            self.debug_pub.publish(Float32MultiArray(data=[
+                ramped[0], speeds[0], duties[0], ramped[1], speeds[1], duties[1]]))
 
-    def _publish(self, now, dist, speeds):
+    def _publish(self, now, dist, speeds, state):
         pose = self.odometry.update(dist[0], dist[1])
         v, w = wheels_to_twist(speeds[0], speeds[1], self.separation)
         stamp = now.to_msg()
@@ -150,11 +156,13 @@ class BaseNode(Node):
             tf.transform.rotation.w = qw
             self.tf_broadcaster.sendTransform(tf)
 
+        for i in range(2):
+            self.wheel_angle[i] += dist[i] / self.radius
+        if not state:
+            return
         joints = JointState()
         joints.header.stamp = stamp
         joints.name = ['left_wheel_joint', 'right_wheel_joint']
-        for i in range(2):
-            self.wheel_angle[i] += dist[i] / self.radius
         joints.position = list(self.wheel_angle)
         joints.velocity = [s / self.radius for s in speeds]
         self.joint_pub.publish(joints)

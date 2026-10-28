@@ -14,16 +14,13 @@ import math
 import time
 
 import rclpy
-from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.qos import DurabilityPolicy, QoSProfile, qos_profile_sensor_data
-from rclpy.time import Time
 from action_msgs.srv import CancelGoal
 from geometry_msgs.msg import PoseStamped, Twist
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Bool, Float32, String
 from std_srvs.srv import SetBool
-from tf2_ros import Buffer, TransformException, TransformListener
 
 from ika_control.mux import CommandMux
 from ika_control.safety import corridor_gap, Footprint, LidarPose, limit_linear
@@ -39,7 +36,6 @@ class ModeManagerNode(Node):
         self.declare_parameter('rate', 20.0)
         self.declare_parameter('cmd_timeout', 0.5)
         self.declare_parameter('teleop_takeover', True)
-        self.declare_parameter('base_frame', 'base_link')
         self.declare_parameter('safety.enabled', True)
         self.declare_parameter('safety.stop_distance', 0.10)
         self.declare_parameter('safety.slow_distance', 0.35)
@@ -49,10 +45,14 @@ class ModeManagerNode(Node):
         self.declare_parameter('footprint.front', 0.17)
         self.declare_parameter('footprint.rear', 0.09)
         self.declare_parameter('footprint.half_width', 0.09)
+        # Lidarın base_link'e göre sabit konumu; robot.launch.py robot.yaml'dan doldurur.
+        # (TF dinlemek /tf'teki her mesajı Python'da işletiyordu.)
+        self.declare_parameter('lidar.x', 0.0)
+        self.declare_parameter('lidar.y', 0.0)
+        self.declare_parameter('lidar.yaw', 0.0)
         p = lambda name: self.get_parameter(name).value  # noqa: E731
 
         self.mux = CommandMux(p('cmd_timeout'), p('teleop_takeover'))
-        self.base_frame = p('base_frame')
         self.safety = p('safety.enabled')
         self.stop_distance = p('safety.stop_distance')
         self.slow_distance = p('safety.slow_distance')
@@ -62,10 +62,7 @@ class ModeManagerNode(Node):
                               p('footprint.half_width'))
         self.scan = None
         self.scan_time = 0.0
-        self.lidar = None
-
-        self.tf_buffer = Buffer()
-        self.tf_listener = TransformListener(self.tf_buffer, self)
+        self.lidar = LidarPose(p('lidar.x'), p('lidar.y'), p('lidar.yaw'))
 
         self.cmd_pub = self.create_publisher(Twist, 'cmd_vel', 10)
         self.mode_pub = self.create_publisher(String, 'ika/mode', LATCHED)
@@ -120,15 +117,6 @@ class ModeManagerNode(Node):
     def _on_scan(self, msg: LaserScan):
         self.scan = msg
         self.scan_time = time.monotonic()
-        if self.lidar is None:
-            try:
-                tf = self.tf_buffer.lookup_transform(
-                    self.base_frame, msg.header.frame_id, Time(), Duration(seconds=0.0))
-            except TransformException:
-                return
-            t, q = tf.transform.translation, tf.transform.rotation
-            self.lidar = LidarPose(t.x, t.y, math.atan2(2.0 * (q.w * q.z + q.x * q.y),
-                                                        1.0 - 2.0 * (q.y * q.y + q.z * q.z)))
 
     def _on_goal(self, msg: PoseStamped):
         if self.mux.estop:
@@ -176,7 +164,7 @@ class ModeManagerNode(Node):
             return None   # lidar yoksa fren devre dışı (ör. mock)
         s = self.scan
         return corridor_gap(s.ranges, s.angle_min, s.angle_increment,
-                            self.lidar or LidarPose(), self.body, forward,
+                            self.lidar, self.body, forward,
                             self.side_margin, s.range_min, s.range_max)
 
 

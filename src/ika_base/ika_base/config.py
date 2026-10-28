@@ -28,6 +28,7 @@ DEFAULTS = {
     'max_wheel_speed': 0.5,           # %100 duty'deki teker hızı [m/s]
     'max_accel': 1.0,                 # [m/s^2]
     'control_rate': 50.0,
+    'state_rate': 10.0,          # /joint_states ve ~/wheels (yalnızca görselleştirme/ayar)
     'cmd_timeout': 0.5,
     'speed_filter_alpha': 0.5,
 

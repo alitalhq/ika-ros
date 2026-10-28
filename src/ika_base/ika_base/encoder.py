@@ -13,6 +13,7 @@ Yön kuralı: ileri dönüşte A, B'den önce gelir (00 -> 10 -> 11 -> 01).
 Tersi ölçülüyorsa ilgili enkoder için invert: true verin.
 """
 
+import select
 import threading
 import time
 
@@ -137,20 +138,29 @@ class EncoderReader:
         # bu taramada okunmuş olur; yalnızca onlar sıralanıp işlenir, sonrakiler
         # bir sonraki taramaya kalır. Olaylar CLOCK_MONOTONIC ile damgalanır;
         # saat uyuşmuyorsa (eski kernel) olay beklemeden işlenir.
+        # libgpiod v2 kuyrukları fd verir: select ile olay gelince uyanılır.
+        # fd yoksa (v1, mock) kuyruklar kısa aralıklarla yoklanır.
+        fds = [req.fileno() for req, _ in sources]
+        waitable = all(fd is not None for fd in fds)
         pending = []
         while not self._stop.is_set():
+            if waitable:
+                # Geç kalan olay varsa hemen yeniden kes; yoksa olay gelene dek uyu.
+                ready, _, _ = select.select(fds, [], [], 0.001 if pending else 0.1)
+                if not ready and not pending:
+                    continue
             cutoff = time.monotonic_ns()
             for req, route in sources:
-                if req.wait(0.001):
+                if req.wait(0.0 if waitable else 0.001):
                     pending.extend((edge, route) for edge in req.read())
             if not pending:
                 continue
             pending.sort(key=lambda item: item[0].timestamp_ns)
             late = [cutoff < edge.timestamp_ns <= cutoff + 1_000_000_000 for edge, _ in pending]
-            ready = [item for item, wait in zip(pending, late) if not wait]
+            ready_items = [item for item, wait in zip(pending, late) if not wait]
             pending = [item for item, wait in zip(pending, late) if wait]
-            if ready:
-                self._apply(ready)
+            if ready_items:
+                self._apply(ready_items)
 
     def _apply(self, items):
         with self._lock:
