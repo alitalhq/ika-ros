@@ -133,9 +133,11 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 - [ ] **GPIO:** "operation timeout" alıyorsanız TX/RX çapraz mı (lidar TX →
       pin 10), `/dev/ttyS3` var mı ve `ecap2` overlay'i açık mı kontrol edin;
       sürerse `gpio.duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
-- [ ] Lidarın açısı doğru: robotun tam önüne bir kutu koyunca `/scan`'de kutu
-      0° yönünde görünüyor (ters takılıysa `robot.yaml` → `lidar.yaw: 3.14159`).
-      Yanlışsa harita sürüş sırasında kayar ve dönerken dağılır
+- [ ] Lidarın açısı doğru. Robotun tam önüne (çizgi sensörü tarafı, ortalı,
+      30–40 cm) lidar yüksekliğinden uzun bir kutu koyun; 1 m içinde başka
+      bir şey olmasın. Kutunun `/scan`'deki açısı `a` ise `robot.yaml` →
+      `lidar.yaw = -a` (radyan). Kitte lidar 180° dönük takılıdır: kutu
+      ~±180°'de görünür, `yaw` ≈ 3.14. Yanlışsa harita sürüşte kayar, dönerken dağılır
 - [ ] (İsteğe bağlı) Lidar freni: `control.yaml` → `safety.enabled: true` iken önde
       kutuya ~0.10 m kala duruyor, yanından geçilen duvarda yavaşlamıyor
 

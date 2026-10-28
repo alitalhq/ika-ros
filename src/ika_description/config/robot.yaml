@@ -36,7 +36,10 @@ lidar:                     # RPLIDAR A1 dönen kafanın merkezi
   x: 0.0
   y: 0.0
   z: 0.12
-  yaw: 0.0                 # lidar 0° okunun base_link x eksenine açısı
+  # Lidar 0° okunun base_link x eksenine açısı. Kitte lidar 180° dönük
+  # takılı (2026-10-28, robotun önüne konan kutu /scan'de -179° göründü).
+  # Yeniden ölçmek: docs/saha-testi.md, 7. adım.
+  yaw: 3.124
 line_sensor:               # çizgi sensörü dizisinin merkezi
   x: 0.12
   y: 0.0
