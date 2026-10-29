@@ -1,12 +1,17 @@
-// Deneyap Kart 1A v2: 8 kanallı analog çizgi sensörünü okur, Gemstone'a gönderir.
+// Deneyap Mini v2 / Kart 1A v2: 8 kanallı analog çizgi sensörü -> Gemstone.
 //
-// Sensör D1..D8 -> A0..A7 (ESP32-S3 GPIO 4, 5, 6, 7, 15, 16, 17, 18).
+// Sensör D1..D8 -> A0..A7. Arduino IDE'de FİZİKSEL kartı seçerek derleyin:
+//   Mini v2 (ESP32-S2): GPIO 7, 8, 9, 10, 11, 12, 13, 16.
+//   Kart 1A v2 (ESP32-S3): GPIO 4, 5, 6, 7, 15, 16, 17, 18.
+// İki kartın derlenmiş .bin dosyaları birbirinin yerine kullanılamaz.
 // Her ~20 ms'de bir satır:  {"ika_adc":1,"seq":<sayaç>,"mv":[D1,...,D8]}
-//   UART0 (TX GPIO43 -> Gemstone pin 10, RX GPIO44 <- pin 8), 115200 8N1
+//   UART0: TX GPIO43 -> Gemstone pin 10, RX GPIO44 <- pin 8, 115200 8N1.
+//   Mini v2: TX=D1, RX=D0. Kart 1A v2: TX=D2, RX=D3.
 //   USB CDC (hata ayıklama için aynı satırlar; bağlı değilse atlanır)
-// Bağlantı ve kalibrasyon: docs/donanim.md "Çizgi sensörü (Deneyap Kart)".
+// Yükleme ve bağlantı: firmware/deneyap_line/README.md; docs/donanim.md.
 //
-// Arduino kart paketi: deneyap:esp32 2.1.1, kart "Deneyap Kart 1A v2",
+// Arduino kart paketi: deneyap:esp32 2.1.1.
+// Kart: "Deneyap Mini v2" VEYA "Deneyap Kart 1A v2" (elinizdeki modele göre).
 // USB CDC On Boot: Enabled. Yüklemede kart açılmazsa BUTTON basılıyken
 // RESET'e basıp bırakın, sonra BUTTON'ı bırakın.
 

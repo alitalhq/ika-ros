@@ -83,6 +83,11 @@ okuyup Gemstone'un UART'ına saniyede 50 kez gönderir
 ([`firmware/deneyap_line`](../firmware/deneyap_line/deneyap_line.ino)).
 Her iki kart da 3.3 V lojiktir, arada seviye dönüştürücü gerekmez.
 
+**Deneyap Mini v2** de aynı kaynak kodla kullanılabilir; Arduino'da **Deneyap
+Mini v2** seçilerek yeniden derlenmelidir. ADC pin eşlemesi farklıdır; sensör
+D1–D8 yine A0–A7'ye gider. Mini v2'de UART **TX=D1, RX=D0** etiketlidir.
+[Mini v2 yükleme ve bağlantı yönergesi](../firmware/deneyap_line/README.md).
+
 | Deneyap Kart 1A v2 | Bağlantı |
 |---|---|
 | **TX** (GPIO43) | Gemstone pin 10 (GPIO15, UART RX) |
