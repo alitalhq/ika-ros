@@ -9,7 +9,7 @@
 | `ika_hal` | Python lib | GPIO (libgpiod v1/v2, hat adıyla çözme), sysfs PWM (modül adıyla), `mock`; `lidar_manager_node` (USB / GPIO lidar seçimi) |
 | `ika_base` | Python | Enkoder geri beslemeli teker hız kontrolü, teker odometrisi, `hw_check` |
 | `ika_imu` | C++ | ICM-20948 SPI sürücüsü, jiroskop sapma kalibrasyonu |
-| `ika_line` | Python | 8 kanallı sensör dizisi (dijital eşik ya da QTR-8RC RC zamanlama), PD çizgi izleme, `line_check` |
+| `ika_line` | Python | 8 kanallı sensör dizisi (Deneyap Kart ADC → UART, dijital eşik ya da QTR-8RC RC zamanlama), PD çizgi izleme, `line_check` |
 | `ika_control` | Python | Mod yöneticisi: komut çoklayıcı, acil durdurma, lidar freni |
 | `ika_navigation` | config + Python | slam_toolbox, Nav2, harita kaydetme servisi |
 | `ika_gcs` | web + Python | Tarayıcı arayüzü, rosbridge, robot konumu yayını |

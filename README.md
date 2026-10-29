@@ -8,7 +8,7 @@ diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy**
 - Teker odometrisi + Gemstone dahili IMU füzyonu (robot_localization EKF)
 - RPLIDAR A1 (Gemstone UART'ına doğrudan bağlı) ile haritalama (slam_toolbox),
   kayıtlı haritada Nav2 ile hedefe gitme
-- 8 kanallı kızılötesi çizgi sensörü (QTR-8 benzeri; Pololu QTR-8RC de desteklenir) ile çizgi izleme
+- 8 kanallı kızılötesi çizgi sensörü (QTR-8 benzeri, Deneyap Kart üzerinden analog; Pololu QTR-8RC de desteklenir) ile çizgi izleme
 - Host'tan tarayıcıyla kontrol: manuel sürüş (klavye, ekran, gamepad), mod
   seçimi, acil durdurma, canlı harita, harita kaydetme, haritaya tıklayıp hedef verme
 - `/cmd_vel` zaman aşımı, teleop devralma; isteğe bağlı lidar çarpışma freni (varsayılan kapalı)
@@ -94,11 +94,13 @@ src/
   ika_hal/          GPIO / PWM katmanı (libgpiod v1/v2, ad ile pin çözme, mock)
   ika_base/         motor + enkoder + PID + odometri, hw_check aracı
   ika_imu/          ICM-20948 sürücüsü
-  ika_line/         8 kanallı çizgi sensörü (dijital / QTR-8RC), çizgi izleme, line_check aracı
+  ika_line/         8 kanallı çizgi sensörü (Deneyap UART / dijital / QTR-8RC), çizgi izleme, line_check aracı
   ika_control/      mod yöneticisi, acil durdurma, lidar freni
   ika_navigation/   slam_toolbox, Nav2, harita kaydetme
   ika_gcs/          tarayıcı arayüzü
   ika_bringup/      robot.launch.py, hardware.yaml, control.yaml, ekf.yaml
+firmware/
+  deneyap_line/     Deneyap Kart 1A v2: çizgi sensörü ADC → UART
 docs/
   donanim.md        pin haritası, bağlantılar, elektriksel uyarılar
   saha-testi.md     ilk kurulum ve kalibrasyon kontrol listesi

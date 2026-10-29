@@ -54,12 +54,18 @@ ika_base_node:
 
 line_sensor_node:
   ros__parameters:
-    # Kitteki sensör: "8路寻线模块" (8 kanallı, Pololu QTR-8 benzeri klon).
-    # Her kanal 10 kΩ ile VCC'ye çekili analog çıkış: beyaz ≈ 0 V, siyah ≈ VCC;
-    # GPIO eşiğiyle dijital okunur. Kartı yalnızca 3.3 V ile besleyin ve
-    # "3.3V" köprüsünü lehimleyin (docs/donanim.md). Pololu QTR-8RC için: type: qtr_rc
-    type: digital
-    # Soldan sağa (robotun arkasından, ileri bakarak) D1 ... D8.
+    # Kitteki sensör: "8路寻线模块" (8 kanallı, Pololu QTR-8 benzeri klon),
+    # analog çıkışlı. Yalnızca 3.3 V ile besleyin, "3.3V" köprüsünü lehimleyin.
+    #   serial : sensör Deneyap Kart 1A v2'nin ADC'sine bağlı, kart Gemstone
+    #            UART'ına (pin 8/10) gönderir — varsayılan (docs/donanim.md)
+    #   digital: sensör doğrudan Gemstone GPIO'larına (aşağıdaki pins)
+    #   qtr_rc : Pololu QTR-8RC, aynı pins
+    type: serial
+    serial:
+      port: /dev/ttyS3               # UART-MAIN1; GPIO lidar bağlantısıyla aynı pinler
+      baudrate: 115200
+      calibration: ~/.ika/line_calibration.json   # /line/calibrate_white + _black yazar
+    # digital / qtr_rc: soldan sağa (robotun arkasından, ileri bakarak) D1 ... D8.
     pins: ["GPIO21",                 # pin 40 <- D1
            "GPIO6",                  # pin 31 <- D2
            "GPIO19",                 # pin 35 <- D3
