@@ -73,6 +73,26 @@
         <p id="line-raw" class="muted raw"></p>
       </section>
 
+      <section class="panel" aria-labelledby="calibration-title">
+        <h2 id="calibration-title">Çizgi sensörü kalibrasyonu</h2>
+        <p class="muted">Sensörü kullanacağınız yükseklikte sabitleyin. Önce beyaz,
+          sonra mat siyah yüzey ölçülür. İşlem boyunca sürüş kapalıdır.</p>
+        <p id="calibration-saved" class="muted">Sensör durumu bekleniyor…</p>
+        <div class="row calibration-actions">
+          <button id="calibration-start" disabled>Kalibrasyonu başlat</button>
+          <button id="calibration-cancel" class="hidden">Kapat</button>
+        </div>
+        <p id="calibration-message" class="muted" role="status" aria-live="polite"></p>
+        <button id="calibration-capture" class="hidden" disabled>Beyaz hazır — ölç</button>
+        <div class="calibration-table-wrap">
+          <table id="calibration-table" class="hidden">
+            <caption>Son kayıtlı referanslar (mV)</caption>
+            <thead><tr><th>Göz</th><th>Beyaz</th><th>Siyah</th><th>Eşik</th><th>Fark</th></tr></thead>
+            <tbody id="calibration-values"></tbody>
+          </table>
+        </div>
+      </section>
+
       <section class="panel">
         <h2>Lidar</h2>
         <div class="modes two">
@@ -98,6 +118,7 @@
   </section>
 
   <script src="vendor/roslib.js"></script>
+  <script src="calibration.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

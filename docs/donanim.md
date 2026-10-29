@@ -111,6 +111,23 @@ BUTTON basılıyken RESET'e basıp bırakın, sonra BUTTON'ı bırakın.
 **Kalibrasyon** (robot çalışırken, robot `idle` modda). Kanal başına eşik beyaz ve
 siyah ölçümün ortasıdır; kalibrasyon olmadan hiçbir kanal çizgi görmez.
 
+**Web arayüzünden:** Çizgi sensörü kalibrasyonu panelinde **Kalibrasyonu başlat**
+seçin. Robot Boşta moduna alınır; klavye, gamepad, ekran sürüşü ve harita hedefi
+bu sekmede işlem kapanana kadar engellenir. Sensörü çalışma yüksekliğinde sabit
+tutup sekiz gözün tamamının altına beyaz yüzey koyun ve **Beyaz hazır — ölç**
+seçin. Sonra yüksekliği değiştirmeden mat siyah yüzey koyup **Siyah hazır — ölç
+ve kaydet** seçin. Her tıklamadan sonra yaklaşık 1,2 saniye sabit tutun.
+
+Panel son kayıtlı beyaz/siyah değerleri, eşikleri ve kanal başına ayrım payını
+mV olarak gösterir; 200 mV altındaki dar paylar vurgulanır. Yeni ölçüm başarısız
+olursa veya işlem kapatılırsa önceki kayıt korunur. Kayıtlı ayarlar her açılışta
+otomatik yüklenir; yükseklik, zemin veya ışık değişince tekrar kalibre edin.
+`qtr_rc`/`digital` tiplerinde veya sensör kapalıyken bu panel kullanılamaz.
+
+**Terminalden:** aynı servisler kullanılabilir. Robot Boşta, `/cmd_vel` sıfır ve
+canlı olmalı; son bir saniyede en az 10 ölçüm gereklidir. Beyaz referans 15 dakika
+geçerlidir; hareket, Boşta modundan çıkış veya veri kesilmesi referansı iptal eder.
+
 ```bash
 # sensör beyaz zeminin 3–6 mm üstünde, ~1 sn sabit
 ros2 service call /line/calibrate_white std_srvs/srv/Trigger
@@ -122,6 +139,10 @@ Her kanalda beyaz/siyah farkı en az 100 mV olmalı ve ölçümler örtüşmemel
 hangi kanalın ayrışmadığı yanıtta yazar ve eski kalibrasyon korunur. Sonuç robotta
 `~/.ika/line_calibration.json` dosyasına yazılır (servis root çalıştığı için
 `/root/.ika/`). Canlı değerler: `ros2 topic echo /line/state --field raw` (mV).
+Arayüz durumu: `/line/calibration_status` (`std_msgs/String`, JSON, 2 Hz).
+`supported`, `ready`, `calibrated`, `white_ready`, `samples` ve kayıt varsa
+`white_mv`, `black_mv`, `threshold_mv` alanlarını içerir. Kalibrasyon servisi
+yalnız başarılı siyah ölçümünde dosyayı atomik olarak değiştirir.
 
 #### Doğrudan Gemstone GPIO'larına (`type: digital`)
 
