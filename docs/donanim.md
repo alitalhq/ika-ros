@@ -35,7 +35,7 @@ birlikte) yer değiştirir; doğrulamak için `hw_check motors` önce `left`'i d
 | Pin | Sinyal | Bağlantı | `hardware.yaml` |
 |---|---|---|---|
 | 1 | 3V3 | Motor 1 enkoder VCC | — |
-| 2, 4 | 5V | Deneyap Kart 5V girişi; Lidar V5 ve VMOTO (yalnız GPIO lidar) | — |
+| 2, 4 | 5V | Lidar V5 ve VMOTO (yalnız GPIO lidar) | — |
 | 6 | GND | ortak GND, Deneyap GND | — |
 | 7 | GPIO4 | Motor 1 (sağ teker) enkoder C1 | `right.enc_a` |
 | 8 | GPIO14 (UART1 TX) | Deneyap RX **veya** Lidar RX (yalnız GPIO lidar) | `line_sensor_node.serial.port`, `lidar_manager_node.gpio.port` |
@@ -87,17 +87,19 @@ Her iki kart da 3.3 V lojiktir, arada seviye dönüştürücü gerekmez.
 |---|---|
 | **TX** (GPIO43) | Gemstone pin 10 (GPIO15, UART RX) |
 | **RX** (GPIO44) | Gemstone pin 8 (GPIO14, UART TX) |
-| **5V** girişi | Gemstone pin 2 veya 4 (5V) |
 | **GND** | Gemstone pin 6 |
 | **3V3** | sensör VCC ve IR |
 | **GND** | sensör GND |
 | **A0 … A7** | sensör D1 … D8 (ESP32-S3 GPIO 4, 5, 6, 7, 15, 16, 17, 18) |
 
 - TX karşıdakinin RX'ine gider (çapraz). Ortak GND şart.
-- Deneyap'ın 3V3 pinini Gemstone'un 3.3 V pinlerine bağlamayın; iki regülatör
-  birbirine karşı çalışır.
-- Deneyap'ı Gemstone USB'sine kablolu takmak da beslemeye yeter; veri yine UART'tan
-  akar. USB, firmware yüklemek ve `Serial` monitörde çerçeveleri görmek içindir.
+- **Besleme:** Deneyap, USB-C kablosuyla Gemstone'un USB portundan beslenir; veri
+  yine UART'tan akar (USB ayrıca firmware yüklemek ve `Serial` monitör içindir).
+  Kartın üreticiye göre tek besleme girişleri USB ve Li-Po konnektörüdür:
+  **5V** ve **3V3** pinleri çıkıştır, **VBAT** pil voltajını verir, **BAT** (A8)
+  pil voltajını ölçen analog giriştir. Bu pinlerin hiçbirine Gemstone'dan
+  besleme vermeyin
+  ([Deneyap 1A v2 pin tanımları](https://docs.deneyapkart.org/en/Cards/Deneyap-Kart-1A-v2/Pin-Definitions-dy1Av2.md)).
 - pin 8/10 Deneyap'a verildiği için bu robotta **GPIO lidar kullanılamaz**; lidar
   USB adaptörüyle bağlanır. `line:=true` ve `type: serial` iken arayüzden GPIO
   seçilirse lidar başlatılmaz.
