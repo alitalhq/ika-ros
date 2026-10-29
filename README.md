@@ -10,7 +10,8 @@ diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy**
   kayıtlı haritada Nav2 ile hedefe gitme
 - 8 kanallı kızılötesi çizgi sensörü (QTR-8 benzeri, Deneyap Kart üzerinden analog; Pololu QTR-8RC de desteklenir) ile çizgi izleme
 - Host'tan tarayıcıyla kontrol: manuel sürüş (klavye, ekran, gamepad), mod
-  seçimi, acil durdurma, canlı harita, harita kaydetme, haritaya tıklayıp hedef verme
+  seçimi, acil durdurma, canlı harita, harita kaydetme, haritaya tıklayıp hedef verme,
+  Deneyap çizgi sensörü için adım adım beyaz/siyah kalibrasyonu
 - `/cmd_vel` zaman aşımı, teleop devralma; isteğe bağlı lidar çarpışma freni (varsayılan kapalı)
 
 ## Hızlı başlangıç

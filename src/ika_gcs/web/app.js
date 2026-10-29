@@ -13,6 +13,9 @@ const API = {
   plan: ['/plan', 'nav_msgs/msg/Path'],
   line: ['/line/state', 'ika_interfaces/msg/LineState'],
   lineStatus: ['/line_follower/status', 'std_msgs/msg/String'],
+  calibrationStatus: ['/line/calibration_status', 'std_msgs/msg/String'],
+  calibrateWhite: ['/line/calibrate_white', 'std_srvs/srv/Trigger'],
+  calibrateBlack: ['/line/calibrate_black', 'std_srvs/srv/Trigger'],
   rosout: ['/rosout', 'rcl_interfaces/msg/Log'],
   teleop: ['/cmd_vel/teleop', 'geometry_msgs/msg/Twist'],
   goal: ['/goal_pose', 'geometry_msgs/msg/PoseStamped'],
@@ -54,17 +57,29 @@ function connect() {
   const host = $('host').value.trim() || 'localhost';
   try { localStorage.setItem('ika-host', host); } catch (e) { /* gizli pencere */ }
   const url = `ws://${host.includes(':') ? host : `${host}:${ROSBRIDGE_PORT}`}`;
+  calibration.connection(false);
+  heldKeys.clear();
+  heldPads.clear();
+  teleopTopic = null;
   if (ros) ros.close();
   ros = new ROSLIB.Ros({ url });
+  const session = ros;
   ros.on('connection', () => {
+    if (ros !== session) return;
     connected = true;
+    calibration.connection(true);
     $('conn-state').className = 'dot on';
     log(`bağlandı: ${host}`);
     subscribeAll();
   });
   ros.on('close', () => {
+    if (ros !== session) return;
     if (connected) log('bağlantı koptu', 'warn');
     connected = false;
+    calibration.connection(false);
+    heldKeys.clear();
+    heldPads.clear();
+    teleopTopic = null;
     $('conn-state').className = 'dot off';
   });
   ros.on('error', () => log(`rosbridge'e ulaşılamadı: ${url}`, 'error'));
@@ -81,7 +96,11 @@ function call([name, type], request, done, failed = () => {}) {
 }
 
 function subscribeAll() {
-  topic(API.mode).subscribe((m) => { state.mode = m.data; renderMode(); });
+  topic(API.mode).subscribe((m) => {
+    state.mode = m.data;
+    calibration.modeChanged(m.data);
+    renderMode();
+  });
   topic(API.estopActive).subscribe((m) => { state.estop = m.data; renderMode(); });
   topic(API.obstacle).subscribe((m) => {
     state.obstacleAt = Date.now();
@@ -106,6 +125,10 @@ function subscribeAll() {
   });
   topic(API.line, { throttle_rate: 100 }).subscribe(renderLine);
   topic(API.lineStatus).subscribe((m) => { $('line-status').textContent = m.data; });
+  topic(API.calibrationStatus).subscribe((m) => {
+    try { calibration.update(JSON.parse(m.data)); }
+    catch (e) { log('Kalibrasyon durum mesajı okunamadı', 'warn'); }
+  });
   topic(API.lidar).subscribe((m) => { state.lidar = m; renderLidar(); });
   topic(API.rosout, { queue_length: 20 }).subscribe((m) => {
     if (m.level >= 30 || (m.level >= 20 && OUR_NODES.test(m.name))) {
@@ -128,7 +151,7 @@ function renderMode() {
 }
 
 function setMode(mode) {
-  if (!connected) return;
+  if (!connected || calibration.active) return;
   call(API.setMode, { mode }, (res) => log(`mod: ${res.message}`, res.success ? 'info' : 'warn'));
 }
 
@@ -178,6 +201,7 @@ const heldKeys = new Set();
 const heldPads = new Set();
 let teleopTopic = null;
 let wasMoving = false;
+let calibrationDriveBlocked = false;
 
 function publishTwist(v, w) {
   if (!connected) return;
@@ -209,6 +233,7 @@ function steering(v, w) {
 }
 
 function teleopTick() {
+  if (calibration.active) return;
   let v = 0;
   let w = 0;
   for (const vec of [...[...heldKeys].map((k) => KEYS[k]), ...heldPads]) {
@@ -219,6 +244,10 @@ function teleopTick() {
   v = Math.max(-1, Math.min(1, v + gv));
   w = Math.max(-1, Math.min(1, w + gw));
   const moving = v !== 0 || w !== 0;
+  if (calibrationDriveBlocked) {
+    if (!moving) calibrationDriveBlocked = false;
+    return;
+  }
   if (state.estop) return;
   if (moving) {
     publishTwist(v * parseFloat($('v-max').value), steering(v, w) * parseFloat($('w-max').value));
@@ -235,6 +264,7 @@ function typing(e) {
 window.addEventListener('keydown', (e) => {
   if (typing(e)) return;
   if (e.code === 'Space') { e.preventDefault(); setEstop(true); return; }
+  if (calibration.active) return;
   const key = e.key.toLowerCase();
   if (KEYS[key]) { e.preventDefault(); heldKeys.add(key); }
 });
@@ -246,6 +276,7 @@ document.querySelectorAll('.key').forEach((btn) => {
   const release = () => { heldPads.delete(vec); btn.classList.remove('pressed'); };
   btn.addEventListener('pointerdown', (e) => {
     e.preventDefault();
+    if (calibration.active) return;
     btn.setPointerCapture(e.pointerId);
     heldPads.add(vec);
     btn.classList.add('pressed');
@@ -255,6 +286,61 @@ document.querySelectorAll('.key').forEach((btn) => {
 });
 
 // --- çizgi sensörü -------------------------------------------------------
+const calibration = new LineCalibration(calibrationRequest, renderCalibration);
+
+function calibrationRequest(action) {
+  const session = ros;
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('İşlem zaman aşımına uğradı. Sensör durumunu kontrol edin.')), 8000);
+    const finish = (result, error) => {
+      clearTimeout(timer);
+      if (!connected || ros !== session) { reject(new Error('Robot bağlantısı değişti.')); return; }
+      if (error) reject(new Error('Kalibrasyon servisine ulaşılamadı.'));
+      else resolve(result);
+    };
+    const endpoint = action === 'idle' ? API.setMode
+      : action === 'white' ? API.calibrateWhite : API.calibrateBlack;
+    call(endpoint, action === 'idle' ? { mode: 'idle' } : {},
+      (result) => finish(result), () => finish(null, true));
+  });
+}
+
+function renderCalibration() {
+  const c = calibration;
+  const available = c.available();
+  $('calibration-start').disabled = !available || c.active;
+  $('calibration-start').classList.toggle('hidden', c.active);
+  $('calibration-cancel').classList.toggle('hidden', !c.active);
+  $('calibration-capture').classList.toggle('hidden', !c.active || c.step === 'starting');
+  $('calibration-capture').disabled = !available || c.busy || !c.status?.ready;
+  $('calibration-capture').textContent = c.busy ? 'Ölçülüyor…'
+    : c.step === 'black' ? 'Siyah hazır — ölç ve kaydet' : 'Beyaz hazır — ölç';
+  $('calibration-message').textContent = c.message;
+  $('calibration-saved').textContent = !available
+    ? 'Kalibrasyon verisi yok. Bağlantıyı kontrol edin; bu özellik Deneyap seri sensör sürücüsü gerektirir.'
+    : c.status.calibrated ? 'Kayıtlı kalibrasyon var · açılışta otomatik yüklenir.'
+      : 'Kayıtlı kalibrasyon yok · çizgi takibinden önce kalibre edin.';
+  document.querySelectorAll('[data-mode], .key').forEach((b) => { b.disabled = c.active; });
+  const values = c.status;
+  const hasTable = available && ['white_mv', 'black_mv', 'threshold_mv']
+    .every((key) => Array.isArray(values[key]) && values[key].length === 8);
+  $('calibration-table').classList.toggle('hidden', !hasTable);
+  if (hasTable) {
+    $('calibration-values').replaceChildren(...values.white_mv.map((white, i) => {
+      const row = document.createElement('tr');
+      const difference = Math.abs(white - values.black_mv[i]);
+      if (difference < 200) row.className = 'warn';
+      for (const value of [`D${i + 1}`, white, values.black_mv[i], values.threshold_mv[i], difference]) {
+        const cell = document.createElement('td');
+        cell.textContent = typeof value === 'number' ? value.toFixed(0) : value;
+        row.appendChild(cell);
+      }
+      row.title = difference < 200 ? 'Ayrım payı dar; yüksekliği ve ortam ışığını sabit tutun.' : '';
+      return row;
+    }));
+  }
+}
+
 function renderLine(msg) {
   const box = $('line-sensors');
   if (box.children.length !== msg.sensors.length) {
@@ -369,6 +455,7 @@ function drawMap() {
 }
 
 canvas.addEventListener('click', (e) => {
+  if (calibration.active) return;
   if (!$('goal-mode').checked || !state.map || !view || !connected) return;
   if (state.estop) { log('acil durdurma aktifken hedef verilemez', 'warn'); return; }
   const rect = canvas.getBoundingClientRect();
@@ -397,6 +484,21 @@ canvas.addEventListener('click', (e) => {
 });
 
 // --- olaylar -------------------------------------------------------------
+$('calibration-start').addEventListener('click', () => {
+  if (!calibration.available() || calibration.active) return;
+  calibrationDriveBlocked = true;
+  heldKeys.clear();
+  heldPads.clear();
+  wasMoving = false;
+  publishTwist(0, 0);
+  calibration.start();
+});
+$('calibration-capture').addEventListener('click', () => calibration.capture());
+$('calibration-cancel').addEventListener('click', () => {
+  heldKeys.clear();
+  heldPads.clear();
+  calibration.cancel();
+});
 $('host').value = storedHost() || window.location.hostname || 'localhost';
 $('connect').addEventListener('click', () => { $('host').blur(); connect(); });
 // Yazı kutusundayken W/A/S/D yazıya gider; Enter/Esc odaktan çıkarıp sürüşe döner.
@@ -464,6 +566,7 @@ for (const id of ['v-max', 'w-max']) {
 window.addEventListener('resize', resizeCanvas);
 setInterval(teleopTick, 100);
 setInterval(() => {
+  renderCalibration();
   if (Date.now() - state.obstacleAt > 1000) $('obstacle').textContent = '—';
 }, 500);
 

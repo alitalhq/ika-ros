@@ -15,23 +15,26 @@ Servisler (yalnız serial; sensör ~1 sn zeminde dururken çağrılır):
   Siyah ölçümü beyazdan sonra alınır, ikisi ayrışırsa kalibrasyon kaydedilir.
 """
 
-import collections
+import json
 import os
 import time
 
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import DurabilityPolicy, QoSProfile
 
+from geometry_msgs.msg import Twist
+from std_msgs.msg import String
 from std_srvs.srv import Trigger
 
 from ika_hal.gpio import open_chip, resolve_pin
 from ika_interfaces.msg import LineState
 from ika_line import adc_serial
+from ika_line.calibration import CalibrationSession
 from ika_line.line_math import read_line, sensor_positions
 from ika_line.qtr import dark_channels, read_decay_us
 
 SERIAL_TIMEOUT = 0.5      # bu süre çerçeve gelmezse yayın durur (takip komutu da kesilir)
-CALIBRATION_WINDOW = 1.0  # kalibrasyonda kullanılan son ölçümler [s]
 
 
 class PinGroup:
@@ -147,12 +150,17 @@ class LineSensorNode(Node):
         self.port = None
         self.reader = adc_serial.FrameReader()
         self.last_frame = time.monotonic()
-        self.recent = collections.deque()          # (zaman, mv) son CALIBRATION_WINDOW
-        self.white_frames = None
+        self.session = CalibrationSession(self.calibration_path)
         self.warned = set()
         self._load_calibration()
         self.create_service(Trigger, 'line/calibrate_white', self._srv_white)
         self.create_service(Trigger, 'line/calibrate_black', self._srv_black)
+        latched = QoSProfile(depth=1, durability=DurabilityPolicy.TRANSIENT_LOCAL)
+        self.create_subscription(String, 'ika/mode',
+                                 lambda msg: self.session.set_mode(msg.data), latched)
+        self.create_subscription(Twist, 'cmd_vel', self._calibration_command, 10)
+        self.calibration_pub = self.create_publisher(String, 'line/calibration_status', 1)
+        self.create_timer(0.5, self._publish_calibration_status)
         self.create_timer(1.0 / p('rate'), self._tick_serial)
         self.get_logger().info(
             f'serial: Deneyap {self.port_name} @ {self.baudrate}, kalibrasyon '
@@ -203,66 +211,56 @@ class LineSensorNode(Node):
             self.get_logger().error(f'{self.port_name} okunamadı: {exc}')
             self.port.close()
             self.port = None
+            self.session.clear()
             return
         now = time.monotonic()
         if values is None:
             if now - self.last_frame > SERIAL_TIMEOUT:
+                self.session.clear()
                 self._warn_once('timeout', "Deneyap'tan veri gelmiyor (kablo, baud, firmware)")
             return
         self.last_frame = now
         self.warned.discard('timeout')
-        self.recent.append((now, values))
-        while self.recent and now - self.recent[0][0] > CALIBRATION_WINDOW:
-            self.recent.popleft()
+        self.session.feed(values, now)
         self._load_calibration()
         if self.calibration is None:
             self._warn_once('calibration', 'çizgi sensörü kalibre değil: '
                             '/line/calibrate_white ve /line/calibrate_black çağırın')
         self._publish(values, adc_serial.dark_channels(values, self.calibration))
 
-    def _recent_frames(self):
-        frames = [v for _, v in self.recent]
-        if len(frames) < 10 or time.monotonic() - self.last_frame > SERIAL_TIMEOUT:
-            return None
-        return frames
+    def _calibration_command(self, msg):
+        self.session.set_command([msg.linear.x, msg.linear.y, msg.linear.z,
+                                  msg.angular.x, msg.angular.y, msg.angular.z], time.monotonic())
+
+    def _publish_calibration_status(self):
+        now = time.monotonic()
+        if not self.session.stationary(now):
+            self.session.clear()
+        data = self.session.status(self.calibration, now)
+        self.calibration_pub.publish(String(data=json.dumps(data)))
 
     def _srv_white(self, request, response):
-        frames = self._recent_frames()
-        response.success = frames is not None
-        if frames is None:
-            response.message = "Deneyap'tan yeterli veri yok"
-            return response
-        self.white_frames = frames
-        median = [int(sorted(c)[len(c) // 2]) for c in zip(*frames)]
-        response.message = f'beyaz kaydedildi (mV): {median}; şimdi siyahı ölçün'
-        self.get_logger().info(response.message)
-        return response
+        return self._capture_surface('white', response)
 
     def _srv_black(self, request, response):
-        frames = self._recent_frames()
+        return self._capture_surface('black', response)
+
+    def _capture_surface(self, surface, response):
         response.success = False
-        if self.white_frames is None:
-            response.message = 'önce /line/calibrate_white'
-            return response
-        if frames is None:
-            response.message = "Deneyap'tan yeterli veri yok"
-            return response
         try:
-            calibration = adc_serial.make_calibration(self.white_frames, frames)
-            adc_serial.save_calibration(self.calibration_path, calibration)
+            calibration = self.session.capture(surface, time.monotonic())
         except (ValueError, OSError) as exc:
             response.message = f'kalibrasyon kaydedilmedi: {exc}'
             self.get_logger().error(response.message)
             return response
-        self.calibration = calibration
-        self.calibration_stamp = None   # bir sonraki okumada dosya damgası alınır
-        self.warned.discard('calibration')
-        self.white_frames = None
+        if calibration is not None:
+            self.calibration = calibration
+            self.calibration_stamp = None
+            self.warned.discard('calibration')
         response.success = True
-        response.message = (f'kalibrasyon kaydedildi: {self.calibration_path} '
-                            f'beyaz {[int(v) for v in calibration["white_mv"]]} '
-                            f'siyah {[int(v) for v in calibration["black_mv"]]}')
+        response.message = self.session.message
         self.get_logger().info(response.message)
+        self._publish_calibration_status()
         return response
 
     # --- GPIO tipleri ---

@@ -18,7 +18,7 @@ def test_scripts_and_styles_exist():
 
 def test_app_element_ids_exist_in_html():
     ids = set(re.findall(r'\bid="([^"]+)"', _read('index.html')))
-    js = _read('app.js')
+    js = _read('app.js') + _read('calibration.js')
     used = set(re.findall(r"\$\('([^']+)'\)", js))
     assert used, 'app.js içinde $(...) kullanımı bulunamadı'
     assert used <= ids, sorted(used - ids)

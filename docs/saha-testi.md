@@ -165,6 +165,10 @@ ros2 topic echo /line/state --field raw      # D1 … D8, mV
       fark var (100 mV civarındaysa sensör çok yüksekte)
 - [ ] Kalibrasyon: [donanim.md](donanim.md#deneyap-kart-1a-v2-üzerinden-varsayılan-type-serial)
       → `/line/calibrate_white`, `/line/calibrate_black` başarılı
+- [ ] Web panelinde başlat → beyaz → siyah sırası çalışıyor; robot Boşta kalıyor,
+      sürüş engelleniyor. Kayıtlı mV tablosu doluyor ve açılıştan sonra korunuyor.
+- [ ] Aynı yüzeyi iki kez ölçmek hata veriyor; önceki kayıt değişmiyor. Bağlantı
+      kesilince veya mod değişince işlem kapanıyor. QTR/dijital tipte panel pasif.
 - [ ] `ros2 topic echo /line/state --field sensors`: beyazda hepsi `false`, siyahta `true`
 - [ ] Siyah bandı sensörün altında soldan sağa kaydırınca `true` soldan sağa ilerliyor.
       Ters ilerliyorsa A0…A7 kabloları ters takılmıştır
