@@ -5,6 +5,8 @@
 
 Bağlantı /ika/set_lidar servisiyle (arayüzdeki Lidar paneli) değiştirilir ve
 `state_file`'a kaydedilir; robot yeniden açılınca aynı bağlantı kullanılır.
+`busy_port` başka bir cihazın kullandığı UART'tır (ör. Deneyap çizgi sensörü
+/dev/ttyS3'te); o porta düşen GPIO bağlantısı başlatılmaz.
 Sürücü kapanırsa (ör. USB kablosu çıktı) `restart_delay` sonra yeniden başlatılır.
 Durum /ika/lidar'da yayınlanır.
 
@@ -52,6 +54,7 @@ class LidarManagerNode(Node):
             'source': 'usb',
             'source_override': '',
             'port_override': '',
+            'busy_port': '',
             'state_file': '~/.ika/lidar_source',
             'baudrate': 115200,
             'frame_id': 'lidar_link',
@@ -100,6 +103,10 @@ class LidarManagerNode(Node):
             return self._p('usb.port') or find_usb_port()
         return self._p('gpio.port')
 
+    def _port_busy(self, port: str) -> bool:
+        busy = self._p('busy_port')
+        return bool(busy) and os.path.realpath(port) == os.path.realpath(busy)
+
     def _set_motor(self, on: bool):
         if on and self._pwm is None:
             self._pwm = open_pwm(self._p('gpio.pwm'), self._p('gpio.period_ns'),
@@ -113,11 +120,14 @@ class LidarManagerNode(Node):
     def _start(self):
         self._retry_at = 0.0
         try:
-            self._set_motor(self._source == 'gpio')
+            self._set_motor(self._source == 'gpio' and not self._port_busy(self._resolve_port()))
         except (OSError, ValueError) as e:
             return self._fail(f"lidar motor PWM'i açılamadı ({self._p('gpio.pwm')}): {e}")
 
         self._port = self._resolve_port()
+        if self._port_busy(self._port):
+            return self._fail(f'{self._port} çizgi sensörüne (Deneyap) ayrılmış; '
+                              'lidar için USB bağlantısını seçin')
         if not self._driver:
             return self._fail('sllidar_ros2 paketi kurulu değil')
         if not self._port or not os.path.exists(self._port):

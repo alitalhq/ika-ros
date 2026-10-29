@@ -26,6 +26,10 @@ def main(argv=None):
 
     with open(args.config) as f:
         params = (yaml.safe_load(f) or {}).get('line_sensor_node', {}).get('ros__parameters', {})
+    if params.get('type') == 'serial':
+        sys.exit('type: serial (Deneyap) canlı değerleri robot çalışırken okunur:\n'
+                 '  ros2 topic echo /line/state --field raw     # D1..D8 mV\n'
+                 'kalibrasyon: docs/donanim.md "Çizgi sensörü (Deneyap Kart)"')
     pins = [resolve_pin(s) for s in params.get('pins', []) if s.strip()]
     if not pins:
         sys.exit('line_sensor_node.pins boş')

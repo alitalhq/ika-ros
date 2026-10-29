@@ -15,7 +15,8 @@ Argümanlar:
   lidar_source <boş> | usb | gpio  boşsa arayüzde seçilip kaydedilen, o da yoksa
                                 hardware.yaml'daki (usb) bağlantı
   lidar_port   <boş>            seri portu elle ver (ör. /dev/ttyUSB1)
-  line         true | false     çizgi sensörü + çizgi izleme
+  line         true | false     çizgi sensörü + çizgi izleme (hardware.yaml'da type: serial
+                                ise Deneyap UART'ı GPIO lidara kapatılır)
   slam         true | false     slam_toolbox + harita kaydetme servisi
   slam_mode    mapping | localization
   map          <yol>            localization için uzantısız pose graph yolu
@@ -72,6 +73,13 @@ def _setup(context):
     with open(os.path.join(_share('ika_description', context), 'config', 'robot.yaml')) as f:
         geometry = yaml.safe_load(f)
 
+    with open(hardware) as f:
+        line_params = (yaml.safe_load(f) or {}).get('line_sensor_node', {}).get(
+            'ros__parameters', {})
+    # Deneyap çizgi sensörü UART'ı kullanıyorsa GPIO lidar aynı portu açmasın.
+    line_port = (line_params.get('serial', {}).get('port', '/dev/ttyS3')
+                 if flag('line') and line_params.get('type') == 'serial' else '')
+
     fusion = flag('fusion')
     odom_topic = '/odometry/filtered' if fusion else '/wheel/odom'
     actions = [_include('ika_description', 'description.launch.py', context)]
@@ -100,6 +108,7 @@ def _setup(context):
                 'backend': backend,
                 'source_override': arg['lidar_source'],
                 'port_override': arg['lidar_port'],
+                'busy_port': line_port,
             }]))
 
     if flag('line'):

@@ -152,17 +152,36 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 
 ## 8. Çizgi sensörü ve izleme
 
+**Deneyap Kart üzerinden (`type: serial`, varsayılan).** Robot `line:=true` ile
+çalışırken:
+
+```bash
+ros2 topic echo /line/state --field raw      # D1 … D8, mV
+```
+
+- [ ] Değerler akıyor. Akmıyorsa: Deneyap TX → pin 10, RX → pin 8, ortak GND,
+      firmware yüklü mü; servis günlüğünde "Deneyap'tan veri gelmiyor" uyarısı
+- [ ] Sensör 3–6 mm yükseklikte; beyaz ile siyah arasında her kanalda yüzlerce mV
+      fark var (100 mV civarındaysa sensör çok yüksekte)
+- [ ] Kalibrasyon: [donanim.md](donanim.md#deneyap-kart-1a-v2-üzerinden-varsayılan-type-serial)
+      → `/line/calibrate_white`, `/line/calibrate_black` başarılı
+- [ ] `ros2 topic echo /line/state --field sensors`: beyazda hepsi `false`, siyahta `true`
+- [ ] Siyah bandı sensörün altında soldan sağa kaydırınca `true` soldan sağa ilerliyor.
+      Ters ilerliyorsa A0…A7 kabloları ters takılmıştır
+
+**Doğrudan GPIO (`type: digital`).**
+
 ```bash
 ros2 run ika_line line_check --config $HW
 ```
-
-Ekranda soldan sağa D1 … D8 seviyeleri görünür (`type: digital`).
 
 - [ ] Sensör beyaz zeminin 3–5 mm üstündeyken 8 kanal **0**, siyah bandın üstünde **1**
 - [ ] Hep 1 ise: sensör VCC pin 17'de mi, GND bağlı mı, "3.3V" köprüsü lehimli mi,
       D kabloları takılı mı ([donanim.md](donanim.md#çizgi-sensörü))
 - [ ] Siyah bandı sensörün altında soldan sağa kaydırınca 1 soldan sağa ilerliyor.
       Ters ilerliyorsa `pins` listesini ters çevirin
+
+**Her iki bağlantıda:**
 - [ ] Robot launch'ında `/line/state`: çizgi soldayken `position` **pozitif**
 - [ ] Pistte arayüzden **Çizgi izle**: önce `speed: 0.10` ile başlayın,
       sonra `kp` / `kd` / `speed` ayarlayın (`control.yaml`)

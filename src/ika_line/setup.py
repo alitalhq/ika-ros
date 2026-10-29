@@ -14,7 +14,7 @@ setup(
     zip_safe=True,
     maintainer='Ali Talha',
     maintainer_email='alitlhq@icloud.com',
-    description='QTR-RC / dijital IR çizgi sensörü sürücüsü ve PD çizgi izleme',
+    description='Deneyap / QTR-RC / dijital IR çizgi sensörü sürücüsü ve PD çizgi izleme',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={

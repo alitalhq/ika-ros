@@ -3,7 +3,7 @@
 <package format="3">
   <name>ika_line</name>
   <version>0.1.0</version>
-  <description>QTR-RC veya dijital IR çizgi sensörü dizisi sürücüsü ve PD tabanlı çizgi izleme.</description>
+  <description>Deneyap Kart (analog, UART), QTR-RC veya dijital IR çizgi sensörü dizisi sürücüsü ve PD tabanlı çizgi izleme.</description>
   <maintainer email="alitlhq@icloud.com">Ali Talha</maintainer>
   <license>Apache-2.0</license>
 
@@ -12,6 +12,8 @@
   <exec_depend>rclpy</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
+  <exec_depend>std_srvs</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
   <exec_depend>python3-yaml</exec_depend>
 
   <test_depend>python3-pytest</test_depend>
