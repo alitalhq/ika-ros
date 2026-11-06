@@ -38,8 +38,8 @@ ika_base_node:
       bias: as-is                    # enkoder kartında dahili pull-up var
       ppr: 546.0                     # Waveshare DCGM-3865: 13 PPR x 1:42, çıkış milinde
 
-    max_wheel_speed: 0.8             # %100 duty'de teker hızı [m/s]; tahmin: ~180 rpm x 85 mm.
-                                     # hw_check sweep ile ölçün
+    max_wheel_speed: 0.88            # %100 duty'de teker hızı [m/s]; hw_check sweep:
+                                     # sağ 0.878, sol 0.885 (küçüğü, 2026-11-06)
     max_accel: 0.6                   # kalkış/duruş ivmesi [m/s^2]; 1.0 sert hissediliyordu
     control_rate: 50.0
     cmd_timeout: 0.5
@@ -48,7 +48,7 @@ ika_base_node:
       kp: 60.0
       ki: 300.0
       kff: 1.0
-      min_duty: 0.0                  # tekerin kalktığı duty — hw_check sweep
+      min_duty: 20.0                 # tekerler %20–25 arasında kalkıyor (hw_check sweep)
       max_duty: 100.0
       i_limit: 30.0                  # integral katkısı sınırı [%]; ölçüm düşünce %100'e kilitlenmesin
 
