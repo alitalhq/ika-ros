@@ -17,7 +17,7 @@ ika_base_node:
     # L298N'nin Motor 1 çıkışı (OUT1/OUT2) SAĞ tekere, Motor 2 çıkışı
     # (OUT3/OUT4) SOL tekere bağlı; hw_check motors ile doğrulandı.
     left:                            # Motor 2 (L298N OUT3/OUT4) -> sol teker
-      in1: "GPIO24"                  # pin 18 -> IN3
+      in1: "GPIO26"                  # pin 37 -> IN3 (pin 18 lidar UART'ına verildi)
       in2: "GPIO25"                  # pin 22 -> IN4
       pwm: "epwm1:1"                 # GPIO13, pin 33 -> ENB
       invert: true                   # aynalı montaj: bu motor ters yönde sarılı
@@ -38,8 +38,8 @@ ika_base_node:
       bias: as-is                    # enkoder kartında dahili pull-up var
       ppr: 546.0                     # Waveshare DCGM-3865: 13 PPR x 1:42, çıkış milinde
 
-    max_wheel_speed: 0.8             # %100 duty'de teker hızı [m/s]; tahmin: ~180 rpm x 85 mm.
-                                     # hw_check sweep ile ölçün
+    max_wheel_speed: 0.88            # %100 duty'de teker hızı [m/s]; hw_check sweep:
+                                     # sağ 0.878, sol 0.885 (küçüğü, 2026-11-06)
     max_accel: 0.6                   # kalkış/duruş ivmesi [m/s^2]; 1.0 sert hissediliyordu
     control_rate: 50.0
     cmd_timeout: 0.5
@@ -48,7 +48,7 @@ ika_base_node:
       kp: 60.0
       ki: 300.0
       kff: 1.0
-      min_duty: 0.0                  # tekerin kalktığı duty — hw_check sweep
+      min_duty: 20.0                 # tekerler %20–25 arasında kalkıyor (hw_check sweep)
       max_duty: 100.0
       i_limit: 30.0                  # integral katkısı sınırı [%]; ölçüm düşünce %100'e kilitlenmesin
 
@@ -62,18 +62,19 @@ line_sensor_node:
     #   qtr_rc : Pololu QTR-8RC, aynı pins
     type: serial
     serial:
-      port: /dev/ttyS3               # UART-MAIN1; GPIO lidar bağlantısıyla aynı pinler
+      port: /dev/ttyS3               # UART-MAIN1: Gemstone TX pin 8, RX pin 10
       baudrate: 115200
       calibration: ~/.ika/line_calibration.json   # /line/calibrate_white + _black yazar
     # digital / qtr_rc: soldan sağa (robotun arkasından, ileri bakarak) D1 ... D8.
+    # D4/D8 pin 3/5'te: önce i2c1 overlay'ini kapatın (pin 37 IN3'e, pin 26 lidara verildi).
     pins: ["GPIO21",                 # pin 40 <- D1
            "GPIO6",                  # pin 31 <- D2
            "GPIO19",                 # pin 35 <- D3
-           "GPIO26",                 # pin 37 <- D4
+           "GPIO2",                  # pin 3  <- D4
            "GPIO16",                 # pin 36 <- D5
            "GPIO20",                 # pin 38 <- D6
            "GPIO8",                  # pin 24 <- D7
-           "GPIO7"]                  # pin 26 <- D8
+           "GPIO3"]                  # pin 5  <- D8
     emitter_pin: ""                  # IR (LED) pini boşta: kartta LED'ler açık
     spacing: 0.009525                # kanal aralığı (9.525 mm)
     rate: 100.0
@@ -107,7 +108,7 @@ lidar_manager_node:
     usb:
       port: ""                       # boş: /dev/serial/by-id altındaki CP210x, yoksa /dev/ttyUSB*
     gpio:
-      port: /dev/ttyS3               # UART-MAIN1: Gemstone TX GPIO14 (pin 8), RX GPIO15 (pin 10)
+      port: /dev/ttyS0               # UART-WKUP0 (uart-ttys0 overlay): Gemstone TX pin 18, RX pin 26
       pwm: "ecap2"                   # GPIO18, pin 12 -> lidar MOTOCTL
       period_ns: 1000000
       duty_percent: 85.0             # %100'de motor gürültüsü UART'ı bozuyordu (eski robot)
