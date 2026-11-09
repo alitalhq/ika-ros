@@ -36,6 +36,7 @@ docker compose logs -f
 ```
 
 Host'ta aynı ağdan tarayıcıyla **`http://<gemstone-ip>:8000`** açın.
+Robotu yeni bir Wi-Fi ağına (şifresiyle) tanıtmak için: [docs/wifi.md](docs/wifi.md).
 
 Pin bağlantıları [docs/donanim.md](docs/donanim.md), ayarlar
 `src/ika_bringup/config/hardware.yaml`. İlk kurulumda PWM overlay'lerini açıp
@@ -106,6 +107,7 @@ docs/
   donanim.md        pin haritası, bağlantılar, elektriksel uyarılar
   saha-testi.md     ilk kurulum ve kalibrasyon kontrol listesi
   mimari.md         node / topic / mod yapısı
+  wifi.md           robotu yeni bir Wi-Fi ağına bağlama
 ```
 
 ## Geliştirme
