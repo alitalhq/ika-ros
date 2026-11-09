@@ -14,10 +14,10 @@ wheel_separation: 0.17     # YER TUTUCU: iki teker ortası arası (temas noktala
 wheel_width: 0.038
 
 chassis:                   # lidar freni de bu ölçüleri kullanır (gövde ayak izi)
-  length: 0.26
-  width: 0.18
+  length: 0.19
+  width: 0.23
   height: 0.07
-  x: 0.04                  # şasi merkezinin base_link'e göre konumu
+  x: 0.025                 # 2026-11-09: aks önden ~12 cm geride (çizgi sensörü dahil)
   z: 0.02
 
 caster:
@@ -35,7 +35,7 @@ imu:                       # Gemstone kartı üzerindeki ICM-20948
   pitch: 0.0
   yaw: 0.0
 lidar:                     # RPLIDAR A1 dönen kafanın merkezi
-  x: 0.0
+  x: 0.01
   y: 0.0
   z: 0.12
   # Lidar 0° okunun base_link x eksenine açısı. Kitte lidar 180° dönük

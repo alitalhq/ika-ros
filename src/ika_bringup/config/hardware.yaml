@@ -48,9 +48,9 @@ ika_base_node:
       kp: 60.0
       ki: 300.0
       kff: 1.0
-      min_duty: 20.0                 # tekerler %20–25 arasında kalkıyor (hw_check sweep)
+      min_duty: 30.0                 # havada %20–25 kalkıyor; yerde dönüşte iç teker %20de duruyordu (2026-11-09)
       max_duty: 100.0
-      i_limit: 30.0                  # integral katkısı sınırı [%]; ölçüm düşünce %100'e kilitlenmesin
+      i_limit: 60.0                  # integral katkısı sınırı [%]; 30'da tırtıklı lastik virajda dönemiyordu (2026-11-09)
 
 line_sensor_node:
   ros__parameters:
@@ -76,7 +76,7 @@ line_sensor_node:
            "GPIO8",                  # pin 24 <- D7
            "GPIO3"]                  # pin 5  <- D8
     emitter_pin: ""                  # IR (LED) pini boşta: kartta LED'ler açık
-    spacing: 0.009525                # kanal aralığı (9.525 mm)
+    spacing: -0.009525               # NEGATİF: sensör dizisi ters takılı, konum işareti çevrildi (2026-11-09)
     rate: 100.0
     line_is_dark: true               # beyaz zeminde siyah çizgi
     digital:
