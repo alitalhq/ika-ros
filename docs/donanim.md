@@ -18,7 +18,7 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 | Motor enkoderleri (hall, AB, 546 PPR çıkış milinde, dahili pull-up) | 4 × GPIO | `ika_base` |
 | ICM-20948 IMU | kart üzerinde, SPI `/dev/spidev0.3` | `ika_imu` |
 | RPLIDAR A1 | USB adaptör (varsayılan) **veya** UART `/dev/ttyS0` + motor PWM | `sllidar_ros2`, `ika_hal` |
-| 8 kanallı çizgi sensörü ("8路寻线模块", QTR-8 benzeri, analog çıkış) | Deneyap Kart 1A v2 ADC → UART `/dev/ttyS3` (varsayılan) **veya** 8 × GPIO | `ika_line` |
+| 8 kanallı çizgi sensörü ("8路寻线模块", QTR-8 benzeri, analog çıkış) | Deneyap Mini v2 (bu robotta; 1A v2 de olur) ADC → UART `/dev/ttyS3` (varsayılan) **veya** 8 × GPIO | `ika_line` |
 | 3S Li-Po (11.1 V, 4200 mAh, 40C) | L298N +12V ve Gemstone DC girişi (J4); tüm GND'ler ortak | — |
 
 ## Kablolama şeması
