@@ -95,66 +95,84 @@
 <text x="270" y="794" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">(5 V GPIO'yu yakar).</text>
 <text x="30" y="804" text-anchor="start" font-size="10" fill="#555" font-weight="400">GND: header'daki herhangi bir GND</text>
 <text x="30" y="818" text-anchor="start" font-size="10" fill="#555" font-weight="400">(pin 6, 9, 14, 20, 25, 30, 34, 39).</text>
-<rect x="990" y="170" width="170" height="250" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
-<text x="1075.0" y="190" text-anchor="middle" font-weight="700" font-size="14">Deneyap Kart</text>
-<text x="1075.0" y="207" text-anchor="middle" font-size="11" fill="#555">Mini v2 / 1A v2</text>
-<text x="998" y="219" text-anchor="start" font-size="12" fill="#6a1b9a" font-weight="700">RX</text>
-<polyline points="880,215 990,215" fill="none" stroke="#6a1b9a" stroke-width="2"/>
-<text x="872" y="219" text-anchor="end" font-size="12" fill="#111" font-weight="400">UART TX · GPIO14  <tspan font-weight="700">8</tspan></text>
-<text x="998" y="249" text-anchor="start" font-size="12" fill="#6a1b9a" font-weight="700">TX</text>
-<polyline points="880,245 990,245" fill="none" stroke="#6a1b9a" stroke-width="2"/>
-<text x="872" y="249" text-anchor="end" font-size="12" fill="#111" font-weight="400">UART RX · GPIO15  <tspan font-weight="700">10</tspan></text>
-<text x="998" y="279" text-anchor="start" font-size="12" fill="#222" font-weight="700">GND</text>
-<polyline points="880,275 990,275" fill="none" stroke="#222" stroke-width="2"/>
-<text x="872" y="279" text-anchor="end" font-size="12" fill="#111" font-weight="400">GND  <tspan font-weight="700">6</tspan></text>
-<text x="892" y="233" text-anchor="start" font-size="10" fill="#6a1b9a" font-weight="400">/dev/ttyS3 · 115200</text>
-<text x="872" y="349" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-A</text>
-<polyline points="880,345 990,345" fill="none" stroke="#546e7a" stroke-width="3"/>
-<text x="998" y="349" text-anchor="start" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
-<text x="892" y="339" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">besleme + firmware</text>
-<text x="892" y="363" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">(/dev/ttyACM0)</text>
-<rect x="1230" y="170" width="165" height="250" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
-<text x="1312.5" y="190" text-anchor="middle" font-weight="700" font-size="14">Çizgi sensörü</text>
-<text x="1312.5" y="207" text-anchor="middle" font-size="11" fill="#555">8 kanal analog</text>
-<text x="1152" y="219" text-anchor="end" font-size="12" fill="#ad1457" font-weight="700">3V3</text>
-<polyline points="1160,215 1230,215" fill="none" stroke="#ad1457" stroke-width="2"/>
-<text x="1238" y="219" text-anchor="start" font-size="12" fill="#ad1457" font-weight="700">VCC</text>
-<text x="1152" y="249" text-anchor="end" font-size="12" fill="#222" font-weight="700">GND</text>
-<polyline points="1160,245 1230,245" fill="none" stroke="#222" stroke-width="2"/>
-<text x="1238" y="249" text-anchor="start" font-size="12" fill="#222" font-weight="700">GND</text>
-<polyline points="1160,320 1230,320" fill="none" stroke="#00838f" stroke-width="6"/>
-<text x="1152" y="324" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A0…A7</text>
-<text x="1238" y="324" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D1…D8</text>
-<text x="1238" y="349" text-anchor="start" font-size="11" fill="#555" font-weight="400">IR: boşta</text>
-<text x="1312.5" y="376" text-anchor="middle" font-size="10" fill="#c62828" font-weight="400">yalnızca 3.3 V,</text>
-<text x="1312.5" y="390" text-anchor="middle" font-size="10" fill="#c62828" font-weight="400">"3.3V" köprüsü lehimli</text>
-<text x="1312.5" y="408" text-anchor="middle" font-size="10" fill="#555" font-weight="400">zemine 3–6 mm</text>
-<text x="1190" y="304" text-anchor="start" font-size="10" fill="#00838f" font-weight="400">A0→D1 … A7→D8</text>
-<text x="990" y="449" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">Sensör dizisi ters takılı: yazılımda spacing = −0.009525.</text>
-<text x="990" y="464" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">Kablo A0…A7 sırası düzeltilirse spacing yeniden pozitif yapılmalı.</text>
-<text x="872" y="544" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-A</text>
-<polyline points="880,540 990,540" fill="none" stroke="#546e7a" stroke-width="3"/>
-<rect x="990" y="505" width="170" height="70" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
-<text x="1075.0" y="525" text-anchor="middle" font-weight="700" font-size="14">CP210x adaptör</text>
-<text x="1075.0" y="542" text-anchor="middle" font-size="11" fill="#555">lidarın kendi kartı</text>
-<polyline points="1160,540 1230,540" fill="none" stroke="#555" stroke-width="4"/>
-<rect x="1230" y="505" width="165" height="70" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
-<text x="1312.5" y="525" text-anchor="middle" font-weight="700" font-size="14">RPLIDAR A1</text>
-<text x="1312.5" y="542" text-anchor="middle" font-size="11" fill="#555">yaw ≈ 180° (3.124 rad)</text>
-<text x="892" y="534" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">/dev/serial/by-id/*CP210*</text>
-<text x="872" y="644" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
-<polyline points="880,640 990,640" fill="none" stroke="#546e7a" stroke-width="2" stroke-dasharray="6 4"/>
-<rect x="990" y="612" width="405" height="58" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
-<text x="1192.5" y="632" text-anchor="middle" font-weight="700" font-size="14">Bilgisayar (isteğe bağlı)</text>
-<text x="1192.5" y="649" text-anchor="middle" font-size="11" fill="#555">ssh gemstone@192.168.7.2 · takılıysa kart USB'den beslenir</text>
-<rect x="900" y="700" width="515" height="190" rx="6" fill="#fffde7" stroke="#444" stroke-width="1.6"/>
-<text x="1157.5" y="720" text-anchor="middle" font-weight="700" font-size="14">Bu robotta boşta / yedek bağlantılar</text>
-<text x="912" y="752" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar</text>
-<text x="912" y="774" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 18 TX / pin 26 RX (ttyS0, uart-ttys0 overlay) → lidar — yalnız GPIO lidar</text>
-<text x="912" y="796" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar</text>
-<text x="912" y="818" text-anchor="start" font-size="11" fill="#333" font-weight="400">type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5</text>
-<text x="912" y="840" text-anchor="start" font-size="11" fill="#333" font-weight="400">   (pin 3/5 için i2c1 overlay'i kapalı olmalı)</text>
-<text x="912" y="862" text-anchor="start" font-size="11" fill="#333" font-weight="400">Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.</text>
+<rect x="990" y="150" width="190" height="330" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
+<text x="1085.0" y="170" text-anchor="middle" font-weight="700" font-size="14">Deneyap Mini v2</text>
+<text x="1085.0" y="187" text-anchor="middle" font-size="11" fill="#555">ESP32-S2</text>
+<text x="998" y="209" text-anchor="start" font-size="11" fill="#6a1b9a" font-weight="700">RX · D0 (GPIO44)</text>
+<polyline points="880,205 990,205" fill="none" stroke="#6a1b9a" stroke-width="2"/>
+<text x="872" y="209" text-anchor="end" font-size="12" fill="#111" font-weight="400">UART TX · GPIO14  <tspan font-weight="700">8</tspan></text>
+<text x="998" y="239" text-anchor="start" font-size="11" fill="#6a1b9a" font-weight="700">TX · D1 (GPIO43)</text>
+<polyline points="880,235 990,235" fill="none" stroke="#6a1b9a" stroke-width="2"/>
+<text x="872" y="239" text-anchor="end" font-size="12" fill="#111" font-weight="400">UART RX · GPIO15  <tspan font-weight="700">10</tspan></text>
+<text x="998" y="269" text-anchor="start" font-size="11" fill="#222" font-weight="700">GND</text>
+<polyline points="880,265 990,265" fill="none" stroke="#222" stroke-width="2"/>
+<text x="872" y="269" text-anchor="end" font-size="12" fill="#111" font-weight="400">GND  <tspan font-weight="700">6</tspan></text>
+<text x="892" y="223" text-anchor="start" font-size="10" fill="#6a1b9a" font-weight="400">/dev/ttyS3 · 115200</text>
+<text x="892" y="286" text-anchor="start" font-size="10" fill="#555" font-weight="400">çapraz: TX→RX, RX←TX</text>
+<text x="872" y="324" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-A</text>
+<polyline points="880,320 990,320" fill="none" stroke="#546e7a" stroke-width="3"/>
+<text x="998" y="324" text-anchor="start" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
+<text x="892" y="314" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">besleme + firmware</text>
+<text x="892" y="338" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">(/dev/ttyACM0)</text>
+<rect x="1250" y="150" width="150" height="330" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
+<text x="1325.0" y="170" text-anchor="middle" font-weight="700" font-size="14">Çizgi sensörü</text>
+<text x="1325.0" y="187" text-anchor="middle" font-size="11" fill="#555">8 kanal analog</text>
+<text x="1172" y="209" text-anchor="end" font-size="12" fill="#ad1457" font-weight="700">3V3</text>
+<polyline points="1180,205 1250,205" fill="none" stroke="#ad1457" stroke-width="2"/>
+<text x="1258" y="209" text-anchor="start" font-size="12" fill="#ad1457" font-weight="700">VCC + IR</text>
+<text x="1172" y="239" text-anchor="end" font-size="12" fill="#222" font-weight="700">GND</text>
+<polyline points="1180,235 1250,235" fill="none" stroke="#222" stroke-width="2"/>
+<text x="1258" y="239" text-anchor="start" font-size="12" fill="#222" font-weight="700">GND</text>
+<text x="1172" y="294" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A0 <tspan fill="#777" font-weight="400" font-size="10">(G7)</tspan></text>
+<polyline points="1180,290 1250,290" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="294" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D1</text>
+<text x="1172" y="318" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A1 <tspan fill="#777" font-weight="400" font-size="10">(G8)</tspan></text>
+<polyline points="1180,314 1250,314" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="318" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D2</text>
+<text x="1172" y="342" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A2 <tspan fill="#777" font-weight="400" font-size="10">(G9)</tspan></text>
+<polyline points="1180,338 1250,338" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="342" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D3</text>
+<text x="1172" y="366" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A3 <tspan fill="#777" font-weight="400" font-size="10">(G10)</tspan></text>
+<polyline points="1180,362 1250,362" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="366" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D4</text>
+<text x="1172" y="390" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A4 <tspan fill="#777" font-weight="400" font-size="10">(G11)</tspan></text>
+<polyline points="1180,386 1250,386" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="390" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D5</text>
+<text x="1172" y="414" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A5 <tspan fill="#777" font-weight="400" font-size="10">(G12)</tspan></text>
+<polyline points="1180,410 1250,410" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="414" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D6</text>
+<text x="1172" y="438" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A6 <tspan fill="#777" font-weight="400" font-size="10">(G13)</tspan></text>
+<polyline points="1180,434 1250,434" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="438" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D7</text>
+<text x="1172" y="462" text-anchor="end" font-size="12" fill="#00838f" font-weight="700">A7 <tspan fill="#777" font-weight="400" font-size="10">(G16)</tspan></text>
+<polyline points="1180,458 1250,458" fill="none" stroke="#00838f" stroke-width="2"/>
+<text x="1258" y="462" text-anchor="start" font-size="12" fill="#00838f" font-weight="700">D8</text>
+<text x="990" y="498" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">Sensör: yalnızca 3.3 V, "3.3V" köprüsü lehimli, zemine 3–6 mm.</text>
+<text x="990" y="512" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">Dizi ters takılı: yazılımda spacing = −0.009525; A0…A7 sırası</text>
+<text x="990" y="526" text-anchor="start" font-size="10" fill="#c62828" font-weight="400">düzeltilirse spacing yeniden pozitif yapılmalı.</text>
+<text x="872" y="579" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-A</text>
+<polyline points="880,575 990,575" fill="none" stroke="#546e7a" stroke-width="3"/>
+<rect x="990" y="545" width="190" height="62" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
+<text x="1085.0" y="565" text-anchor="middle" font-weight="700" font-size="14">CP210x adaptör</text>
+<text x="1085.0" y="582" text-anchor="middle" font-size="11" fill="#555">lidarın kendi kartı</text>
+<polyline points="1180,575 1250,575" fill="none" stroke="#555" stroke-width="4"/>
+<rect x="1250" y="545" width="150" height="62" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
+<text x="1325.0" y="565" text-anchor="middle" font-weight="700" font-size="14">RPLIDAR A1</text>
+<text x="1325.0" y="582" text-anchor="middle" font-size="11" fill="#555">yaw ≈ 180°</text>
+<text x="892" y="569" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">/dev/serial/by-id/*CP210*</text>
+<text x="872" y="659" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
+<polyline points="880,655 990,655" fill="none" stroke="#546e7a" stroke-width="2" stroke-dasharray="6 4"/>
+<rect x="990" y="627" width="410" height="56" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="1195.0" y="647" text-anchor="middle" font-weight="700" font-size="14">Bilgisayar (isteğe bağlı)</text>
+<text x="1195.0" y="664" text-anchor="middle" font-size="11" fill="#555">ssh gemstone@192.168.7.2 · takılıysa kart USB'den beslenir</text>
+<rect x="900" y="705" width="505" height="185" rx="6" fill="#fffde7" stroke="#444" stroke-width="1.6"/>
+<text x="1152.5" y="725" text-anchor="middle" font-weight="700" font-size="14">Bu robotta boşta / yedek bağlantılar</text>
+<text x="912" y="754" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar</text>
+<text x="912" y="776" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 18 TX / pin 26 RX (ttyS0, uart-ttys0 overlay) → lidar — yalnız GPIO lidar</text>
+<text x="912" y="798" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar</text>
+<text x="912" y="820" text-anchor="start" font-size="11" fill="#333" font-weight="400">type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5</text>
+<text x="912" y="842" text-anchor="start" font-size="11" fill="#333" font-weight="400">   (pin 3/5 için i2c1 overlay'i kapalı olmalı)</text>
+<text x="912" y="864" text-anchor="start" font-size="11" fill="#333" font-weight="400">Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.</text>
 <polyline points="30,840 56,840" fill="none" stroke="#c62828" stroke-width="3"/>
 <text x="62" y="844" text-anchor="start" font-size="11" fill="#111" font-weight="400">Pil +</text>
 <polyline points="135,840 161,840" fill="none" stroke="#222" stroke-width="3"/>

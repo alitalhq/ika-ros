@@ -107,7 +107,7 @@ firmware/
   deneyap_line/     Deneyap Kart 1A v2: çizgi sensörü ADC → UART
 docs/
   donanim.md        pin haritası, bağlantılar, elektriksel uyarılar
-  kablolama.svg     robotun kablolama şeması
+  kablolama.svg     robotun kablolama şeması (kablolama.py üretir)
   saha-testi.md     ilk kurulum ve kalibrasyon kontrol listesi
   mimari.md         node / topic / mod yapısı
   wifi.md           robotu yeni bir Wi-Fi ağına bağlama
