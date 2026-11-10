@@ -75,13 +75,24 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
   L298N yanmadan önce sigorta atar.
 - **Gemstone pilden doğrudan beslenebilir, ama yalnızca DC güç girişinden**
   (şemada J4, "Optional Power Input"). Resmi değer 5–12 V / 5 A; dolu 3S
-  12.6 V ile bunun biraz üstündedir. v0.2 şemasına göre bu girişteki eFuse
-  ~14.7 V'ta keser ve arkadaki buck'lar 15 V'a kadar çalışır, yani 12.6 V
-  payın içindedir. Kartınızın revizyonu farklıysa şemasına bakın.
-- **Pili Type-C girişine asla vermeyin.** Type-C 5–9 V içindir; ~10 V
-  üstünde koruması keser ya da kart zarar görür.
-- Kart ~4 V'a kadar çalışmaya devam eder, yani **pili aşırı deşarjdan
-  korumaz**. 3S'i 10.5 V altına indirmemek düşük gerilim alarmının işidir.
+  12.6 V ile bunun biraz üstündedir ama donanım payın içindedir
+  (t3-gem-o1 v0.2 şeması ve TI veri sayfalarına göre):
+  - Girişteki eFuse (IC4, TPS259470A) aşırı gerilim kesmesi R26 = 1 MΩ /
+    R29 = 88.7 kΩ ile **~14.7 V'ta** keser (eşik 1.183–1.223 V → 14.5–15.0 V),
+    13.4 V'un altına inince yeniden açar. eFuse'un kendisi 23 V'a kadar
+    çalışır.
+  - Arkadaki 5 V düşürücü (TPS62180) 4–15 V aralığında çalışır, mutlak
+    sınırı 17 V'tur.
+  - Kartınızın revizyonu farklıysa şemasına bakın.
+- **Pili Type-C girişine asla vermeyin.** Type-C 5–9 V içindir; o hattın
+  eFuse'u (IC3, R16 = 1 MΩ / R22 = 133 kΩ) ~10.2 V'ta keser.
+- Pil takılıyken Type-C de bağlanabilir: kart iki eFuse ile öncelikli güç
+  seçici olarak tasarlanmış, Type-C'de geçerli güç varsa pil yolunu kendisi
+  kapatır (IC3 AUXOFF → Q8 → R32 → IC4 OVLO). Bu durumda kart USB'den,
+  motorlar pilden beslenir.
+- Pil girişinin düşük gerilim kesmesi (R28 = 1 MΩ / R33 = 430 kΩ) ~4.0 V'ta
+  açar, ~3.6 V'ta kapatır; yani kart **pili aşırı deşarjdan korumaz**. 3S'i
+  10.5 V altına indirmemek düşük gerilim alarmının işidir.
 - Pilden Gemstone'a ve L298N'e **ayrı kablolarla** gidin (yıldız bağlantı);
   birinin klemensinden diğerine köprü yapmayın. L298N besleme girişine
   470–1000 µF elektrolitik kondansatör koyun (motorların ani durmasında
