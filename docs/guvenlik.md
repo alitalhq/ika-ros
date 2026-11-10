@@ -73,8 +73,16 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - Pilde bir **ana anahtar ve sigorta** (ör. 10 A bıçak sigorta) olması
   önerilir. 40C pil kısa devrede 150 A'in üstünde akım verebilir; kablo ve
   L298N yanmadan önce sigorta atar.
-- Motorlar USB-C gücüyle dönmez; pil gerekir. Bu kurulumda Gemstone USB-C'den,
-  motorlar pilden beslenir ve **GND'ler ortaktır**.
+- Gemstone da pilden beslenir. Pilin 11.1–12.6 V'u karta **asla doğrudan
+  verilmez**; arada 5 V'a düşüren bir regülatör (buck) olmalıdır. Regülatörün
+  çıkışını karta takmadan önce multimetreyle 5 V olduğunu ölçün. Batarya,
+  regülatör, L298N, Gemstone ve enkoder **GND'leri ortaktır**.
+- Pil zayıfladığında motorlar kalkışta gerilimi anlık düşürür, regülatör
+  5 V'u tutamaz ve kart kendiliğinden yeniden başlar. Bu hem sürüşü keser hem
+  dosya sistemini bozabilir; düşük gerilim alarmı bu yüzden de önemlidir.
+- Pil takılıyken kartı bilgisayara Type-C ile bağlamanız gerekirse (ör. ağ
+  ayarı) kart iki kaynaktan beslenir. Regülatör ile USB'nin 5 V'u birbirine
+  akım basabilir; mümkünse ikisinden yalnızca birini kullanın.
 - İlk testleri **tekerler havada** (robotu bir kutunun üstüne koyarak) yapın.
   Yazılım ayarı yanlışsa robot masadan düşmez.
 - Robot hareket ederken elinizi tekerlerden uzak tutun; web arayüzündeki
@@ -98,9 +106,10 @@ günlüğünde bunun izleri görüldü). Önce yazılımı kapatın:
 ssh gemstone@<robot-ip> sudo poweroff
 ```
 
-Kartın ışıkları sönünce (~15 sn) USB-C'yi, sonra pili çıkarın. Pili robotta
-takılı bırakmayın: bağlı devreler pili yavaşça boşaltır ve 3.0 V/hücrenin
-altına indirebilir.
+Kartın ışıkları sönünce (~15 sn) pili çıkarın. Kart pilden beslendiği için
+`poweroff`'tan sonra bile regülatör ve kart pilden akım çekmeye devam eder.
+Pili robotta takılı bırakmayın: birkaç saatte 3.0 V/hücrenin altına inip
+kalıcı hasar görebilir.
 
 ## Kontrol listesi
 
@@ -114,6 +123,6 @@ Her çalışmadan önce:
 
 Bittikten sonra:
 
-- [ ] `sudo poweroff`, sonra USB-C ve pil çıkarıldı
+- [ ] `sudo poweroff`, ışıklar sönünce pil çıkarıldı
 - [ ] Pil soğuyunca safe bag içinde şarj edildi ya da saklama gerilimine
       getirildi
