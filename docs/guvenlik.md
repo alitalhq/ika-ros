@@ -73,16 +73,20 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - Pilde bir **ana anahtar ve sigorta** (ör. 10 A bıçak sigorta) olması
   önerilir. 40C pil kısa devrede 150 A'in üstünde akım verebilir; kablo ve
   L298N yanmadan önce sigorta atar.
-- Gemstone da pilden beslenir. Pilin 11.1–12.6 V'u karta **asla doğrudan
-  verilmez**; arada 5 V'a düşüren bir regülatör (buck) olmalıdır. Regülatörün
-  çıkışını karta takmadan önce multimetreyle 5 V olduğunu ölçün. Batarya,
-  regülatör, L298N, Gemstone ve enkoder **GND'leri ortaktır**.
-- Pil zayıfladığında motorlar kalkışta gerilimi anlık düşürür, regülatör
-  5 V'u tutamaz ve kart kendiliğinden yeniden başlar. Bu hem sürüşü keser hem
-  dosya sistemini bozabilir; düşük gerilim alarmı bu yüzden de önemlidir.
-- Pil takılıyken kartı bilgisayara Type-C ile bağlamanız gerekirse (ör. ağ
-  ayarı) kart iki kaynaktan beslenir. Regülatör ile USB'nin 5 V'u birbirine
-  akım basabilir; mümkünse ikisinden yalnızca birini kullanın.
+- **Gemstone pilden doğrudan beslenebilir, ama yalnızca DC güç girişinden**
+  (şemada J4, "Optional Power Input"). Resmi değer 5–12 V / 5 A; dolu 3S
+  12.6 V ile bunun biraz üstündedir. v0.2 şemasına göre bu girişteki eFuse
+  ~14.7 V'ta keser ve arkadaki buck'lar 15 V'a kadar çalışır, yani 12.6 V
+  payın içindedir. Kartınızın revizyonu farklıysa şemasına bakın.
+- **Pili Type-C girişine asla vermeyin.** Type-C 5–9 V içindir; ~10 V
+  üstünde koruması keser ya da kart zarar görür.
+- Kart ~4 V'a kadar çalışmaya devam eder, yani **pili aşırı deşarjdan
+  korumaz**. 3S'i 10.5 V altına indirmemek düşük gerilim alarmının işidir.
+- Pilden Gemstone'a ve L298N'e **ayrı kablolarla** gidin (yıldız bağlantı);
+  birinin klemensinden diğerine köprü yapmayın. L298N besleme girişine
+  470–1000 µF elektrolitik kondansatör koyun (motorların ani durmasında
+  besleme hattına dönen gerilimi bastırır). Batarya, L298N, Gemstone ve
+  enkoder **GND'leri ortaktır**.
 - İlk testleri **tekerler havada** (robotu bir kutunun üstüne koyarak) yapın.
   Yazılım ayarı yanlışsa robot masadan düşmez.
 - Robot hareket ederken elinizi tekerlerden uzak tutun; web arayüzündeki
@@ -107,7 +111,7 @@ ssh gemstone@<robot-ip> sudo poweroff
 ```
 
 Kartın ışıkları sönünce (~15 sn) pili çıkarın. Kart pilden beslendiği için
-`poweroff`'tan sonra bile regülatör ve kart pilden akım çekmeye devam eder.
+`poweroff`'tan sonra bile pilden akım çekmeye devam eder.
 Pili robotta takılı bırakmayın: birkaç saatte 3.0 V/hücrenin altına inip
 kalıcı hasar görebilir.
 
