@@ -1,6 +1,6 @@
 # Kullanım ve pil güvenliği
 
-Robot 3S Li-Po (11.1 V nominal, dolu 12.6 V) ile çalışır. Li-Po piller hafif
+Robot 3S Li-Po (11.1 V nominal, dolu 12.6 V, 4200 mAh, 40C) ile çalışır. Li-Po piller hafif
 ve güçlüdür ama yanlış kullanılınca şişer, alev alır ve söndürmesi zordur.
 Bu sayfadaki kurallar robotla çalışan herkes içindir.
 
@@ -16,8 +16,9 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
   tutun.** Çanta yangını durdurmaz ama alevi içinde tutar, çevreye yayılmasını
   geciktirir. Çantaya tek pil koyun, fermuarını kapatın.
 - **Yalnızca balanslı Li-Po şarj cihazıyla şarj edin** (balans soketi takılı,
-  "LiPo Balance" modu, hücre sayısı 3S). Akım: en fazla 1C (2200 mAh pil için
-  2.2 A).
+  "LiPo Balance" modu, hücre sayısı 3S). Akım: en fazla 1C, yani 4200 mAh pil
+  için **4.2 A** (daha düşük, ör. 2 A, pile daha iyi gelir). Pilin üzerindeki
+  **40C deşarj** değeridir (en fazla ~168 A çekilebilir); şarj akımı değildir.
 - **Şarjı hiçbir zaman gözetimsiz bırakmayın**, gece boyu şarjda bırakmayın.
   Yanmaz bir zeminde (seramik, beton, metal tepsi), yanıcı şeylerden uzakta
   şarj edin.
@@ -50,7 +51,7 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - Konnektörü (XT60 vb.) açıkta bırakmayın; uç kapağı takın ya da bantlayın.
   Anahtar, bozuk para ve aletlerle aynı cebe koymayın.
 - **Uçakta** Li-Po yalnızca kabin bagajında taşınabilir, bagaja verilemez.
-  100 Wh altı pillerde genelde izin gerekmez (3S 2200 mAh ≈ 24 Wh). Her pil
+  100 Wh altı pillerde genelde izin gerekmez (bu pil: 11.1 V × 4.2 Ah ≈ 47 Wh). Her pil
   ayrı safe bag'de, uçları yalıtılmış olsun; havayolunun kuralına bakın.
 - Güneşte kalan araçta bırakmayın.
 
@@ -70,7 +71,8 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - **Kablo değiştirirken pili çıkarın.** Pil takılıyken pin değiştirmek
   GPIO'ları yakabilir.
 - Pilde bir **ana anahtar ve sigorta** (ör. 10 A bıçak sigorta) olması
-  önerilir; kısa devrede kablo yanmadan önce sigorta atar.
+  önerilir. 40C pil kısa devrede 150 A'in üstünde akım verebilir; kablo ve
+  L298N yanmadan önce sigorta atar.
 - Motorlar USB-C gücüyle dönmez; pil gerekir. Bu kurulumda Gemstone USB-C'den,
   motorlar pilden beslenir ve **GND'ler ortaktır**.
 - İlk testleri **tekerler havada** (robotu bir kutunun üstüne koyarak) yapın.
