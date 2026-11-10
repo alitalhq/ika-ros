@@ -37,6 +37,8 @@ docker compose logs -f
 
 Host'ta aynı ağdan tarayıcıyla **`http://<gemstone-ip>:8000`** açın.
 Robotu yeni bir Wi-Fi ağına (şifresiyle) tanıtmak için: [docs/wifi.md](docs/wifi.md).
+Pil ve kullanım kuralları (düşük gerilim alarmı, Li-Po safe bag, kapatma):
+[docs/guvenlik.md](docs/guvenlik.md). **Robotu ilk kez kullanmadan önce okuyun.**
 
 Pin bağlantıları [docs/donanim.md](docs/donanim.md), ayarlar
 `src/ika_bringup/config/hardware.yaml`. İlk kurulumda PWM overlay'lerini açıp
@@ -108,6 +110,7 @@ docs/
   saha-testi.md     ilk kurulum ve kalibrasyon kontrol listesi
   mimari.md         node / topic / mod yapısı
   wifi.md           robotu yeni bir Wi-Fi ağına bağlama
+  guvenlik.md       Li-Po pil, taşıma ve kullanım güvenliği
 ```
 
 ## Geliştirme
