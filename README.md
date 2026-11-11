@@ -19,7 +19,7 @@ diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy**
 ### Robot: Docker'sız (Gemstone için önerilen)
 
 ```bash
-git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros && cd ~/ika-ros
+git clone https://github.com/mehmetakiferdem/ika-ros.git ~/ika-ros && cd ~/ika-ros
 bash deploy/install-native.sh                 # ROS 2 Jazzy + bağımlılıklar + derleme
 sudo bash deploy/install-service.sh 1         # açılışta başlat; robot no = ROS_DOMAIN_ID
 ```
@@ -29,7 +29,7 @@ Ayrıntılar, iki robot ve güncelleme: [Docker'sız kurulum](docs/native-kurulu
 ### Robot: Docker ile
 
 ```bash
-git clone <repo> ~/ika-ros && cd ~/ika-ros
+git clone https://github.com/mehmetakiferdem/ika-ros.git ~/ika-ros && cd ~/ika-ros
 docker compose build
 docker compose up -d                 # tam robot: lidar + SLAM + arayüz
 docker compose logs -f
