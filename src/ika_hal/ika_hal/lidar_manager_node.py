@@ -1,7 +1,8 @@
 """RPLIDAR sürücüsünü (sllidar_node) seçilen bağlantıyla çalıştırır.
 
   usb   lidarın USB adaptörü; port /dev/serial/by-id altında kendiliğinden bulunur
-  gpio  adaptörsüz: Gemstone'un ikinci UART'ı (/dev/ttyS0, pin 18/26) + lidar motoru için PWM (ecap2)
+  gpio  adaptörsüz: Gemstone'un ikinci UART'ı (/dev/ttyS0, pin 18/26)
+        + lidar motoru için PWM (ecap2)
 
 Bağlantı /ika/set_lidar servisiyle (arayüzdeki Lidar paneli) değiştirilir ve
 `state_file`'a kaydedilir; robot yeniden açılınca aynı bağlantı kullanılır.
