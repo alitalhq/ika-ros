@@ -112,14 +112,15 @@ t(GX+GW-8,y,'USB-C','end',12,C['usb'],'700'); line([(GX+GW,y),(DX,y)],C['usb'],2
 box(DX,627,SX+SW-DX,56,'Bilgisayar (isteğe bağlı)','ssh gemstone@192.168.7.2 · takılıysa kart USB\'den beslenir',dash=True,fill='#fff')
 
 # reserved
-box(GX+GW+20,705,505,185,'Bu robotta boşta / yedek bağlantılar',None,fill='#fffde7')
+box(GX+GW+20,700,505,205,'Bu robotta boşta / yedek bağlantılar',None,fill='#fffde7')
 rows=['pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar',
-      'pin 18 TX / pin 26 RX (ttyS0, uart-ttys0 overlay) → lidar — yalnız GPIO lidar',
+      'pin 18 TX / pin 26 RX (ttyS0) → lidar — yalnız GPIO lidar;',
+      '   overlay: ika-bt-off + uart-ttys0, spidev0-2cs yerine 1cs',
       'pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar',
       'type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5',
       '   (pin 3/5 için i2c1 overlay\'i kapalı olmalı)',
       'Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.']
-for i,s in enumerate(rows): t(GX+GW+32,750+i*22,s,'start',11,'#333')
+for i,s in enumerate(rows): t(GX+GW+32,745+i*21,s,'start',11,'#333')
 
 # legend
 lx,ly=30,840

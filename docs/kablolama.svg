@@ -165,14 +165,15 @@
 <rect x="990" y="627" width="410" height="56" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
 <text x="1195.0" y="647" text-anchor="middle" font-weight="700" font-size="14">Bilgisayar (isteğe bağlı)</text>
 <text x="1195.0" y="664" text-anchor="middle" font-size="11" fill="#555">ssh gemstone@192.168.7.2 · takılıysa kart USB'den beslenir</text>
-<rect x="900" y="705" width="505" height="185" rx="6" fill="#fffde7" stroke="#444" stroke-width="1.6"/>
-<text x="1152.5" y="725" text-anchor="middle" font-weight="700" font-size="14">Bu robotta boşta / yedek bağlantılar</text>
-<text x="912" y="754" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar</text>
-<text x="912" y="776" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 18 TX / pin 26 RX (ttyS0, uart-ttys0 overlay) → lidar — yalnız GPIO lidar</text>
-<text x="912" y="798" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar</text>
-<text x="912" y="820" text-anchor="start" font-size="11" fill="#333" font-weight="400">type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5</text>
-<text x="912" y="842" text-anchor="start" font-size="11" fill="#333" font-weight="400">   (pin 3/5 için i2c1 overlay'i kapalı olmalı)</text>
-<text x="912" y="864" text-anchor="start" font-size="11" fill="#333" font-weight="400">Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.</text>
+<rect x="900" y="700" width="505" height="205" rx="6" fill="#fffde7" stroke="#444" stroke-width="1.6"/>
+<text x="1152.5" y="720" text-anchor="middle" font-weight="700" font-size="14">Bu robotta boşta / yedek bağlantılar</text>
+<text x="912" y="749" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar</text>
+<text x="912" y="770" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 18 TX / pin 26 RX (ttyS0) → lidar — yalnız GPIO lidar;</text>
+<text x="912" y="791" text-anchor="start" font-size="11" fill="#333" font-weight="400">   overlay: ika-bt-off + uart-ttys0, spidev0-2cs yerine 1cs</text>
+<text x="912" y="812" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar</text>
+<text x="912" y="833" text-anchor="start" font-size="11" fill="#333" font-weight="400">type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5</text>
+<text x="912" y="854" text-anchor="start" font-size="11" fill="#333" font-weight="400">   (pin 3/5 için i2c1 overlay'i kapalı olmalı)</text>
+<text x="912" y="875" text-anchor="start" font-size="11" fill="#333" font-weight="400">Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.</text>
 <polyline points="30,840 56,840" fill="none" stroke="#c62828" stroke-width="3"/>
 <text x="62" y="844" text-anchor="start" font-size="11" fill="#111" font-weight="400">Pil +</text>
 <polyline points="135,840 161,840" fill="none" stroke="#222" stroke-width="3"/>
