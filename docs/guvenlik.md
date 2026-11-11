@@ -15,6 +15,11 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - **Li-Po'yu taşırken ve şarj ederken Li-Po güvenlik çantasında (safe bag)
   tutun.** Çanta yangını durdurmaz ama alevi içinde tutar, çevreye yayılmasını
   geciktirir. Çantaya tek pil koyun, fermuarını kapatın.
+- **Pili, kullandığınız pilin üreticisinin dokümantasyonuna (etiket, veri
+  sayfası, kullanım kılavuzu) uygun şekilde şarj edin.** Şarj akımı, şarj
+  gerilimi, sıcaklık aralığı ve saklama koşulları pilden pile değişir;
+  üreticinin değerleri bu sayfadaki genel değerlerden önce gelir. Şarj
+  cihazının kılavuzundaki talimatlara da uyun.
 - **Yalnızca balanslı Li-Po şarj cihazıyla şarj edin** (balans soketi takılı,
   "LiPo Balance" modu, hücre sayısı 3S). Akım: en fazla 1C, yani 4200 mAh pil
   için **4.2 A** (daha düşük, ör. 2 A, pile daha iyi gelir). Pilin üzerindeki
@@ -139,5 +144,5 @@ Her çalışmadan önce:
 Bittikten sonra:
 
 - [ ] `sudo poweroff`, ışıklar sönünce pil çıkarıldı
-- [ ] Pil soğuyunca safe bag içinde şarj edildi ya da saklama gerilimine
+- [ ] Pil soğuyunca safe bag içinde, üreticinin talimatlarına göre şarj edildi ya da saklama gerilimine
       getirildi
