@@ -21,9 +21,9 @@ class LineFollowerNode(Node):
     def __init__(self):
         super().__init__('line_follower_node')
         defaults = {
-            'speed': 0.15, 'kp': 12.0, 'kd': 0.4, 'max_angular': 2.5,
-            'min_speed_ratio': 0.3, 'half_width': 0.03, 'search_angular': 1.5,
-            'lost_timeout': 1.5, 'intersection_action': 'straight',
+            'speed': 0.30, 'kp': 50.0, 'kd': 8.0, 'max_angular': 4.0,
+            'min_speed_ratio': 0.4, 'half_width': 0.025, 'search_angular': 1.2,
+            'lost_timeout': 3.0, 'intersection_action': 'straight', 'd_filter': 0.5,
         }
         for name, value in defaults.items():
             self.declare_parameter(name, value)

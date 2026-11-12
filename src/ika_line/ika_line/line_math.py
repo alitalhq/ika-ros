@@ -31,10 +31,28 @@ def read_line(active, positions) -> LineReading:
                        len(hits) == len(positions) and len(positions) > 2)
 
 
+def read_line_analog(darkness, positions, detect=0.5, floor=0.1) -> LineReading:
+    """Kanal başına 0 (beyaz) .. 1 (siyah) koyuluktan sürekli konum.
+
+    Konum, koyuluğu `floor` üstündeki kanalların koyulukla ağırlıklı ortalamasıdır;
+    çizgi iki sensörün arasındayken de ara değer verir (0/1 okumada konum 9.5 mm'lik
+    basamaklarla değişir, türev her basamakta sıçrar). Bir kanal `detect` üstündeyse
+    çizgi görülmüş sayılır.
+    """
+    active = [d >= detect for d in darkness]
+    if not any(active):
+        return LineReading(active, False, 0.0, False)
+    weights = [d if d > floor else 0.0 for d in darkness]
+    position = sum(w * p for w, p in zip(weights, positions)) / sum(weights)
+    return LineReading(active, True, position, all(active) and len(positions) > 2)
+
+
 class LineFollower:
     """Çizgi konum hatasına PD uygulayıp (v, w) üretir.
 
     - Hata büyüdükçe ileri hız düşer (keskin virajda savrulmasın).
+    - Türev birinci dereceden alçak geçirenle süzülür (`d_filter`: 0 süzme yok,
+      1'e yaklaştıkça daha yumuşak); sensör gürültüsü direksiyona sıçrama yapmasın.
     - Çizgi kaybolursa en son görüldüğü tarafa `search_angular` ile döner;
       `lost_timeout` sonra durur ve 'lost' bildirir.
     - Kavşakta (tüm sensörler aktif) `intersection_action`: straight | stop.
@@ -42,7 +60,8 @@ class LineFollower:
 
     def __init__(self, speed=0.15, kp=12.0, kd=0.4, max_angular=2.5,
                  min_speed_ratio=0.3, half_width=0.03,
-                 search_angular=1.5, lost_timeout=1.5, intersection_action='straight'):
+                 search_angular=1.5, lost_timeout=1.5, intersection_action='straight',
+                 d_filter=0.0):
         if intersection_action not in ('straight', 'stop'):
             raise ValueError("intersection_action straight veya stop olmalı")
         self.speed = speed
@@ -54,9 +73,11 @@ class LineFollower:
         self.search_angular = search_angular
         self.lost_timeout = lost_timeout
         self.intersection_action = intersection_action
+        self.d_filter = d_filter
         self.reset()
 
     def reset(self):
+        self.derivative = 0.0
         self.last_error = None
         self.last_side = 0.0
         self.lost_for = 0.0
@@ -76,6 +97,7 @@ class LineFollower:
         if not reading.detected:
             self.lost_for += dt
             self.last_error = None
+            self.derivative = 0.0
             if self.lost_for > self.lost_timeout or self.last_side == 0.0:
                 self.state = 'lost'
                 return 0.0, 0.0
@@ -86,12 +108,12 @@ class LineFollower:
         error = reading.position            # çizgi solda (+) -> sola dön (+w)
         if abs(error) > 1e-6:
             self.last_side = math.copysign(1.0, error)
-        derivative = 0.0
         if self.last_error is not None and dt > 0.0:
-            derivative = (error - self.last_error) / dt
+            raw = (error - self.last_error) / dt
+            self.derivative = self.d_filter * self.derivative + (1.0 - self.d_filter) * raw
         self.last_error = error
 
-        angular = self.kp * error + self.kd * derivative
+        angular = self.kp * error + self.kd * self.derivative
         angular = max(-self.max_angular, min(self.max_angular, angular))
         ratio = min(1.0, abs(error) / self.half_width) if self.half_width > 0 else 0.0
         linear = self.speed * (1.0 - (1.0 - self.min_speed_ratio) * ratio)

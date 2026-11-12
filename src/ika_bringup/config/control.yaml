@@ -16,14 +16,17 @@ mode_manager_node:
 
 line_follower_node:
   ros__parameters:
-    speed: 0.15
-    kp: 12.0                         # [rad/s / m]
-    kd: 0.4
-    max_angular: 2.5
-    min_speed_ratio: 0.3             # en keskin hatada hızın kalacağı oran
-    half_width: 0.03                 # bu hatada hız min_speed_ratio'ya iner
-    search_angular: 1.5
-    lost_timeout: 1.5
+    # Değerler 8 kanallı analog konumla (Deneyap) benzetimde ayarlandı:
+    # eski 0.15 m/s / kp 12 ayarı virajda ~45 mm sapıp salınıyordu (#27).
+    speed: 0.30
+    kp: 50.0                         # [rad/s / m]
+    kd: 8.0
+    d_filter: 0.5                    # türevi alçak geçirgenle yumuşatır (0 = kapalı)
+    max_angular: 4.0
+    min_speed_ratio: 0.4             # en keskin hatada hızın kalacağı oran
+    half_width: 0.025                # bu hatada hız min_speed_ratio'ya iner
+    search_angular: 1.2
+    lost_timeout: 3.0
     intersection_action: straight    # straight | stop
 
 map_manager_node:

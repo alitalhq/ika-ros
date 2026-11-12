@@ -77,3 +77,11 @@ def test_calibration_file_validation(tmp_path):
     path.write_text(json.dumps({'white_mv': [2000] * 8, 'black_mv': [2050] * 8}))
     with pytest.raises(ValueError):
         adc_serial.load_calibration(str(path))
+
+
+def test_darkness_scales_between_references_both_polarities():
+    cal = {'white_mv': [400, 2600] + [400] * 6, 'black_mv': [2600, 400] + [2600] * 6}
+    d = adc_serial.darkness([1500, 1500, 100, 3000, 400, 2600, 1500, 1500], cal)
+    assert d[:2] == [pytest.approx(0.5), pytest.approx(0.5)]
+    assert d[2:6] == [0.0, 1.0, 0.0, 1.0]
+    assert adc_serial.darkness([1500] * 8, None) == [0.0] * 8

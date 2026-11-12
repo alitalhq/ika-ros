@@ -110,6 +110,14 @@ def save_calibration(path, calibration):
     os.replace(tmp, path)
 
 
+def darkness(values, calibration):
+    """Kanal başına 0 (beyaz referans) .. 1 (siyah referans). Kalibrasyon yoksa 0."""
+    if calibration is None:
+        return [0.0] * len(values)
+    return [min(1.0, max(0.0, (v - w) / (b - w)))
+            for v, w, b in zip(values, calibration['white_mv'], calibration['black_mv'])]
+
+
 def dark_channels(values, calibration):
     """Siyah zemine benzeyen kanallar. Kalibrasyon yoksa hiçbiri."""
     if calibration is None:

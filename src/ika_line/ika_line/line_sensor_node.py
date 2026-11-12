@@ -9,7 +9,8 @@ type: digital  TCRT5000 vb. modüllerin dijital (DO) çıkışı;
                `line_level` = sensör çizgiyi görünce okunan seviye.
 
 `pins` soldan sağa sıralanır (robotun arkasından, ileri bakarak). 3.3 V lojik!
-Yayın   : /line/state (ika_interfaces/LineState; serial'de raw = mV)
+Yayın   : /line/state (ika_interfaces/LineState; serial'de raw = mV ve konum
+          kalibre analog değerlerden sürekli, diğer tiplerde 0/1 kanallardan)
 Servisler (yalnız serial; sensör ~1 sn zeminde dururken çağrılır):
   /line/calibrate_white, /line/calibrate_black  (std_srvs/Trigger)
   Siyah ölçümü beyazdan sonra alınır, ikisi ayrışırsa kalibrasyon kaydedilir.
@@ -31,7 +32,7 @@ from ika_hal.gpio import open_chip, resolve_pin
 from ika_interfaces.msg import LineState
 from ika_line import adc_serial
 from ika_line.calibration import CalibrationSession
-from ika_line.line_math import read_line, sensor_positions
+from ika_line.line_math import read_line, read_line_analog, sensor_positions
 from ika_line.qtr import dark_channels, read_decay_us
 
 SERIAL_TIMEOUT = 0.5      # bu süre çerçeve gelmezse yayın durur (takip komutu da kesilir)
@@ -226,7 +227,8 @@ class LineSensorNode(Node):
         if self.calibration is None:
             self._warn_once('calibration', 'çizgi sensörü kalibre değil: '
                             '/line/calibrate_white ve /line/calibrate_black çağırın')
-        self._publish(values, adc_serial.dark_channels(values, self.calibration))
+        self._publish(values, read_line_analog(
+            adc_serial.darkness(values, self.calibration), self.positions))
 
     def _calibration_command(self, msg):
         self.session.set_command([msg.linear.x, msg.linear.y, msg.linear.z,
@@ -274,10 +276,10 @@ class LineSensorNode(Node):
         return raw, [v == self.line_level for v in raw]
 
     def _tick(self):
-        self._publish(*self._read())
+        raw, active = self._read()
+        self._publish(raw, read_line(active, self.positions))
 
-    def _publish(self, raw, active):
-        reading = read_line(active, self.positions)
+    def _publish(self, raw, reading):
         msg = LineState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.header.frame_id = self.frame_id
