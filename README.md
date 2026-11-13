@@ -1,11 +1,8 @@
 # İKA ROS
 
 <p align="center">
-  <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="320" alt="İKA robotunun tekerlekleri ve lidarı"></a>
   <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="320" alt="İKA robotunun pili ve kabloları"></a>
-</p>
-<p align="center">
-  <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="240" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
+  <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="320" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
 </p>
 
 İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotudur. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Robot çizgi izleyebilir, lidar ile çevresinin haritasını çıkarabilir ve Nav2 etkinleştirildiğinde kayıtlı harita üzerinde belirlenen bir hedefe gidebilir.
