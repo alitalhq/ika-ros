@@ -1,0 +1,14 @@
+// Kart üstündeki Bluetooth'un UART'ını (main_uart6, ttyS6) kapatır.
+//
+// Bluetooth UART'ı RTS/CTS için main pad 9/10'u tutuyor; T3'ün uart-ttys0
+// overlay'i (lidar UART'ı, header pin 18/26) aynı pad'leri istediği için
+// ttyS0 açılışta "pin PIN10 already requested by 2860000.serial" hatasıyla
+// başlamıyor. Wi-Fi aynı çipte ama SDIO'dan bağlı, etkilenmez.
+//
+// Derleme ve kurulum: docs/donanim.md → Overlay'ler.
+/dts-v1/;
+/plugin/;
+
+&main_uart6 {
+	status = "disabled";
+};

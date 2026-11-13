@@ -27,6 +27,11 @@ jobs:
         run: python3 -m flake8 --config src/ika/.flake8 src/ika/src
       - name: shellcheck
         run: shellcheck -e SC1091 src/ika/deploy/*.sh src/ika/docker/*.sh
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Web calibration tests
+        run: node --test src/ika/src/ika_gcs/test/*.test.cjs
       - name: Build
         run: |
           source /opt/ros/jazzy/setup.bash

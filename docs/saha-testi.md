@@ -140,7 +140,8 @@ portu ve tarama hızını gösterir; seçim robotta saklanır.
 - [ ] **USB:** panel "lidar portu yok" diyorsa `ls /dev/serial/by-id/` boş
       olabilir; minimal imajda CP210x sürücüsü eksiktir (`lsmod | grep cp210x`)
 - [ ] **GPIO:** "operation timeout" alıyorsanız TX/RX çapraz mı (lidar TX →
-      pin 10), `/dev/ttyS3` var mı ve `ecap2` overlay'i açık mı kontrol edin;
+      pin 26), `dmesg`'te `2b300000.serial: ttyS0` var mı, `ika-bt-off`, `uart-ttys0`
+      ve `ecap2` overlay'leri açık mı kontrol edin (docs/donanim.md → Overlay'ler);
       sürerse `gpio.duty_percent`'i 75'e indirin (motor gürültüsü UART'ı bozabiliyor)
 - [ ] Lidarın açısı doğru. Robotun tam önüne (çizgi sensörü tarafı, ortalı,
       30–40 cm) lidar yüksekliğinden uzun bir kutu koyun; 1 m içinde başka
@@ -165,6 +166,10 @@ ros2 topic echo /line/state --field raw      # D1 … D8, mV
       fark var (100 mV civarındaysa sensör çok yüksekte)
 - [ ] Kalibrasyon: [donanim.md](donanim.md#deneyap-kart-1a-v2-üzerinden-varsayılan-type-serial)
       → `/line/calibrate_white`, `/line/calibrate_black` başarılı
+- [ ] Web panelinde başlat → beyaz → siyah sırası çalışıyor; robot Boşta kalıyor,
+      sürüş engelleniyor. Kayıtlı mV tablosu doluyor ve açılıştan sonra korunuyor.
+- [ ] Aynı yüzeyi iki kez ölçmek hata veriyor; önceki kayıt değişmiyor. Bağlantı
+      kesilince veya mod değişince işlem kapanıyor. QTR/dijital tipte panel pasif.
 - [ ] `ros2 topic echo /line/state --field sensors`: beyazda hepsi `false`, siyahta `true`
 - [ ] Siyah bandı sensörün altında soldan sağa kaydırınca `true` soldan sağa ilerliyor.
       Ters ilerliyorsa A0…A7 kabloları ters takılmıştır

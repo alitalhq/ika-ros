@@ -143,6 +143,16 @@ label input[type=range] { width: 100%; padding: 0; }
 
 .raw { text-align: center; font-family: ui-monospace, Menlo, monospace; }
 
+.calibration-actions { margin-top: 10px; flex-wrap: wrap; }
+#calibration-capture { width: 100%; margin-top: 10px; border-color: var(--accent); }
+.calibration-table-wrap { overflow-x: auto; }
+#calibration-table { width: 100%; margin-top: 12px; border-collapse: collapse; font-size: 12px; }
+#calibration-table caption { text-align: left; color: var(--muted); margin-bottom: 6px; }
+#calibration-table th, #calibration-table td { padding: 4px; text-align: right; }
+#calibration-table th:first-child, #calibration-table td:first-child { text-align: left; }
+#calibration-table tbody tr { border-top: 1px solid var(--line); }
+#calibration-table .warn { color: var(--warn); }
+
 .row { display: flex; gap: 6px; }
 .row input { flex: 1; min-width: 0; }
 

@@ -1,126 +1,129 @@
 # İKA ROS
 
-T3 Gemstone O1 üzerinde çalışan, modüler, kit olarak dağıtılabilecek
-diferansiyel sürüşlü İKA yazılımı. **Ubuntu 24.04 + ROS 2 Jazzy**
-(doğrudan kurulum veya Docker).
+<p align="center">
+  <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="320" alt="İKA robotunun pili ve kabloları"></a>
+  <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="320" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
+</p>
 
-- Enkoder geri beslemeli motor hız kontrolü (teker başına PI + ileri besleme)
-- Teker odometrisi + Gemstone dahili IMU füzyonu (robot_localization EKF)
-- RPLIDAR A1 (Gemstone UART'ına doğrudan bağlı) ile haritalama (slam_toolbox),
-  kayıtlı haritada Nav2 ile hedefe gitme
-- 8 kanallı kızılötesi çizgi sensörü (QTR-8 benzeri, Deneyap Kart üzerinden analog; Pololu QTR-8RC de desteklenir) ile çizgi izleme
-- Host'tan tarayıcıyla kontrol: manuel sürüş (klavye, ekran, gamepad), mod
-  seçimi, acil durdurma, canlı harita, harita kaydetme, haritaya tıklayıp hedef verme
-- `/cmd_vel` zaman aşımı, teleop devralma; isteğe bağlı lidar çarpışma freni (varsayılan kapalı)
+İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotudur. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Robot çizgi izleyebilir, lidar ile çevresinin haritasını çıkarabilir ve Nav2 etkinleştirildiğinde kayıtlı harita üzerinde belirlenen bir hedefe gidebilir.
 
-## Hızlı başlangıç
+- **Manuel sürüş** için klavye, ekrandaki yön tuşları veya gamepad kullanılır. Tekerlek hızı enkoderlerle ölçülür, odometri kart üzerindeki IMU ile birleştirilir.
+- **Çizgi izleme** için sekiz kanallı analog sensör Deneyap Mini v2 üzerinden okunur. Beyaz ve siyah zemin ölçümleri web arayüzünden kaydedilir.
+- **Haritalama ve navigasyon** için RPLIDAR A1 kullanılır. Harita kaydedilebilir ve Nav2 etkinleştirildiğinde harita üzerinden hedef verilebilir.
 
-### Robot: Docker'sız (Gemstone için önerilen)
+## İlk kullanım
+
+### 1. Gemstone O1’e Ubuntu 24.04 kurun
+
+1. Bilgisayarınıza Gem Imager’ı kurun ve en az 32 GB kapasiteli bir microSD kartı okuyucuyla bilgisayara takın. [Gem Imager indirme sayfası](https://t3gemstone.org/tr/software)
+2. Gem Imager’da **T3-GEM-O1** modelini, **Ubuntu 24.04 (Noble) Minimal** imajını ve hedef olarak microSD kartı seçin. Özelleştirme ekranında kullanıcı parolasını belirleyin. Uzaktan bağlanacaksanız SSH’ı etkinleştirin. Wi-Fi bilgilerini de bu ekrandan girebilirsiniz. Ardından imajı yazın.
+3. Gemstone kapalıyken microSD kartı takın ve açılış anahtarlarını **SD card** konumuna getirin. Ardından kartı çalıştırın. Dahili eMMC kullanacaksanız üreticinin eMMC yazma ve açılış adımlarını izleyin. [Gemstone hızlı başlangıç kılavuzu](https://docs.t3gemstone.org/tr/quickstart)
+4. Gemstone’u Ethernet veya Wi-Fi üzerinden internete bağlayın. Aynı ağdaki bilgisayardan SSH ile ya da Gemstone’a bağlı ekran ve klavyeyle oturum açın. [Ağ bağlantısı kılavuzu](docs/wifi.md)
+
+### 2. İKA yazılımını Gemstone’a kurun
+
+Gemstone’da `sudo` yetkili bir kullanıcıyla aşağıdaki komutları çalıştırın. Kurulum betiği ROS 2 Jazzy’yi ve bağımlılıkları yükleyip çalışma alanını derler.
 
 ```bash
-git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros && cd ~/ika-ros
-bash deploy/install-native.sh                 # ROS 2 Jazzy + bağımlılıklar + derleme
-sudo bash deploy/install-service.sh 1         # açılışta başlat; robot no = ROS_DOMAIN_ID
+git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros
+cd ~/ika-ros
+bash deploy/install-native.sh
 ```
 
-Ayrıntılar, iki robot ve güncelleme: [Docker'sız kurulum](docs/native-kurulum.md).
+### 3. Deneyap Mini v2’yi programlayın ve donanımı kontrol edin
 
-### Robot: Docker ile
+Bilgisayarınıza **Deneyap Kart IDE**’yi kurun. IDE’de `deneyap_line.ino` dosyasını açın, **Deneyap Mini v2** kartını ve bağlı portu seçin, ardından **Derle ve Yükle**’ye tıklayın. [Resmî IDE kurulum kılavuzu](https://docs.deneyapkart.org/tr/IDE/Deneyap-Kart-IDE-Setup) · [Mini v2 yükleme ayarları ve port kontrolü](firmware/deneyap_line/README.md)
+
+Güç kapalıyken [pin bağlantılarını](#donanım-ve-pin-bağlantıları) tamamlayın. Gemstone’da motor PWM hatları için [donanım ayarlarını](docs/donanim.md) uygulayın ve değişikliklerin ardından kartı yeniden başlatın. İlk sürüşten önce [pil ve kullanım güvenliği](docs/guvenlik.md) bölümünü okuyun, tekerlekleri yerden kaldırarak [saha testini](docs/saha-testi.md) yapın.
+
+### 4. Robotu başlatın ve arayüzü açın
+
+Gemstone’da çalıştırın:
 
 ```bash
-git clone <repo> ~/ika-ros && cd ~/ika-ros
-docker compose build
-docker compose up -d                 # tam robot: lidar + SLAM + arayüz
+cd ~/ika-ros
+sudo bash deploy/start-native.sh
+```
+
+Aynı ağa bağlı bilgisayardan [İKA Kontrol arayüzünü](#web-arayüzü) açın.
+
+### 5. Çizgi sensörünü kalibre edin ve harita çıkarın
+
+- **Çizgi izleme** için arayüzde **Çizgi sensörü kalibrasyonu → Kalibrasyonu başlat** seçeneğini kullanın. Sensörü çalışma yüksekliğinde tutarak sekiz kanalın tamamını önce beyaz, ardından mat siyah yüzey üzerinde ölçün. Ölçümler kaydedilince **Çizgi izle** modunu deneyin.
+- **Haritalama** varsayılan olarak açıktır. Robotu **Manuel** modda gezdirin ve **Harita kaydet** panelini kullanın. Kayıtlı haritada hedefe gitmek için `slam_mode:=localization`, uzantısız `map` yolu ve `nav:=true` ile başlatın. [Başlatma ve servis ayarları](docs/native-kurulum.md)
+
+### Açılışta otomatik başlatma
+
+Elle başlattığınız oturumu `Ctrl+C` ile durdurup depo dizininde şu komutu çalıştırın:
+
+```bash
+sudo bash deploy/install-service.sh 1
+```
+
+`1`, robotun `ROS_DOMAIN_ID` değeridir. Aynı ağdaki her robota farklı bir değer verin. Servis ayarları, günlükler ve güncelleme adımları [Docker’sız kurulum kılavuzunda](docs/native-kurulum.md) yer alır.
+
+<details>
+<summary>Docker ile çalıştırma ve donanımsız deneme</summary>
+
+Docker ve Compose kurulu Linux sisteminde, depo dizininden robotu başlatın:
+
+```bash
+ROS_DOMAIN_ID=1 docker compose up --build -d
 docker compose logs -f
 ```
 
-Host'ta aynı ağdan tarayıcıyla **`http://<gemstone-ip>:8000`** açın.
-
-Pin bağlantıları [docs/donanim.md](docs/donanim.md), ayarlar
-`src/ika_bringup/config/hardware.yaml`. İlk kurulumda PWM overlay'lerini açıp
-[saha testi](docs/saha-testi.md) adımlarını sırayla izleyin.
-
-### Donanımsız (laptop)
+Donanımsız arayüz denemesi için aynı dizinde imajı oluşturup aşağıdaki komutları çalıştırın. `backend:=mock` motor ve enkoderleri benzetir. Tarayıcıda `http://localhost:8000` adresini açın.
 
 ```bash
-IKA_ARGS="backend:=mock" docker compose up
+docker compose build
+docker run --rm -p 8000:8000 -p 9090:9090 ika-ros:jazzy ros2 launch ika_bringup robot.launch.py backend:=mock fusion:=false line:=false slam:=false
 ```
 
-Motor ve enkoderler benzetilir; IMU ve lidar kapanır. Tarayıcıda
-`http://localhost:8000`. macOS / Windows'taki Docker Desktop'ta host ağı
-sınırlıdır: `compose.yaml`'da `network_mode: host` satırını
-`ports: ["8000:8000", "9090:9090"]` ile değiştirin.
+</details>
 
-> **Aynı ağda birden fazla robot varsa** her robota farklı bir
-> `ROS_DOMAIN_ID` verin (`ROS_DOMAIN_ID=12 docker compose up -d`). Aksi halde
-> aynı isimli node'lar birbirine karışır: bir robotun Nav2'si diğerinin
-> node'larını yönetmeye çalışır, komutlar yanlış robota gider.
+## Web arayüzü
 
-### Host'ta ROS 2 ile (isteğe bağlı)
+[![İKA Kontrol ekranında harita, robot konumu, sürüş, sensör kalibrasyonu ve lidar panelleri](docs/img/ika-web-arayuzu.png)](docs/img/ika-web-arayuzu.png)
 
-Host ile robot aynı ağda ve aynı `ROS_DOMAIN_ID` ile:
+*İKA Kontrol ekranı, kayıtlı bir lidar taramasından aktarılan harita ve örnek sensör değerleriyle.*
 
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r cmd_vel:=/cmd_vel/teleop
-ros2 service call /ika/set_mode ika_interfaces/srv/SetMode "{mode: line}"
-rviz2                                # /map, /scan, TF; "2D Goal Pose" -> nav modu
-```
+### Arayüze nasıl bağlanılır?
 
-## Launch
+1. Gemstone’da İKA yazılımını [başlatın](#4-robotu-başlatın-ve-arayüzü-açın). Gemstone terminalinde `hostname -I` komutuyla robotun yerel ağdaki IP adresini öğrenin.
+2. Aynı ağa bağlı bilgisayarda tarayıcıyı açın ve `http://<robot-ip>:8000` adresine gidin. Örneğin robotun IP’si `192.168.1.42` ise adres `http://192.168.1.42:8000` olur.
+3. Sağ üstteki bağlantı göstergesi yeşile dönünce arayüz hazırdır. Gösterge kırmızı kalırsa **robot adresi** alanına Gemstone’un IP’sini yazıp **Bağlan**’a tıklayın. Sayfa `8000`, ROS bağlantısı ise `9090` portunu kullanır. Bağlantı sorunu sürerse [ağ ve servis kontrollerini](docs/wifi.md) izleyin.
 
-```bash
-ros2 launch ika_bringup robot.launch.py [argüman:=değer ...]
-```
+### Arayüzden neler yapılır?
 
-| Argüman | Varsayılan | |
-|---|---|---|
-| `backend` | `gpiod` | `mock`: donanımsız benzetim |
-| `hardware` | `config/hardware.yaml` | başka bir pin dosyası |
-| `imu` / `fusion` | `true` / `true` | `fusion:=false` → odom TF'i teker odometrisinden |
-| `lidar` | `true` | |
-| `lidar_source` | — | `usb` / `gpio`; boşsa arayüzde seçilip kaydedilen, o da yoksa `usb` |
-| `lidar_port` | — | seri portu elle ver; boşsa USB adaptör kendiliğinden bulunur, GPIO'da `/dev/ttyS3` |
-| `line` | `true` | çizgi sensörü + izleyici |
-| `slam` / `slam_mode` / `map` | `true` / `mapping` / — | `slam_mode:=localization map:=~/ika_maps/salon` |
-| `nav` | `false` | Nav2 |
-| `gcs` | `true` | rosbridge `:9090` + web `:8000` |
+| Panel | İşlev |
+| --- | --- |
+| **Mod ve Sürüş** | Boşta, Manuel veya Çizgi izle modunu seçin. Manuel sürüşte ekran tuşlarını, WASD veya ok tuşlarını ya da gamepad’i kullanın. Hızı ve dönüş hızını ayarlayın. |
+| **Harita** | SLAM ile oluşan haritayı ve robotun konumunu izleyin. **Harita kaydet** paneliyle haritayı kaydedin. Nav2 açıkken **Tıkla → hedef** seçeneğiyle harita üzerinden hedef verin. |
+| **Durum ve kalibrasyon** | Hızı, engel mesafesini ve çizgi sensörü ölçümlerini izleyin. Deneyap seri sensörünü beyaz ve siyah yüzeylerle kalibre edin. |
+| **Lidar** | Kablolamaya göre **USB** veya **GPIO (UART)** seçin ve tarama hızını kontrol edin. |
 
-## Yapı
+Sürüşü durdurmak için **ACİL DURDUR** düğmesini veya **Boşluk** tuşunu kullanın.
 
-```
-src/
-  ika_interfaces/   mesaj ve servisler
-  ika_description/  URDF + robot.yaml (geometri için tek kaynak)
-  ika_hal/          GPIO / PWM katmanı (libgpiod v1/v2, ad ile pin çözme, mock)
-  ika_base/         motor + enkoder + PID + odometri, hw_check aracı
-  ika_imu/          ICM-20948 sürücüsü
-  ika_line/         8 kanallı çizgi sensörü (Deneyap UART / dijital / QTR-8RC), çizgi izleme, line_check aracı
-  ika_control/      mod yöneticisi, acil durdurma, lidar freni
-  ika_navigation/   slam_toolbox, Nav2, harita kaydetme
-  ika_gcs/          tarayıcı arayüzü
-  ika_bringup/      robot.launch.py, hardware.yaml, control.yaml, ekf.yaml
-firmware/
-  deneyap_line/     Deneyap Kart 1A v2: çizgi sensörü ADC → UART
-docs/
-  donanim.md        pin haritası, bağlantılar, elektriksel uyarılar
-  saha-testi.md     ilk kurulum ve kalibrasyon kontrol listesi
-  mimari.md         node / topic / mod yapısı
-```
+## Donanım ve pin bağlantıları
 
-## Geliştirme
+Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkoderli iki **Waveshare DCGM-3865** motor, **Deneyap Mini v2**, sekiz kanallı analog çizgi sensörü ve **RPLIDAR A1**’dir.
 
-```bash
-# Konteyner içinde (kaynak ./src bağlı):
-colcon build --symlink-install
-colcon test && colcon test-result --verbose
+[![Motor ve enkoder bağlantıları](docs/img/kablolama/motor-ve-enkoder.png)](docs/img/kablolama/motor-ve-enkoder.png)
 
-# ROS'suz birim testleri (herhangi bir makinede):
-PYTHONPATH=src/ika_hal:src/ika_base:src/ika_line:src/ika_control pytest src/*/test
-python3 -m flake8 src
-```
+[![Deneyap Mini v2 ve çizgi sensörü bağlantıları](docs/img/kablolama/deneyap-ve-cizgi-sensoru.png)](docs/img/kablolama/deneyap-ve-cizgi-sensoru.png)
 
-Üçüncü parti kaynak paketleri `ika.repos` içinde (`vcs import src < ika.repos`).
+[![Lidar ve güç bağlantıları](docs/img/kablolama/lidar-ve-guc.png)](docs/img/kablolama/lidar-ve-guc.png)
+
+[Kablolama şemasını PDF olarak aç](docs/ika-kablolama.pdf)
+
+## Proje belgeleri
+
+| Belge | İçerik |
+| --- | --- |
+| [Mimari](docs/mimari.md) | ROS 2 paketleri, konular ve sürüş modları |
+| [Donanım](docs/donanim.md) | Pinler, PWM, UART seçenekleri ve sensör kalibrasyonu |
+| [Saha testi](docs/saha-testi.md) | İlk çalıştırma, motor yönü ve enkoder kontrolleri |
 
 ## Lisans
 
-Apache-2.0. `ika_imu/src/icm20948.c` ve `include/icm20948.h`: T3 Foundation, Apache-2.0.
+[Apache-2.0](LICENSE). ICM-20948 sürücüsünün kaynak dosyaları T3 Foundation’a aittir ve Apache-2.0 lisansıyla dağıtılır.

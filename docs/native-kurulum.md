@@ -8,8 +8,10 @@ yetkili bir kullanıcı. Betikler kullanıcı adından ve repo yolundan bağıms
 
 ## 1. Kurulum
 
+Gemstone’un işletim sistemini hazırlamak ve depoyu klonlamak için
+[README’deki ilk iki adımı](../README.md#ilk-kullanım) izleyin.
+
 ```bash
-git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros
 cd ~/ika-ros
 bash deploy/install-native.sh        # ~20-40 dk; sudo şifresi sorar
 ```

@@ -5,26 +5,26 @@ mode_manager_node:
     teleop_takeover: true            # başka moddayken teleop -> manual
     safety:
       # Kapalı: sahada manuel sürüşü kilitliyordu. Otonom sürüşte açmak için true.
-      enabled: false
+      enabled: true
       # Engel, robotun gideceği koridorda (gövde genişliği + side_margin)
       # aranır; mesafeler gövdenin ön (geri giderken arka) ucundan [m].
       # Gövde ölçüleri robot.yaml'dan gelir.
-      stop_distance: 0.10
+      stop_distance: 0.15
       slow_distance: 0.35
       side_margin: 0.01              # gövde kenarından pay; köşeler sürtüyorsa artırın
       scan_timeout: 0.5
 
 line_follower_node:
   ros__parameters:
-    speed: 0.15
-    kp: 12.0                         # [rad/s / m]
-    kd: 0.4
+    speed: 0.10
+    kp: 30.0                         # [rad/s / m]
+    kd: 0.6
     max_angular: 2.5
     min_speed_ratio: 0.3             # en keskin hatada hızın kalacağı oran
     half_width: 0.03                 # bu hatada hız min_speed_ratio'ya iner
-    search_angular: 1.5
-    lost_timeout: 1.5
-    intersection_action: straight    # straight | stop
+    search_angular: 1.0
+    lost_timeout: 4.0
+    intersection_action: stop    # straight | stop
 
 map_manager_node:
   ros__parameters:
