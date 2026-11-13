@@ -6,22 +6,50 @@
 - **Çizgi izleme** — Sekiz kanallı analog sensör Deneyap Mini v2 üzerinden okunur. Beyaz ve siyah zemin ölçümleri web arayüzünden kaydedilir.
 - **Haritalama ve navigasyon** — RPLIDAR A1 ile harita çıkarılır ve kaydedilir. Nav2 etkinleştirildiğinde harita üzerinden hedef verilebilir.
 
-## Kurulum
+## İlk kullanım
 
-### Gemstone O1 üzerinde
+### 1. Gemstone O1’e Ubuntu 24.04 kurun
 
-Ubuntu 24.04 yüklü Gemstone’da internet bağlantısı ve `sudo` yetkili bir kullanıcı gerekir. İlk çalıştırmadan önce [kablolamayı](#donanım-ve-pin-bağlantıları) kontrol edin, [pil ve kullanım güvenliği](docs/guvenlik.md) bölümünü okuyun ve [saha testi](docs/saha-testi.md) adımlarını izleyin.
+1. Bilgisayarınıza Gem Imager’ı kurun ve en az 32 GB kapasiteli bir microSD kartı okuyucuyla bilgisayara takın. [Gem Imager indirme sayfası](https://t3gemstone.org/tr/software)
+2. Gem Imager’da **T3-GEM-O1** modelini, **Ubuntu 24.04 (Noble) Minimal** imajını ve hedef olarak microSD kartı seçin. Özelleştirme ekranında kullanıcı parolasını belirleyin. Uzaktan bağlanacaksanız SSH’ı etkinleştirin. Wi-Fi bilgilerini de bu ekrandan girebilirsiniz. Ardından imajı yazın.
+3. Gemstone kapalıyken microSD kartı takın ve açılış anahtarlarını **SD card** konumuna getirin. Ardından kartı çalıştırın. Dahili eMMC kullanacaksanız üreticinin eMMC yazma ve açılış adımlarını izleyin. [Gemstone hızlı başlangıç kılavuzu](https://docs.t3gemstone.org/tr/quickstart)
+4. Gemstone’u Ethernet veya Wi-Fi üzerinden internete bağlayın. Aynı ağdaki bilgisayardan SSH ile ya da Gemstone’a bağlı ekran ve klavyeyle oturum açın. [Ağ bağlantısı kılavuzu](docs/wifi.md)
+
+### 2. İKA yazılımını Gemstone’a kurun
+
+Gemstone’da `sudo` yetkili bir kullanıcıyla aşağıdaki komutları çalıştırın. Kurulum betiği ROS 2 Jazzy’yi ve bağımlılıkları yükleyip çalışma alanını derler.
 
 ```bash
 git clone --branch codex/readme-donanim https://github.com/Emirsw/ika-ros.git ~/ika-ros
 cd ~/ika-ros
 bash deploy/install-native.sh
+```
+
+### 3. Deneyap Mini v2’yi programlayın ve donanımı kontrol edin
+
+Bilgisayarda Arduino IDE’yi açın, kart olarak **Deneyap Mini v2** seçin ve `deneyap_line.ino` dosyasını yükleyin. COM portu görünmüyorsa **BUT** basılıyken **RES** tuşuna basıp bırakın, ardından **BUT** tuşunu bırakıp yeni portu kontrol edin. [Yükleme ve bağlantı adımları](firmware/deneyap_line/README.md)
+
+Güç kapalıyken [pin bağlantılarını](#donanım-ve-pin-bağlantıları) tamamlayın. Gemstone’da motor PWM hatları için [donanım ayarlarını](docs/donanim.md) uygulayın ve değişikliklerin ardından kartı yeniden başlatın. İlk sürüşten önce [pil ve kullanım güvenliği](docs/guvenlik.md) bölümünü okuyun, tekerlekleri yerden kaldırarak [saha testini](docs/saha-testi.md) yapın.
+
+### 4. Robotu başlatın ve arayüzü açın
+
+Gemstone’da çalıştırın:
+
+```bash
+cd ~/ika-ros
 sudo bash deploy/start-native.sh
 ```
 
-Kurulum betiği ROS 2 Jazzy’yi ve bağımlılıkları yükler, ardından çalışma alanını derler. Gemstone’da `hostname -I` ile ağ adresini bulun. Aynı ağa bağlı bilgisayarın tarayıcısında `http://<robot-ip>:8000` adresini açın. Robotu farklı bir kablosuz ağa bağlamak için [Wi-Fi kılavuzunu](docs/wifi.md) izleyin.
+Gemstone’da `hostname -I` ile ağ adresini bulun. Aynı ağa bağlı bilgisayarın tarayıcısında `http://<robot-ip>:8000` adresini açın.
 
-Robotu açılışta otomatik başlatmak için elle başlattığınız oturumu `Ctrl+C` ile durdurun ve depo dizininde şu komutu çalıştırın:
+### 5. Çizgi sensörünü kalibre edin ve harita çıkarın
+
+- **Çizgi izleme** için arayüzde **Çizgi sensörü kalibrasyonu → Kalibrasyonu başlat** seçeneğini kullanın. Sensörü çalışma yüksekliğinde tutarak sekiz kanalın tamamını önce beyaz, ardından mat siyah yüzey üzerinde ölçün. Ölçümler kaydedilince **Çizgi izle** modunu deneyin.
+- **Haritalama** varsayılan olarak açıktır. Robotu **Manuel** modda gezdirin ve **Harita kaydet** panelini kullanın. Kayıtlı haritada hedefe gitmek için `slam_mode:=localization`, uzantısız `map` yolu ve `nav:=true` ile başlatın. [Başlatma ve servis ayarları](docs/native-kurulum.md)
+
+### Açılışta otomatik başlatma
+
+Elle başlattığınız oturumu `Ctrl+C` ile durdurup depo dizininde şu komutu çalıştırın:
 
 ```bash
 sudo bash deploy/install-service.sh 1
@@ -69,12 +97,6 @@ Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel
 | RPLIDAR A1, doğrudan UART | TX → 26, RX → 18, MOTOCTL → 12. Veri hattı `/dev/ttyS0`. [Gerekli donanım ayarları](docs/donanim.md#lidar-bağlantısı-usb-veya-gpio). |
 
 Çizgi sensörünün D1–D8 çıkışlarını sırasıyla **Mini v2’nin A0–A7** girişlerine bağlayın. Sensörü 3,3 V ile besleyin ve üzerindeki `3.3V` köprüsünü kontrol edin. Ortak GND ve PWM bağlantıları için tam şemayı izleyin.
-
-## İlk kullanım
-
-1. **Deneyap yazılımını yükleyin.** Arduino IDE’de kart olarak **Deneyap Mini v2** seçin. COM portu görünmüyorsa **BUT** basılıyken **RES** tuşuna basıp bırakın, sonra **BUT** tuşunu bırakın ve yeni portu kontrol edin. [Yükleme ve bağlantı adımları](firmware/deneyap_line/README.md)
-2. **Çizgi sensörünü kalibre edin.** Web arayüzünde **Çizgi sensörü kalibrasyonu → Kalibrasyonu başlat** seçeneğini kullanın. Sensörü çalışma yüksekliğinde tutarak sekiz kanalın tamamını önce beyaz, ardından mat siyah yüzey üzerinde ölçün. Ölçümler kaydedilince **Çizgi izle** modunu deneyin.
-3. **Haritayı oluşturun ve kaydedin.** Varsayılan başlangıçta SLAM açıktır. Robotu **Manuel** modda gezdirin ve **Harita kaydet** panelini kullanın. Kayıtlı haritada hedefe gitmek için `slam_mode:=localization`, uzantısız `map` yolu ve `nav:=true` ile başlatın. [Başlatma ve servis ayarları](docs/native-kurulum.md)
 
 ## Proje belgeleri
 

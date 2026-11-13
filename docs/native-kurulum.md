@@ -8,7 +8,8 @@ yetkili bir kullanıcı. Betikler kullanıcı adından ve repo yolundan bağıms
 
 ## 1. Kurulum
 
-Depoyu klonlamak için [README’deki kurulum adımını](../README.md#gemstone-o1-üzerinde) izleyin.
+Gemstone’un işletim sistemini hazırlamak ve depoyu klonlamak için
+[README’deki ilk iki adımı](../README.md#ilk-kullanım) izleyin.
 
 ```bash
 cd ~/ika-ros
