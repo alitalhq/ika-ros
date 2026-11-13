@@ -1,5 +1,13 @@
 # İKA ROS
 
+<p align="center">
+  <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="240" alt="İKA robotunun tekerlekleri ve lidarı"></a>
+  <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="240" alt="İKA robotunun pili ve kabloları"></a>
+</p>
+<p align="center">
+  <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="240" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
+</p>
+
 İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotunun yazılımıdır. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Aynı ağdaki bir bilgisayardan tarayıcıyla robotu sürebilir, harita çıkarabilir ve çizgi sensörünü kalibre edebilirsiniz.
 
 - **Manuel sürüş** için klavye, ekrandaki yön tuşları veya gamepad kullanılır. Tekerlek hızı enkoderlerle ölçülür, odometri kart üzerindeki IMU ile birleştirilir.
@@ -79,10 +87,6 @@ docker run --rm -p 8000:8000 -p 9090:9090 ika-ros:jazzy ros2 launch ika_bringup 
 ## Donanım ve pin bağlantıları
 
 Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkoderli iki **Waveshare DCGM-3865** motor, **Deneyap Mini v2**, sekiz kanallı analog çizgi sensörü ve **RPLIDAR A1**’dir.
-
-| Çapraz görünüm | Arka görünüm | Ön görünüm |
-| :---: | :---: | :---: |
-| <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="210" alt="İKA robotunun tekerleklerini ve lidarını gösteren çapraz görünüm"></a> | <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="210" alt="İKA robotunun pilini ve kablolarını gösteren arka görünüm"></a> | <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="210" alt="İKA robotunun çizgi sensörünü ve motor sürücüsünü gösteren ön görünüm"></a> |
 
 [![İKA robotunun kablolama şeması. Gemstone O1, L298N, motorlar, enkoderler, Deneyap Mini v2, çizgi sensörü ve lidar.](docs/kablolama.svg)](docs/kablolama.svg)
 
