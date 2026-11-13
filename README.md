@@ -45,7 +45,7 @@ cd ~/ika-ros
 sudo bash deploy/start-native.sh
 ```
 
-Gemstone’da `hostname -I` ile ağ adresini bulun. Aynı ağa bağlı bilgisayarın tarayıcısında `http://<robot-ip>:8000` adresini açın.
+Aynı ağa bağlı bilgisayardan [İKA Kontrol arayüzünü](#web-arayüzü) açın.
 
 ### 5. Çizgi sensörünü kalibre edin ve harita çıkarın
 
@@ -80,6 +80,29 @@ docker run --rm -p 8000:8000 -p 9090:9090 ika-ros:jazzy ros2 launch ika_bringup 
 ```
 
 </details>
+
+## Web arayüzü
+
+[![İKA Kontrol ekranında harita, robot konumu, sürüş, sensör kalibrasyonu ve lidar panelleri](docs/img/ika-web-arayuzu.png)](docs/img/ika-web-arayuzu.png)
+
+*İKA Kontrol ekranı, örnek harita ve sensör verileriyle.*
+
+### Arayüze nasıl bağlanılır?
+
+1. Gemstone’da İKA yazılımını [başlatın](#4-robotu-başlatın-ve-arayüzü-açın). Gemstone terminalinde `hostname -I` komutuyla robotun yerel ağdaki IP adresini öğrenin.
+2. Aynı ağa bağlı bilgisayarda tarayıcıyı açın ve `http://<robot-ip>:8000` adresine gidin. Örneğin robotun IP’si `192.168.1.42` ise adres `http://192.168.1.42:8000` olur.
+3. Sağ üstteki bağlantı göstergesi yeşile dönünce arayüz hazırdır. Gösterge kırmızı kalırsa **robot adresi** alanına Gemstone’un IP’sini yazıp **Bağlan**’a tıklayın. Sayfa `8000`, ROS bağlantısı ise `9090` portunu kullanır. Bağlantı sorunu sürerse [ağ ve servis kontrollerini](docs/wifi.md) izleyin.
+
+### Arayüzden neler yapılır?
+
+| Panel | İşlev |
+| --- | --- |
+| **Mod ve Sürüş** | Boşta, Manuel veya Çizgi izle modunu seçin. Manuel sürüşte ekran tuşlarını, WASD veya ok tuşlarını ya da gamepad’i kullanın. Hızı ve dönüş hızını ayarlayın. |
+| **Harita** | SLAM ile oluşan haritayı ve robotun konumunu izleyin. **Harita kaydet** paneliyle haritayı kaydedin. Nav2 açıkken **Tıkla → hedef** seçeneğiyle harita üzerinden hedef verin. |
+| **Durum ve kalibrasyon** | Hızı, engel mesafesini ve çizgi sensörü ölçümlerini izleyin. Deneyap seri sensörünü beyaz ve siyah yüzeylerle kalibre edin. |
+| **Lidar** | Kablolamaya göre **USB** veya **GPIO (UART)** seçin ve tarama hızını kontrol edin. |
+
+Sürüşü durdurmak için **ACİL DURDUR** düğmesini veya **Boşluk** tuşunu kullanın.
 
 ## Donanım ve pin bağlantıları
 
