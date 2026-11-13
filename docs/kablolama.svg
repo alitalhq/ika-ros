@@ -1,24 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1420" height="1010" viewBox="0 0 1420 1010" font-family="DejaVu Sans, Arial, sans-serif">
 <rect width="1420" height="1010" fill="#fff"/>
 <text x="710.0" y="26" text-anchor="middle" font-size="18" fill="#111" font-weight="700">İKA robotu kablolama şeması</text>
-<text x="710.0" y="46" text-anchor="middle" font-size="11" fill="#555" font-weight="400">Kaynak: src/ika_bringup/config/hardware.yaml (6 Kasım 2026 kablolaması). Sol/sağ: robotun arkasından, çizgi sensörüne (öne) bakarak.</text>
+<text x="710.0" y="46" text-anchor="middle" font-size="11" fill="#555" font-weight="400">Pinler hardware.yaml yapılandırmasına göre gösterilmiştir. Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir.</text>
 <rect x="30" y="62" width="200" height="80" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
 <text x="130.0" y="82" text-anchor="middle" font-weight="700" font-size="14">3S Li-Po</text>
 <text x="130.0" y="99" text-anchor="middle" font-size="11" fill="#555">11.1 V · 4200 mAh · 40C</text>
 <text x="130" y="132" text-anchor="middle" font-size="10" fill="#c62828" font-weight="400">+ düşük gerilim alarmı (balans)</text>
-<rect x="250" y="64" width="130" height="50" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
-<text x="315.0" y="84" text-anchor="middle" font-weight="700" font-size="14">Anahtar + 10 A</text>
-<text x="315.0" y="101" text-anchor="middle" font-size="11" fill="#555">sigorta (önerilir)</text>
+<rect x="250" y="57" width="130" height="51" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
+<text x="315.0" y="77" text-anchor="middle" font-weight="700" font-size="14">Anahtar + 10 A</text>
+<text x="315.0" y="94" text-anchor="middle" font-size="11" fill="#555">sigorta (önerilir)</text>
 <polyline points="230,82 250,82" fill="none" stroke="#c62828" stroke-width="3"/>
-<polyline points="380,82 620,82" fill="none" stroke="#c62828" stroke-width="3"/>
+<rect x="460" y="57" width="140" height="51" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
+<text x="530.0" y="77" text-anchor="middle" font-weight="700" font-size="14">DC regülatör</text>
+<text x="530.0" y="94" text-anchor="middle" font-size="11" fill="#555">J4 için 5–12 V</text>
+<polyline points="380,82 460,82" fill="none" stroke="#c62828" stroke-width="3"/>
 <polyline points="400,82 400,170" fill="none" stroke="#c62828" stroke-width="3"/>
 <circle cx="400" cy="82" r="3.2" fill="#c62828"/>
-<polyline points="620,82 620,150" fill="none" stroke="#c62828" stroke-width="3"/>
+<polyline points="600,82 620,82 620,150" fill="none" stroke="#c62828" stroke-width="3"/>
 <text x="410" y="104" text-anchor="start" font-size="11" fill="#c62828" font-weight="700">+12V</text>
 <text x="630" y="104" text-anchor="start" font-size="11" fill="#c62828" font-weight="700">+</text>
 <polyline points="230,124 245,124 245,132 440,132 440,170" fill="none" stroke="#222" stroke-width="3"/>
 <polyline points="440,132 680,132 680,150" fill="none" stroke="#222" stroke-width="3"/>
 <circle cx="440" cy="132" r="3.2" fill="#222"/>
+<polyline points="530,108 530,132" fill="none" stroke="#222" stroke-width="3"/>
+<circle cx="530" cy="132" r="3.2" fill="#222"/>
 <text x="450" y="154" text-anchor="start" font-size="11" fill="#222" font-weight="700">GND</text>
 <text x="690" y="150" text-anchor="start" font-size="12" fill="#222" font-weight="700">−</text>
 <text x="720" y="76" text-anchor="start" font-size="10" fill="#555" font-weight="400">pilden ayrı kablolar (yıldız bağlantı); L298N girişine 470–1000 µF</text>
@@ -107,13 +112,12 @@
 <text x="998" y="269" text-anchor="start" font-size="11" fill="#222" font-weight="700">GND</text>
 <polyline points="880,265 990,265" fill="none" stroke="#222" stroke-width="2"/>
 <text x="872" y="269" text-anchor="end" font-size="12" fill="#111" font-weight="400">GND  <tspan font-weight="700">6</tspan></text>
-<text x="892" y="223" text-anchor="start" font-size="10" fill="#6a1b9a" font-weight="400">/dev/ttyS3 · 115200</text>
-<text x="892" y="286" text-anchor="start" font-size="10" fill="#555" font-weight="400">çapraz: TX→RX, RX←TX</text>
+<text x="935.0" y="223" text-anchor="middle" font-size="10" fill="#6a1b9a" font-weight="400">/dev/ttyS3</text>
+<text x="935.0" y="286" text-anchor="middle" font-size="10" fill="#555" font-weight="400">115200 baud</text>
 <text x="872" y="324" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-A</text>
 <polyline points="880,320 990,320" fill="none" stroke="#546e7a" stroke-width="3"/>
-<text x="998" y="324" text-anchor="start" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
-<text x="892" y="314" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">besleme + firmware</text>
-<text x="892" y="338" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">(/dev/ttyACM0)</text>
+<text x="998" y="324" text-anchor="start" font-size="12" fill="#546e7a" font-weight="700">Mikro USB</text>
+<text x="892" y="314" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">besleme</text>
 <rect x="1250" y="150" width="150" height="330" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
 <text x="1325.0" y="170" text-anchor="middle" font-weight="700" font-size="14">Çizgi sensörü</text>
 <text x="1325.0" y="187" text-anchor="middle" font-size="11" fill="#555">8 kanal analog</text>
@@ -159,14 +163,14 @@
 <rect x="1250" y="545" width="150" height="62" rx="6" fill="#fafafa" stroke="#444" stroke-width="1.6"/>
 <text x="1325.0" y="565" text-anchor="middle" font-weight="700" font-size="14">RPLIDAR A1</text>
 <text x="1325.0" y="582" text-anchor="middle" font-size="11" fill="#555">yaw ≈ 180°</text>
-<text x="892" y="569" text-anchor="start" font-size="10" fill="#546e7a" font-weight="400">/dev/serial/by-id/*CP210*</text>
+<text x="935.0" y="569" text-anchor="middle" font-size="10" fill="#546e7a" font-weight="400">USB veri hattı</text>
 <text x="872" y="659" text-anchor="end" font-size="12" fill="#546e7a" font-weight="700">USB-C</text>
 <polyline points="880,655 990,655" fill="none" stroke="#546e7a" stroke-width="2" stroke-dasharray="6 4"/>
 <rect x="990" y="627" width="410" height="56" rx="6" fill="#fff" stroke="#444" stroke-width="1.6" stroke-dasharray="6 4"/>
 <text x="1195.0" y="647" text-anchor="middle" font-weight="700" font-size="14">Bilgisayar (isteğe bağlı)</text>
 <text x="1195.0" y="664" text-anchor="middle" font-size="11" fill="#555">ssh gemstone@192.168.7.2 · takılıysa kart USB'den beslenir</text>
 <rect x="900" y="700" width="505" height="205" rx="6" fill="#fffde7" stroke="#444" stroke-width="1.6"/>
-<text x="1152.5" y="720" text-anchor="middle" font-weight="700" font-size="14">Bu robotta boşta / yedek bağlantılar</text>
+<text x="1152.5" y="720" text-anchor="middle" font-weight="700" font-size="14">Alternatif bağlantılar</text>
 <text x="912" y="749" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar</text>
 <text x="912" y="770" text-anchor="start" font-size="11" fill="#333" font-weight="400">pin 18 TX / pin 26 RX (ttyS0) → lidar — yalnız GPIO lidar;</text>
 <text x="912" y="791" text-anchor="start" font-size="11" fill="#333" font-weight="400">   overlay: ika-bt-off + uart-ttys0, spidev0-2cs yerine 1cs</text>
@@ -195,6 +199,6 @@
 <polyline points="450,866 476,866" fill="none" stroke="#795548" stroke-width="3"/>
 <text x="482" y="870" text-anchor="start" font-size="11" fill="#111" font-weight="400">Motor</text>
 <text x="30" y="924" text-anchor="start" font-size="10" fill="#555" font-weight="400">Pin numarası = Gemstone 40 pin header'daki fiziksel numara (kalın). Kesik çizgi: isteğe bağlı/önerilen.</text>
-<text x="30" y="940" text-anchor="start" font-size="10" fill="#555" font-weight="400">Gemstone DC girişi: resmi 5–12 V; v0.2 şemasında eFuse ~14.7 V'ta keser, dolu 3S (12.6 V) güvenli. Pili Type-C'ye asla bağlamayın.</text>
+<text x="30" y="940" text-anchor="start" font-size="10" fill="#555" font-weight="400">Tam dolu 3S pil 12,6 V’a ulaşır. Gemstone J4 için üreticinin 5–12 V giriş aralığına uygun regüle besleme kullanın.</text>
 <text x="30" y="956" text-anchor="start" font-size="10" fill="#555" font-weight="400">Bkz. docs/donanim.md (pin tablosu) ve docs/guvenlik.md (pil güvenliği).</text>
 </svg>

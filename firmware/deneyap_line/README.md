@@ -8,16 +8,17 @@ siyah/beyaz kalibrasyonu Gemstone'da saklanır.
 ## Arduino IDE ile Mini v2'ye yükleme
 
 1. Bağlantıları değiştirmeden önce gücü kapatın. Yükleme sırasında Gemstone'a
-   giden TX/RX kablolarını çıkarın; Mini v2'yi veri taşıyan USB kablosuyla PC'ye bağlayın.
+   giden TX/RX kablolarını çıkarın ve Mini v2’yi veri aktarabilen bir Mikro USB kablosuyla bilgisayara bağlayın.
 2. Arduino IDE tercihlerindeki ek kart yöneticisi URL'lerine
    `https://raw.githubusercontent.com/deneyapkart/deneyapkart-arduino-core/master/package_deneyapkart_index.json`
    ekleyin. Kart yöneticisinden **Deneyap Gelistirme Kartlari 2.1.1** kurun.
 3. `deneyap_line` klasöründeki **deneyap_line.ino** dosyasını açın.
-4. Kartı **Deneyap Mini v2**, **USB CDC On Boot: Enabled** seçin ve Mini'nin
-   COM portunu seçerek **Yükle** düğmesine basın. Kart 1A v2 seçmeyin: Mini v2
-   ESP32-S2, Kart 1A v2 ESP32-S3 kullanır; ikili dosyaları farklıdır.
-5. Bağlanamıyorsa BUTTON/BOOT basılıyken RESET'e basıp bırakın, sonra BUTTON'ı
-   bırakın. Bootloader'ın COM portu değişebilir; yeni portu seçip tekrar yükleyin.
+4. **Deneyap Mini v2** kartını seçin. **Upload Mode** ayarını **Internal USB**,
+   **USB CDC On Boot** ayarını **Enabled** yapın. Mini v2’nin portunu seçip
+   **Yükle** düğmesine basın.
+5. Port görünmüyorsa **BUT** tuşunu basılı tutarken **RES** tuşuna basıp bırakın,
+   ardından **BUT** tuşunu bırakın. Yükleme modunda görünen yeni portu seçip
+   yeniden deneyin. [Deneyap Mini v2 sorun giderme kılavuzu](https://deneyapkart.org/docs/sorun-giderme-dymv2)
 6. Seri monitörü **115200 baud** açın. Beklenen çıktı:
 
    ```json
@@ -29,8 +30,8 @@ Yükleme sonrası yazılım başlamazsa RESET'e bir kez basın.
 
 ## Mini v2 bağlantıları
 
-Kablo değişiminde iki kartın da gücünü kapatın. Sensördeki **3.3V köprüsü
-kapalıysa VCC yalnız 3V3'e** bağlanır.
+Kabloları değiştirmeden önce iki kartın da gücünü kapatın. Sensörün
+**VCC ucunu 3V3’e** bağlayın ve kart üzerindeki **3.3V** köprüsünü lehimleyin.
 
 | Sensör | Mini v2 | GPIO |
 |---|---|---|
@@ -53,8 +54,8 @@ kapalıysa VCC yalnız 3V3'e** bağlanır.
 
 Sensörün **D1–D8** çıkışları Mini'nin **A0–A7** girişlerine gider; Mini'nin
 D1 pini burada sensör girişi değil, Gemstone'a giden UART TX pinidir.
-Mini'yi USB girişinden besleyin. Bu firmware'in Gemstone veri yolu UART'tır;
-USB kablosu tek başına mevcut `/dev/ttyS3` sürücüsüne veri iletmez.
+Mini v2’yi Mikro USB girişinden besleyin. Robot çalışırken ölçümler Gemstone’a
+UART üzerinden iletilir.
 
 Gemstone'da `type: serial`, `serial.port: /dev/ttyS3`, `serial.baudrate: 115200`
 olmalı. Arayüzde **Çizgi sensörü kalibrasyonu → Kalibrasyonu başlat → Beyaz

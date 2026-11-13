@@ -78,17 +78,10 @@ Bu sayfadaki kurallar robotla çalışan herkes içindir.
 - Pilde bir **ana anahtar ve sigorta** (ör. 10 A bıçak sigorta) olması
   önerilir. 40C pil kısa devrede 150 A'in üstünde akım verebilir; kablo ve
   L298N yanmadan önce sigorta atar.
-- **Gemstone pilden doğrudan beslenebilir, ama yalnızca DC güç girişinden**
-  (şemada J4, "Optional Power Input"). Resmi değer 5–12 V / 5 A; dolu 3S
-  12.6 V ile bunun biraz üstündedir ama donanım payın içindedir
-  (t3-gem-o1 v0.2 şeması ve TI veri sayfalarına göre):
-  - Girişteki eFuse (IC4, TPS259470A) aşırı gerilim kesmesi R26 = 1 MΩ /
-    R29 = 88.7 kΩ ile **~14.7 V'ta** keser (eşik 1.183–1.223 V → 14.5–15.0 V),
-    13.4 V'un altına inince yeniden açar. eFuse'un kendisi 23 V'a kadar
-    çalışır.
-  - Arkadaki 5 V düşürücü (TPS62180) 4–15 V aralığında çalışır, mutlak
-    sınırı 17 V'tur.
-  - Kartınızın revizyonu farklıysa şemasına bakın.
+- **Gemstone’un J4 DC güç girişini 5–12 V aralığında besleyin.** Tam dolu
+  3S pil 12,6 V’a ulaşır. Gemstone’u bu pilden beslemek için J4’e,
+  kartın akım ihtiyacını karşılayan uygun bir DC regülatör üzerinden girin.
+  [T3 Gemstone O1 teknik özellikleri](https://t3gemstone.org/tr/products/o1)
 - **Pili Type-C girişine asla vermeyin.** Type-C 5–9 V içindir; o hattın
   eFuse'u (IC3, R16 = 1 MΩ / R22 = 133 kΩ) ~10.2 V'ta keser.
 - Pil takılıyken Type-C de bağlanabilir: kart iki eFuse ile öncelikli güç

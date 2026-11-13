@@ -19,18 +19,19 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 | ICM-20948 IMU | kart üzerinde, SPI `/dev/spidev0.3` | `ika_imu` |
 | RPLIDAR A1 | USB adaptör (varsayılan) **veya** UART `/dev/ttyS0` (pin 18/26) + motor PWM | `sllidar_ros2`, `ika_hal` |
 | 8 kanallı çizgi sensörü ("8路寻线模块", QTR-8 benzeri, analog çıkış) | Deneyap Mini v2 (bu robotta; 1A v2 de olur) ADC → UART `/dev/ttyS3` (varsayılan) **veya** 8 × GPIO | `ika_line` |
-| 3S Li-Po (11.1 V, 4200 mAh, 40C) | L298N +12V ve Gemstone DC girişi (J4); tüm GND'ler ortak | — |
+| 3S Li-Po (11,1 V, 4200 mAh, 40C) | L298N beslemesi. Gemstone J4 için üretici sınırlarına uygun, regüle DC besleme. Tüm GND uçları ortak. | — |
 
 ## Kablolama şeması
 
 ![Kablolama şeması](kablolama.svg)
 
-Şema `hardware.yaml` ile birebir aynıdır (6 Kasım 2026 kablolaması). Pil
-güvenliği ve Gemstone'un pilden beslenmesi: [guvenlik.md](guvenlik.md).
+Sinyal bağlantıları `hardware.yaml` yapılandırmasını gösterir. Gemstone’un
+besleme sınırları için [pil ve kullanım güvenliği kılavuzuna](guvenlik.md) bakın.
 
-## 40 pin header
+## 40 pinli konnektör
 
-Fiziksel pin = kart üzerindeki numara.
+[40 pin yerleşim görseli](img/pinout.svg). Tablodaki pin numaraları kart
+üzerindeki fiziksel numaralardır.
 
 **Sol/sağ** robotun arkasından, çizgi sensörünün olduğu öne bakarak söylenir.
 Şemadaki Motor 1 (L298N OUT1/OUT2) robotun **sağ**, Motor 2 (OUT3/OUT4) **sol**
@@ -84,42 +85,29 @@ Karşılaştırıcı yoktur, çıkış analogdur. Kart zemine **3–6 mm** mesaf
 
 İki bağlantı vardır, `hardware.yaml` → `line_sensor_node.type` ile seçilir.
 
-#### Deneyap Kart 1A v2 üzerinden (varsayılan, `type: serial`)
+#### Deneyap Mini v2 üzerinden (varsayılan, `type: serial`)
 
-Sensör Deneyap'ın analog girişlerine bağlanır; kart 8 kanalı milivolt olarak
-okuyup Gemstone'un UART'ına saniyede 50 kez gönderir
-([`firmware/deneyap_line`](../firmware/deneyap_line/deneyap_line.ino)).
-Her iki kart da 3.3 V lojiktir, arada seviye dönüştürücü gerekmez.
+Mini v2, sekiz analog kanalı milivolt cinsinden okur ve Gemstone’un
+`/dev/ttyS3` UART hattına 115200 baud ile saniyede yaklaşık 50 ölçüm gönderir.
+Her iki kartın UART hatları 3,3 V lojik seviyesi kullanır.
 
-**Deneyap Mini v2** de aynı kaynak kodla kullanılabilir; Arduino'da **Deneyap
-Mini v2** seçilerek yeniden derlenmelidir. ADC pin eşlemesi farklıdır; sensör
-D1–D8 yine A0–A7'ye gider. Mini v2'de UART **TX=D1, RX=D0** etiketlidir.
-[Mini v2 yükleme ve bağlantı yönergesi](../firmware/deneyap_line/README.md).
-
-| Deneyap Kart 1A v2 | Bağlantı |
+| Deneyap Mini v2 | Bağlantı |
 |---|---|
-| **TX** (GPIO43) | Gemstone pin 10 (GPIO15, UART RX) |
-| **RX** (GPIO44) | Gemstone pin 8 (GPIO14, UART TX) |
+| **TX / D1** (GPIO43) | Gemstone pin 10 (GPIO15, UART RX) |
+| **RX / D0** (GPIO44) | Gemstone pin 8 (GPIO14, UART TX) |
 | **GND** | Gemstone pin 6 |
 | **3V3** | sensör VCC ve IR |
 | **GND** | sensör GND |
-| **A0 … A7** | sensör D1 … D8 (ESP32-S3 GPIO 4, 5, 6, 7, 15, 16, 17, 18) |
+| **A0 … A7** | sensör D1 … D8 (ESP32-S2 GPIO 7, 8, 9, 10, 11, 12, 13, 16) |
 
-- TX karşıdakinin RX'ine gider (çapraz). Ortak GND şart.
-- **Besleme:** Deneyap, USB-C kablosuyla Gemstone'un USB portundan beslenir; veri
-  yine UART'tan akar (USB ayrıca firmware yüklemek ve `Serial` monitör içindir).
-  Kartın üreticiye göre tek besleme girişleri USB ve Li-Po konnektörüdür:
-  **5V** ve **3V3** pinleri çıkıştır, **VBAT** pil voltajını verir, **BAT** (A8)
-  pil voltajını ölçen analog giriştir. Bu pinlerin hiçbirine Gemstone'dan
-  besleme vermeyin
-  ([Deneyap 1A v2 pin tanımları](https://docs.deneyapkart.org/en/Cards/Deneyap-Kart-1A-v2/Pin-Definitions-dy1Av2.md)).
-- pin 8/10 Deneyap'ındır; GPIO lidar ikinci UART'ı (pin 18/26, `/dev/ttyS0`)
-  kullanır, bkz. [Lidar bağlantısı](#lidar-bağlantısı-usb-veya-gpio). İkisi aynı
-  porta ayarlanırsa (`gpio.port` = `serial.port`) GPIO lidar başlatılmaz.
+- Mini v2’yi Gemstone’un USB-A portundan Mikro USB kablosuyla besleyin.
+  Sinyal bağlantısında TX ile RX’i çaprazlayın ve GND uçlarını birleştirin.
+- Doğrudan bağlı lidar, pin 18 ve 26’daki ayrı UART’ı (`/dev/ttyS0`) kullanır.
+  [Lidar bağlantı seçenekleri](#lidar-bağlantısı-usb-veya-gpio)
 
-Firmware yükleme (Arduino IDE): kart paketi **deneyap:esp32 2.1.1**, kart
-**Deneyap Kart 1A v2**, *USB CDC On Boot: Enabled*. Kart yüklemeye girmezse
-BUTTON basılıyken RESET'e basıp bırakın, sonra BUTTON'ı bırakın.
+[Mini v2 yazılımını yükleme](../firmware/deneyap_line/README.md). Aynı kaynak kod
+Deneyap Kart 1A v2 için de derlenebilir. Bu durumda Arduino IDE’de ilgili kartı
+seçin ve o kartın pin etiketlerini izleyin.
 
 **Kalibrasyon** (robot çalışırken, robot `idle` modda). Kanal başına eşik beyaz ve
 siyah ölçümün ortasıdır; kalibrasyon olmadan hiçbir kanal çizgi görmez.
@@ -283,5 +271,5 @@ ve log'a uyarı yazar.
 - 3S pil dolu iken 12.6 V'tur; L298N ~2 V düşürür, motorlar anma geriliminin
   biraz altında çalışır. `max_wheel_speed`'i `hw_check sweep` ile ölçün.
 - Batarya, L298N, Gemstone ve enkoder GND'leri ortak (şemadaki gibi).
-- Gemstone pilden DC girişinden (J4) beslenir, asla Type-C'den değil
-  ([guvenlik.md](guvenlik.md)).
+- Gemstone’un J4 girişini üreticinin belirttiği 5–12 V aralığında besleyin.
+  [Pil ve kullanım güvenliği](guvenlik.md)

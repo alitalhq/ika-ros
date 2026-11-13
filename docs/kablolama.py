@@ -21,21 +21,23 @@ def dot(x,y,col): a(f'<circle cx="{x}" cy="{y}" r="3.2" fill="{col}"/>')
 a(f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" font-family="DejaVu Sans, Arial, sans-serif">')
 a(f'<rect width="{W}" height="{H}" fill="#fff"/>')
 t(W/2,22,'İKA robotu kablolama şeması','middle',18,w='700')
-t(W/2,42,'Kaynak: src/ika_bringup/config/hardware.yaml (6 Kasım 2026 kablolaması). Sol/sağ: robotun arkasından, çizgi sensörüne (öne) bakarak.','middle',11,'#555')
+t(W/2,42,'Pinler hardware.yaml yapılandırmasına göre gösterilmiştir. Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir.','middle',11,'#555')
 
 GX,GY,GW,GH=560,150,320,740
 # --- güç
 box(30,62,200,80,'3S Li-Po','11.1 V · 4200 mAh · 40C')
 t(130,128,'+ düşük gerilim alarmı (balans)','middle',10,'#c62828')
-box(250,64,130,50,'Anahtar + 10 A','sigorta (önerilir)',dash=True,fill='#fff')
+box(250,57,130,51,'Anahtar + 10 A','sigorta (önerilir)',dash=True,fill='#fff')
 line([(230,82),(250,82)],C['pwr'],3)
-line([(380,82),(620,82)],C['pwr'],3)
+box(460,57,140,51,'DC regülatör','J4 için 5–12 V')
+line([(380,82),(460,82)],C['pwr'],3)
 line([(400,82),(400,170)],C['pwr'],3); dot(400,82,C['pwr'])
-line([(620,82),(620,GY)],C['pwr'],3)
+line([(600,82),(620,82),(620,GY)],C['pwr'],3)
 t(410,100,'+12V','start',11,C['pwr'],'700')
 t(630,100,'+','start',11,C['pwr'],'700')
 line([(230,124),(245,124),(245,132),(440,132),(440,170)],C['gnd'],3)
 line([(440,132),(680,132),(680,GY)],C['gnd'],3); dot(440,132,C['gnd'])
+line([(530,108),(530,132)],C['gnd'],3); dot(530,132,C['gnd'])
 t(450,150,'GND','start',11,C['gnd'],'700'); t(690,146,'−','start',12,C['gnd'],'700')
 t(720,72,'pilden ayrı kablolar (yıldız bağlantı); L298N girişine 470–1000 µF','start',10,'#555')
 
@@ -78,11 +80,10 @@ R=[(205,'RX · D0 (GPIO44)','8','UART TX · GPIO14',C['uart']),(235,'TX · D1 (G
 for y,n,p,g,c in R:
     t(DX+8,y,n,'start',11,c,'700'); line([(GX+GW,y),(DX,y)],c)
     t(GX+GW-8,y,f'{g}  <tspan font-weight="700">{p}</tspan>','end',12)
-t(GX+GW+12,219,'/dev/ttyS3 · 115200','start',10,C['uart'])
-t(GX+GW+12,282,'çapraz: TX→RX, RX←TX','start',10,'#555')
+t((GX+GW+DX)/2,219,'/dev/ttyS3','middle',10,C['uart'])
+t((GX+GW+DX)/2,282,'115200 baud','middle',10,'#555')
 y=320; t(GX+GW-8,y,'USB-A','end',12,C['usb'],'700'); line([(GX+GW,y),(DX,y)],C['usb'],3)
-t(DX+8,y,'USB-C','start',12,C['usb'],'700'); t(GX+GW+12,y-10,'besleme + firmware','start',10,C['usb'])
-t(GX+GW+12,y+14,'(/dev/ttyACM0)','start',10,C['usb'])
+t(DX+8,y,'Mikro USB','start',12,C['usb'],'700'); t(GX+GW+12,y-10,'besleme','start',10,C['usb'])
 # line sensor
 SX,SY,SW,SH=1250,150,150,330
 box(SX,SY,SW,SH,'Çizgi sensörü','8 kanal analog')
@@ -104,7 +105,7 @@ t(GX+GW-8,y,'USB-A','end',12,C['usb'],'700'); line([(GX+GW,y),(DX,y)],C['usb'],3
 box(DX,545,DW,62,'CP210x adaptör','lidarın kendi kartı')
 line([(DX+DW,y),(SX,y)],'#555',4)
 box(SX,545,SW,62,'RPLIDAR A1','yaw ≈ 180°')
-t(GX+GW+12,y-10,'/dev/serial/by-id/*CP210*','start',10,C['usb'])
+t((GX+GW+DX)/2,y-10,'USB veri hattı','middle',10,C['usb'])
 
 # PC usb-c
 y=655
@@ -112,7 +113,7 @@ t(GX+GW-8,y,'USB-C','end',12,C['usb'],'700'); line([(GX+GW,y),(DX,y)],C['usb'],2
 box(DX,627,SX+SW-DX,56,'Bilgisayar (isteğe bağlı)','ssh gemstone@192.168.7.2 · takılıysa kart USB\'den beslenir',dash=True,fill='#fff')
 
 # reserved
-box(GX+GW+20,700,505,205,'Bu robotta boşta / yedek bağlantılar',None,fill='#fffde7')
+box(GX+GW+20,700,505,205,'Alternatif bağlantılar',None,fill='#fffde7')
 rows=['pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar',
       'pin 18 TX / pin 26 RX (ttyS0) → lidar — yalnız GPIO lidar;',
       '   overlay: ika-bt-off + uart-ttys0, spidev0-2cs yerine 1cs',
@@ -129,7 +130,7 @@ for i,(n,c) in enumerate(items):
     x=lx+(i%5)*105; yy=ly+(i//5)*26
     line([(x,yy),(x+26,yy)],c,3); t(x+32,yy,n,'start',11)
 t(30,920,'Pin numarası = Gemstone 40 pin header\'daki fiziksel numara (kalın). Kesik çizgi: isteğe bağlı/önerilen.','start',10,'#555')
-t(30,936,'Gemstone DC girişi: resmi 5–12 V; v0.2 şemasında eFuse ~14.7 V\'ta keser, dolu 3S (12.6 V) güvenli. Pili Type-C\'ye asla bağlamayın.','start',10,'#555')
+t(30,936,'Tam dolu 3S pil 12,6 V’a ulaşır. Gemstone J4 için üreticinin 5–12 V giriş aralığına uygun regüle besleme kullanın.','start',10,'#555')
 t(30,952,'Bkz. docs/donanim.md (pin tablosu) ve docs/guvenlik.md (pil güvenliği).','start',10,'#555')
 a('</svg>')
 open(sys.argv[1],'w').write('\n'.join(o))
