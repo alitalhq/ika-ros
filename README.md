@@ -114,21 +114,7 @@ Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkod
 
 [![Lidar ve güç bağlantıları](docs/img/kablolama/lidar-ve-guc.png)](docs/img/kablolama/lidar-ve-guc.png)
 
-[Fotoğraflı HTML şeması](docs/kablolama.html) · [Gemstone O1 40 pin yerleşimi](docs/img/pinout.svg) · [Kablolama tablosu ve donanım ayarları](docs/donanim.md) · [Yazılımdaki pin yapılandırması](src/ika_bringup/config/hardware.yaml)
-
-Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel numaralardır**. Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir.
-
-| Bileşen | Gemstone bağlantısı |
-| --- | --- |
-| L298N, sağ motor | IN1 → 15, IN2 → 11, ENA → 32 |
-| L298N, sol motor | IN3 → 37, IN4 → 22, ENB → 33 |
-| Sağ enkoder | C1 → 7, C2 → 29, 3,3 V → 1 |
-| Sol enkoder | C1 → 13, C2 → 16, 3,3 V → 17 |
-| Deneyap Mini v2 | 5V → Gemstone 5 V (şemada pin 2), GND → 6, TX (D1) → 10, RX (D0) → 8. Veri hattı `/dev/ttyS3`, 115200 baud. |
-| RPLIDAR A1, varsayılan | Kendi USB adaptörüyle Gemstone’a bağlanır. |
-| RPLIDAR A1, doğrudan UART | TX → 26, RX → 18, MOTOCTL → 12. Veri hattı `/dev/ttyS0`. [Gerekli donanım ayarları](docs/donanim.md#lidar-bağlantısı-usb-veya-gpio). |
-
-Çizgi sensörünün D1–D8 çıkışlarını sırasıyla **Mini v2’nin A0–A7** girişlerine bağlayın. Sensörü 3,3 V ile besleyin ve üzerindeki `3.3V` köprüsünü kontrol edin. Ortak GND ve PWM bağlantıları için tam şemayı izleyin.
+[Kablolama şemasını PDF olarak aç](docs/ika-kablolama.pdf)
 
 ## Proje belgeleri
 
@@ -141,5 +127,3 @@ Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel
 ## Lisans
 
 [Apache-2.0](LICENSE). ICM-20948 sürücüsünün kaynak dosyaları T3 Foundation’a aittir ve Apache-2.0 lisansıyla dağıtılır.
-
-[Kablolama şemasını PDF olarak indir](docs/ika-kablolama.pdf)
