@@ -2,9 +2,9 @@
 
 İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotunun yazılımıdır. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Aynı ağdaki bir bilgisayardan tarayıcıyla robotu sürebilir, harita çıkarabilir ve çizgi sensörünü kalibre edebilirsiniz.
 
-- **Manuel sürüş** — Klavye, ekrandaki yön tuşları veya gamepad ile kontrol. Tekerlek hızı enkoderlerle ölçülür, odometri kart üzerindeki IMU ile birleştirilir.
-- **Çizgi izleme** — Sekiz kanallı analog sensör Deneyap Mini v2 üzerinden okunur. Beyaz ve siyah zemin ölçümleri web arayüzünden kaydedilir.
-- **Haritalama ve navigasyon** — RPLIDAR A1 ile harita çıkarılır ve kaydedilir. Nav2 etkinleştirildiğinde harita üzerinden hedef verilebilir.
+- **Manuel sürüş** için klavye, ekrandaki yön tuşları veya gamepad kullanılır. Tekerlek hızı enkoderlerle ölçülür, odometri kart üzerindeki IMU ile birleştirilir.
+- **Çizgi izleme** için sekiz kanallı analog sensör Deneyap Mini v2 üzerinden okunur. Beyaz ve siyah zemin ölçümleri web arayüzünden kaydedilir.
+- **Haritalama ve navigasyon** için RPLIDAR A1 kullanılır. Harita kaydedilebilir ve Nav2 etkinleştirildiğinde harita üzerinden hedef verilebilir.
 
 ## İlk kullanım
 
@@ -82,7 +82,7 @@ Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkod
 
 | Çapraz görünüm | Arka görünüm | Ön görünüm |
 | :---: | :---: | :---: |
-| <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="150" alt="İKA robotunun tekerleklerini ve lidarını gösteren çapraz görünüm"></a> | <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="150" alt="İKA robotunun pilini ve kablolarını gösteren arka görünüm"></a> | <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="150" alt="İKA robotunun çizgi sensörünü ve motor sürücüsünü gösteren ön görünüm"></a> |
+| <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="210" alt="İKA robotunun tekerleklerini ve lidarını gösteren çapraz görünüm"></a> | <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="210" alt="İKA robotunun pilini ve kablolarını gösteren arka görünüm"></a> | <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="210" alt="İKA robotunun çizgi sensörünü ve motor sürücüsünü gösteren ön görünüm"></a> |
 
 [![İKA robotunun kablolama şeması. Gemstone O1, L298N, motorlar, enkoderler, Deneyap Mini v2, çizgi sensörü ve lidar.](docs/kablolama.svg)](docs/kablolama.svg)
 
