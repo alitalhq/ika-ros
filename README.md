@@ -108,9 +108,9 @@ Sürüşü durdurmak için **ACİL DURDUR** düğmesini veya **Boşluk** tuşunu
 
 Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkoderli iki **Waveshare DCGM-3865** motor, **Deneyap Mini v2**, sekiz kanallı analog çizgi sensörü ve **RPLIDAR A1**’dir.
 
-[![İKA robotunun kablolama şeması. Gemstone O1, L298N, motorlar, enkoderler, Deneyap Mini v2, çizgi sensörü ve lidar.](docs/kablolama.svg)](docs/kablolama.svg)
+[![Kart fotoğrafları üzerinde İKA robotunun motor, enkoder, çizgi sensörü, lidar ve güç bağlantıları](docs/img/ika-kablolama.png)](docs/img/ika-kablolama.png)
 
-[Gemstone O1 40 pin yerleşimi](docs/img/pinout.svg) · [Kablolama tablosu ve donanım ayarları](docs/donanim.md) · [Yazılımdaki pin yapılandırması](src/ika_bringup/config/hardware.yaml)
+[Fotoğraflı HTML şeması](docs/kablolama.html) · [Gemstone O1 40 pin yerleşimi](docs/img/pinout.svg) · [Kablolama tablosu ve donanım ayarları](docs/donanim.md) · [Yazılımdaki pin yapılandırması](src/ika_bringup/config/hardware.yaml)
 
 Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel numaralardır**. Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir.
 
@@ -120,7 +120,7 @@ Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel
 | L298N, sol motor | IN3 → 37, IN4 → 22, ENB → 33 |
 | Sağ enkoder | C1 → 7, C2 → 29, 3,3 V → 1 |
 | Sol enkoder | C1 → 13, C2 → 16, 3,3 V → 17 |
-| Deneyap Mini v2 | TX (D1) → 10, RX (D0) → 8, GND → 6. Veri hattı `/dev/ttyS3`, 115200 baud. Mini v2, Mikro USB üzerinden beslenir. |
+| Deneyap Mini v2 | 5V → Gemstone 5 V (şemada pin 2), GND → 6, TX (D1) → 10, RX (D0) → 8. Veri hattı `/dev/ttyS3`, 115200 baud. |
 | RPLIDAR A1, varsayılan | Kendi USB adaptörüyle Gemstone’a bağlanır. |
 | RPLIDAR A1, doğrudan UART | TX → 26, RX → 18, MOTOCTL → 12. Veri hattı `/dev/ttyS0`. [Gerekli donanım ayarları](docs/donanim.md#lidar-bağlantısı-usb-veya-gpio). |
 

@@ -82,8 +82,8 @@ for y,n,p,g,c in R:
     t(GX+GW-8,y,f'{g}  <tspan font-weight="700">{p}</tspan>','end',12)
 t((GX+GW+DX)/2,219,'/dev/ttyS3','middle',10,C['uart'])
 t((GX+GW+DX)/2,282,'115200 baud','middle',10,'#555')
-y=320; t(GX+GW-8,y,'USB-A','end',12,C['usb'],'700'); line([(GX+GW,y),(DX,y)],C['usb'],3)
-t(DX+8,y,'Mikro USB','start',12,C['usb'],'700'); t(GX+GW+12,y-10,'besleme','start',10,C['usb'])
+y=320; t(GX+GW-8,y,'Pin 2 · 5V','end',12,C['pwr'],'700'); line([(GX+GW,y),(DX,y)],C['pwr'],3)
+t(DX+8,y,'5V','start',12,C['pwr'],'700'); t(GX+GW+12,y-10,'besleme','start',10,C['pwr'])
 # line sensor
 SX,SY,SW,SH=1250,150,150,330
 box(SX,SY,SW,SH,'Çizgi sensörü','8 kanal analog')
@@ -117,7 +117,7 @@ box(GX+GW+20,700,505,205,'Alternatif bağlantılar',None,fill='#fffde7')
 rows=['pin 12 · GPIO18 (ecap2) → lidar MOTOCTL — yalnız GPIO lidar',
       'pin 18 TX / pin 26 RX (ttyS0) → lidar — yalnız GPIO lidar;',
       '   overlay: ika-bt-off + uart-ttys0, spidev0-2cs yerine 1cs',
-      'pin 2, 4 · 5V → lidar V5/VMOTO — yalnız GPIO lidar',
+      'Ortak 5V hattı (pin 2, 4) → V5/VMOTO — yalnız GPIO lidar',
       'type: digital çizgi: D1…D8 → pin 40, 31, 35, 3, 36, 38, 24, 5',
       '   (pin 3/5 için i2c1 overlay\'i kapalı olmalı)',
       'Pin 37 artık L298N IN3; eski şemadaki pin 18 lidara verildi.']

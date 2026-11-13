@@ -23,10 +23,11 @@ ros2 run ika_base hw_check pins --config <hardware.yaml>
 
 ## Kablolama şeması
 
-![Kablolama şeması](kablolama.svg)
+[![Kart fotoğraflarıyla İKA kablolama şeması](img/ika-kablolama.png)](img/ika-kablolama.png)
 
 Sinyal bağlantıları `hardware.yaml` yapılandırmasını gösterir. Gemstone’un
 besleme sınırları için [pil ve kullanım güvenliği kılavuzuna](guvenlik.md) bakın.
+[HTML kaynak dosyası](kablolama.html) · [Blok şema](kablolama.svg)
 
 ## 40 pinli konnektör
 
@@ -42,7 +43,7 @@ birlikte) yer değiştirir; doğrulamak için `hw_check motors` önce `left`'i d
 | Pin | Sinyal | Bağlantı | `hardware.yaml` |
 |---|---|---|---|
 | 1 | 3V3 | Motor 1 enkoder VCC | — |
-| 2, 4 | 5V | Lidar V5 ve VMOTO (yalnız GPIO lidar) | — |
+| 2, 4 | 5V | Deneyap Mini v2 5V (şemada pin 2). GPIO lidar için V5 ve VMOTO aynı 5 V hattını kullanır. | — |
 | 3 | GPIO2 | Çizgi D4 (yalnız `type: digital`, i2c1 overlay'i kapalıyken) | `pins[3]` |
 | 5 | GPIO3 | Çizgi D8 (〃) | `pins[7]` |
 | 6 | GND | ortak GND, Deneyap GND | — |
@@ -96,12 +97,16 @@ Her iki kartın UART hatları 3,3 V lojik seviyesi kullanır.
 | **TX / D1** (GPIO43) | Gemstone pin 10 (GPIO15, UART RX) |
 | **RX / D0** (GPIO44) | Gemstone pin 8 (GPIO14, UART TX) |
 | **GND** | Gemstone pin 6 |
+| **5V** | Gemstone 5 V (şemada pin 2) |
 | **3V3** | sensör VCC ve IR |
 | **GND** | sensör GND |
 | **A0 … A7** | sensör D1 … D8 (ESP32-S2 GPIO 7, 8, 9, 10, 11, 12, 13, 16) |
 
-- Mini v2’yi Gemstone’un USB-A portundan Mikro USB kablosuyla besleyin.
-  Sinyal bağlantısında TX ile RX’i çaprazlayın ve GND uçlarını birleştirin.
+- Mini v2’nin **5V** pinini Gemstone’un **5 V** pinine bağlayın. Sinyal
+  bağlantısında TX ile RX’i çaprazlayın ve GND uçlarını birleştirin.
+  Mini v2’nin 5V pini USB besleme hattına bağlıdır. Programlamak için Mini v2’yi
+  bilgisayara USB ile bağlamadan önce Gemstone’dan gelen 5 V hattını ayırın.
+  [Deneyap Mini v2 pin tanımları](https://docs.deneyapkart.org/tr/Cards/Deneyap-Mini-v2/Pin-Definitions-dymv2)
 - Doğrudan bağlı lidar, pin 18 ve 26’daki ayrı UART’ı (`/dev/ttyS0`) kullanır.
   [Lidar bağlantı seçenekleri](#lidar-bağlantısı-usb-veya-gpio)
 
@@ -186,7 +191,7 @@ UART'a (UART-WKUP0, `/dev/ttyS0`) bağlanır; pin 8/10'daki UART Deneyap'ındır
 
 | Lidar | Gemstone |
 |---|---|
-| V5, VMOTO | pin 2, pin 4 (5V) |
+| V5, VMOTO | Gemstone 5 V hattı (pin 2 ve 4). Mini v2 ile aynı besleme hattını kullanıyorsanız uygun bir dağıtım bağlantısı yapın. |
 | GND (ikisi) | herhangi bir GND |
 | TX | pin 26 (GPIO7, UART-WKUP0 RX) |
 | RX | pin 18 (GPIO24, UART-WKUP0 TX) |

@@ -10,8 +10,9 @@ siyah/beyaz kalibrasyonu Gemstone'da saklanır.
 1. Bilgisayarınıza **Deneyap Kart IDE**’yi kurun. İlk açılışta **Geliştirme Ortamı
    Hazırlanıyor** ekranındaki indirmelerin tamamlanmasını bekleyin.
    [Deneyap Kart IDE kurulum kılavuzu](https://docs.deneyapkart.org/tr/IDE/Deneyap-Kart-IDE-Setup)
-2. Bağlantıları değiştirmeden önce gücü kapatın. Yükleme sırasında Gemstone’a
-   giden TX/RX kablolarını çıkarın ve Mini v2’yi veri aktarabilen bir Mikro USB kablosuyla bilgisayara bağlayın.
+2. Bağlantıları değiştirmeden önce gücü kapatın. Gemstone’dan gelen 5 V, TX ve
+   RX kablolarını ayırın. Mini v2’yi kartın USB soketine uygun, veri
+   aktarabilen bir kabloyla bilgisayara bağlayın.
 3. **Ayarlar → Dosya Aç** ile [`deneyap_line.ino`](deneyap_line.ino) dosyasını açın.
    Üst araç çubuğunda **Deneyap Mini v2** kartını seçin.
 4. **Araçlar** menüsünde **Upload Mode** ayarını **Internal USB**, **USB CDC On
@@ -56,11 +57,13 @@ Kabloları değiştirmeden önce iki kartın da gücünü kapatın. Sensörün
 | TX / D1 (GPIO43) | Fiziksel pin 10, GPIO15, RX |
 | RX / D0 (GPIO44) | Fiziksel pin 8, GPIO14, TX |
 | GND | Fiziksel pin 6, GND |
+| 5V | Gemstone 5 V (şemada fiziksel pin 2) |
 
 Sensörün **D1–D8** çıkışları Mini'nin **A0–A7** girişlerine gider; Mini'nin
 D1 pini burada sensör girişi değil, Gemstone'a giden UART TX pinidir.
-Mini v2’yi Mikro USB girişinden besleyin. Robot çalışırken ölçümler Gemstone’a
-UART üzerinden iletilir.
+Robot çalışırken Mini v2, Gemstone’un 5 V hattından beslenir ve ölçümleri
+UART üzerinden gönderir. USB ile programlamadan önce Gemstone’dan gelen 5 V
+hattını ayırın.
 
 Gemstone'da `type: serial`, `serial.port: /dev/ttyS3`, `serial.baudrate: 115200`
 olmalı. Arayüzde **Çizgi sensörü kalibrasyonu → Kalibrasyonu başlat → Beyaz

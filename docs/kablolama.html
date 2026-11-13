@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>İKA kablolama şeması</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172735; background: #eef2f5; font: 16px "Segoe UI", sans-serif; }
+    main { width: min(100%, 1440px); margin: auto; padding: 34px 28px; }
+    h1 { margin: 0; font-size: 36px; letter-spacing: -.035em; }
+    h2 { margin: 0 0 4px; font-size: 23px; }
+    p { margin: 7px 0 0; line-height: 1.45; }
+    header { margin: 0 0 23px; }
+    header p, section p, footer { color: #445868; }
+    section { margin: 14px 0; padding: 18px 20px 15px; border: 1px solid #cfdae2; border-radius: 12px; background: white; }
+    .drawing { overflow-x: auto; }
+    canvas { display: block; width: 100%; min-width: 900px; height: auto; }
+    footer { padding: 3px 4px; font-size: 14px; }
+    a { color: #145c91; }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>İKA kablolama şeması</h1>
+    <p>Gemstone O1 · Deneyap Mini v2 · L298N · RPLIDAR A1</p>
+    <p>Kablo uçları fotoğraflardaki konnektörleri gösterir. Gemstone üzerindeki sayılar 40 pinli konnektörün fiziksel pin numaralarıdır.</p>
+  </header>
+  <section>
+    <h2>Motorlar ve enkoderler</h2>
+    <p>Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir. L298N üzerindeki ENA ve ENB köprülerini çıkarın.</p>
+    <div class="drawing"><canvas id="drive" width="1320" height="638" aria-label="Motor, enkoder ve L298N bağlantıları"></canvas></div>
+  </section>
+  <section>
+    <h2>Deneyap Mini v2 ve çizgi sensörü</h2>
+    <p>Gemstone 5 V → Mini v2 5V. Şemada Gemstone’un 5 V uçlarından pin 2 kullanılır. Seri veri hattı /dev/ttyS3, 115200 baud.</p>
+    <div class="drawing"><canvas id="line" width="1320" height="505" aria-label="Gemstone, Deneyap Mini v2 ve çizgi sensörü bağlantıları"></canvas></div>
+    <p>Çizgi sensörünü 3,3 V ile besleyin ve karttaki 3.3V köprüsünü lehimleyin. Mini v2 bilgisayara USB ile bağlanacaksa Gemstone’dan gelen 5 V hattını ayırın.</p>
+  </section>
+  <section>
+    <h2>Lidar ve güç dağıtımı</h2>
+    <div class="drawing"><canvas id="power" width="1320" height="360" aria-label="RPLIDAR A1 ve robotun güç dağıtımı"></canvas></div>
+    <p>Doğrudan UART lidar bağlantısında Gemstone pin 18 → lidar RX, pin 26 ← lidar TX, pin 12 → MOTOCTL. V5 ve VMOTO ortak 5 V hattına, iki GND ucu ortak toprağa bağlanır. <a href="donanim.md#lidar-bağlantısı-usb-veya-gpio">Gerekli kart ayarları</a></p>
+    <p>L298N üzerindeki 5V-EN köprüsünü modülünüzün besleme talimatına göre ayarlayın. Fotoğraftaki tipte, motor beslemesi 12 V’u aşarsa 5V-EN çıkarılır ve modülün lojik girişine ayrı regüle 5 V verilir. <a href="https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html">L298N modül belgesi</a></p>
+  </section>
+  <footer>
+    <a href="donanim.md">Pin tabloları</a> · <a href="guvenlik.md">Pil ve kullanım güvenliği</a> ·
+    Fotoğraflar <a href="https://t3gemstone.org/tr/products/o1">T3 Gemstone</a>,
+    <a href="https://www.robotistan.com/deneyap-mini-v2-type-c-en">Robotistan</a>,
+    <a href="https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html">SunFounder</a>,
+    <a href="https://robu.in/product/waveshare-l-shaped-permanent-magnet-dc-gear-motor-magnetic-hall-encoder-all-metal-gear-motor/">Robu</a>,
+    <a href="https://make.net.za/product/0me1079/">Make Electronics</a> ve <a href="https://www.slamtec.com/en/lidar/a1">Slamtec</a>.
+  </footer>
+</main>
+<script>
+  const colors = {
+    direction: '#1965b3', pwm: '#bc4e0e', right: '#087a50', left: '#176d70',
+    adc: '#007982', uart: '#713aab', power: '#c42e42', ground: '#303c48',
+    motor: '#7a5136', usb: '#396d98', ink: '#172735', muted: '#445868',
+  };
+
+  const photoNames = ['gemstone', 'deneyap', 'sensor', 'l298n', 'motor', 'lidar'];
+  const photos = {};
+
+  function text(ctx, value, x, y, {color = colors.ink, size = 15, bold = false, align = 'left'} = {}) {
+    ctx.font = `${bold ? 700 : 500} ${size}px "Segoe UI", sans-serif`;
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = color;
+    ctx.fillText(value, x, y);
+  }
+
+  function photo(ctx, name, x, y, width) {
+    const image = photos[name];
+    const scale = width / image.naturalWidth;
+    ctx.drawImage(image, x, y, width, image.naturalHeight * scale);
+    return (px, py) => [x + px * scale, y + py * scale];
+  }
+
+  function wire(ctx, points, color, {width = 3, dashed = false} = {}) {
+    ctx.save();
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    if (dashed) ctx.setLineDash([8, 6]);
+    ctx.beginPath();
+    ctx.moveTo(...points[0]);
+    for (const point of points.slice(1)) ctx.lineTo(...point);
+    ctx.lineWidth = width + 2.6;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+    ctx.lineWidth = width;
+    ctx.strokeStyle = color;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function end(ctx, [x, y], color, label, dx = 0, dy = -15, align = 'center', size = 14) {
+    ctx.beginPath();
+    ctx.arc(x, y, 4.3, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.lineWidth = 1.4;
+    ctx.strokeStyle = '#fff';
+    ctx.stroke();
+    if (label) {
+      ctx.save();
+      ctx.font = `700 ${size}px "Segoe UI", sans-serif`;
+      ctx.textAlign = align;
+      ctx.textBaseline = 'middle';
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = size < 13 ? 2.5 : 4;
+      ctx.lineJoin = 'round';
+      ctx.strokeText(label, x + dx, y + dy);
+      text(ctx, label, x + dx, y + dy, {color, size, bold: true, align});
+      ctx.restore();
+    }
+  }
+
+  // Kartın fotoğrafında J23 üsttedir. İç sıra tek, dış sıra çift numaralıdır.
+  function headerPin(gem, pin) {
+    return gem(84 + (Math.ceil(pin / 2) - 1) * 23.04, pin % 2 ? 58 : 34);
+  }
+
+  function connect(ctx, start, finish, track, color) {
+    wire(ctx, [start, [start[0], track], [finish[0], track], finish], color);
+  }
+
+  function chip(ctx, x, y, w, title, subtitle) {
+    ctx.beginPath();
+    ctx.roundRect(x, y, w, 49, 7);
+    ctx.fillStyle = '#f3f6f8';
+    ctx.fill();
+    ctx.strokeStyle = '#cedae3';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    text(ctx, title, x + w / 2, y + 17, {align: 'center', bold: true});
+    if (subtitle) text(ctx, subtitle, x + w / 2, y + 35, {align: 'center', color: colors.muted, size: 13});
+  }
+
+  function drawDrive() {
+    const ctx = document.querySelector('#drive').getContext('2d');
+    const gem = photo(ctx, 'gemstone', 773, 185, 518);
+    const driver = photo(ctx, 'l298n', 449, 182, 259);
+    const right = photo(ctx, 'motor', 38, 80, 171);
+    const left = photo(ctx, 'motor', 38, 331, 171);
+    const inputs = [
+      ['ENB', 90, 33, 'pwm'], ['IN4', 120, 22, 'direction'],
+      ['IN3', 153, 37, 'direction'], ['IN2', 186, 11, 'direction'],
+      ['IN1', 219, 15, 'direction'], ['ENA', 252, 32, 'pwm'],
+    ];
+    const outputs = {
+      OUT3: driver(44, 157), OUT4: driver(44, 223),
+      OUT2: driver(522, 162), OUT1: driver(522, 227),
+    };
+    const motorPins = { M2: 109, VCC: 129, C1: 149, C2: 168, GND: 189, M1: 208 };
+    const motors = [
+      {at: right, color: 'right', pins: {VCC: 1, C1: 7, C2: 29, GND: 9}, out: ['OUT1', 'OUT2'], track: 28},
+      {at: left, color: 'left', pins: {VCC: 17, C1: 13, C2: 16, GND: 14}, out: ['OUT3', 'OUT4'], track: 73},
+    ];
+
+    for (const [index, [label, x, pin, key]] of inputs.entries()) {
+      const start = driver(x, 57);
+      const finish = headerPin(gem, pin);
+      connect(ctx, start, finish, 113 + index * 10, colors[key]);
+    }
+    for (const motor of motors) {
+      for (const [index, [signal, pin]] of Object.entries(motor.pins).entries()) {
+        const start = motor.at(motorPins[signal], 38);
+        const finish = headerPin(gem, pin);
+        const color = signal === 'VCC' ? colors.power : signal === 'GND' ? colors.ground : colors[motor.color];
+        const corridor = (motor.color === 'right' ? 279 : 337) + index * 12;
+        const bend = start[1] - 20 - index * 8;
+        const track = motor.track + index * 9;
+        wire(ctx, [start, [start[0], bend], [corridor, bend], [corridor, track], [finish[0], track], finish], color);
+      }
+      for (const [index, signal] of ['M2', 'M1'].entries()) {
+        const start = motor.at(motorPins[signal], 38);
+        const finish = outputs[motor.out[index]];
+        const corridor = motor.color === 'right' ? 228 + index * 18 : 264 + index * 18;
+        const bend = start[1] - 8 + index * 8;
+        const route = motor.color === 'right'
+          ? [start, [start[0], bend], [corridor, bend], [corridor, 480 + index * 12], [741 + index * 15, 480 + index * 12], [741 + index * 15, finish[1]], finish]
+          : [start, [start[0], bend], [corridor, bend], [corridor, finish[1]], finish];
+        wire(ctx, route, colors.motor);
+        end(ctx, start, colors.motor);
+      }
+    }
+    for (const [index, [label, x, pin, key]] of inputs.entries()) {
+      end(ctx, driver(x, 57), colors[key], label, 0, index % 2 ? -29 : -15, 'center', 11);
+      labelHeader(ctx, gem, pin, colors[key]);
+    }
+    for (const motor of motors) {
+      for (const [signal, pin] of Object.entries(motor.pins)) {
+        const color = signal === 'VCC' ? colors.power : signal === 'GND' ? colors.ground : colors[motor.color];
+        end(ctx, motor.at(motorPins[signal], 38), color);
+        labelHeader(ctx, gem, pin, color);
+      }
+    }
+    for (const [label, point] of Object.entries(outputs)) {
+      const onRight = point[0] > 600;
+      end(ctx, point, colors.motor, label, onRight ? 22 : -21, -2, onRight ? 'left' : 'right');
+    }
+    end(ctx, driver(455, 46), colors.power, '+12V', 22, -14);
+    end(ctx, driver(386, 46), colors.ground, 'GND', 0, -14);
+    text(ctx, 'L298N', 578, 527, {align: 'center', bold: true, size: 19});
+    text(ctx, 'Sağ motor', 128, 274, {align: 'center', bold: true, size: 18});
+    text(ctx, 'Sol motor', 128, 527, {align: 'center', bold: true, size: 18});
+    text(ctx, 'M2 · VCC · C1 · C2 · GND · M1', 128, 291, {align: 'center', size: 13});
+    text(ctx, 'M2 · VCC · C1 · C2 · GND · M1', 128, 549, {align: 'center', size: 13});
+    text(ctx, 'T3 Gemstone O1', 1032, 611, {align: 'center', bold: true, size: 18});
+    text(ctx, 'Enkoder VCC 3,3 V · GND ortak', 392, 611, {color: colors.muted});
+  }
+
+  function labelHeader(ctx, gem, pin, color) {
+    const offset = {11: 29, 15: 29, 16: -29}[pin] ?? (pin % 2 ? 17 : -14);
+    end(ctx, headerPin(gem, pin), color, String(pin), 0, offset, 'center', 11);
+  }
+
+  function drawLine() {
+    const ctx = document.querySelector('#line').getContext('2d');
+    const gem = photo(ctx, 'gemstone', 23, 125, 468);
+    const mini = photo(ctx, 'deneyap', 673, 42, 149);
+    const sensor = photo(ctx, 'sensor', 1043, 15, 243);
+    const rows = [
+      [2, mini(160, 75), '5V', 'power', 39],
+      [6, mini(19, 137), 'GND', 'ground', 58],
+      [8, mini(13, 341), 'RX', 'uart', 77],
+      [10, mini(13, 321), 'TX', 'uart', 96],
+    ];
+    for (const [pin, finish, label, key, track] of rows) {
+      const start = headerPin(gem, pin);
+      const corridor = 520 + (track - 39) * 1.45;
+      wire(ctx, [start, [start[0], track], [corridor, track], [corridor, finish[1]], finish], colors[key]);
+    }
+    const analogHoles = [[180, 414], [190, 394], [199, 373], [208, 352], [218, 330], [228, 309], [237, 288], [247, 265]];
+    const rails = [];
+    analogHoles.forEach(([x, y], i) => {
+      rails.push([mini(157, 363 - i * 20.2), sensor(x, y), `A${i}`, `D${i + 1}`, 'adc']);
+    });
+    rails.push([mini(161, 102), sensor(253, 246), '3V3', 'VCC', 'power']);
+    rails.push([mini(161, 102), sensor(174, 435), '', 'IR', 'power']);
+    rails.push([mini(161, 123), sensor(162, 456), 'GND', 'GND', 'ground']);
+    for (const [index, [start, finish, , , key]] of rails.entries()) {
+      const corridor = index < 8 ? 896 + index * 13 : 855 + (index - 8) * 12;
+      if (index === 8) {
+        wire(ctx, [start, [842, start[1]], [842, 59], [1209, 59], [1209, finish[1]], finish], colors[key]);
+      } else if (index === 9 || index === 10) {
+        const track = index === 9 ? 411 : 430;
+        wire(ctx, [start, [corridor, start[1]], [corridor, track], [finish[0], track], finish], colors[key]);
+      } else {
+        wire(ctx, [start, [corridor, start[1]], [corridor, finish[1]], finish], colors[key]);
+      }
+    }
+    for (const [pin, finish, label, key] of rows) {
+      end(ctx, headerPin(gem, pin), colors[key], String(pin), 0, pin === 8 ? 17 : -15, 'center', 11);
+      end(ctx, finish, colors[key], label, pin === 2 ? 15 : -14, 0, pin === 2 ? 'left' : 'right');
+    }
+    for (const [start, finish, a, b, key] of rails) {
+      end(ctx, start, colors[key], a, 13, 0, 'left');
+      end(ctx, finish, colors[key], b, 13, 0, 'left');
+    }
+    text(ctx, 'Gemstone O1', 255, 492, {align: 'center', bold: true, size: 18});
+    text(ctx, 'Deneyap Mini v2', 746, 429, {align: 'center', bold: true, size: 18});
+    text(ctx, '8 kanallı çizgi sensörü', 1167, 451, {align: 'center', bold: true, size: 18});
+  }
+
+  function drawPower() {
+    const ctx = document.querySelector('#power').getContext('2d');
+    const gem = photo(ctx, 'gemstone', 548, 50, 354);
+    const driver = photo(ctx, 'l298n', 314, 118, 110);
+    const lidar = photo(ctx, 'lidar', 1112, 61, 179);
+    chip(ctx, 21, 76, 130, '3S Li-Po', '11,1 V nominal');
+    chip(ctx, 172, 76, 125, 'Anahtar', 'sigorta ile');
+    chip(ctx, 327, 16, 149, 'DC regülatör', 'J4 için 5–12 V');
+    chip(ctx, 946, 88, 125, 'USB adaptör', 'CP210x');
+    const [jMinus, jPlus] = [gem(215, 712), gem(240, 712)];
+    const [lPlus, lGnd] = [driver(455, 46), driver(386, 46)];
+    const usb = gem(926, 77);
+    wire(ctx, [[151, 94], [172, 94]], colors.power);
+    wire(ctx, [[297, 94], [306, 94], [306, 39], [327, 39]], colors.power);
+    wire(ctx, [[306, 94], [lPlus[0], 94], lPlus], colors.power);
+    wire(ctx, [[476, 39], [505, 39], [505, 327], [jPlus[0], 327], jPlus], colors.power);
+    wire(ctx, [[151, 112], [161, 112], [161, 299], [lGnd[0], 299], [lGnd[0], 115], lGnd], colors.ground);
+    wire(ctx, [[161, 299], [jMinus[0], 299], jMinus], colors.ground);
+    wire(ctx, [[401, 65], [401, 78], [481, 78], [481, 299]], colors.ground);
+    wire(ctx, [usb, [920, usb[1]], [920, 111], [946, 111]], colors.usb, {width: 4});
+    const lidarCable = lidar(92, 305);
+    wire(ctx, [[1071, 111], [1093, 111], [1093, lidarCable[1]], lidarCable], colors.usb, {width: 4});
+    for (const [pin, col, label] of [[jMinus, 'ground', 'J4 −'], [jPlus, 'power', 'J4 +'], [lPlus, 'power', '+12V'], [lGnd, 'ground', 'GND'], [usb, 'usb', 'USB-A']]) {
+      const offset = {'J4 −': -24, 'J4 +': 24, '+12V': 22, GND: -17}[label] ?? 0;
+      end(ctx, pin, colors[col], label, offset, label.startsWith('J4') ? 15 : -13);
+    }
+    text(ctx, 'L298N', 364, 275, {align: 'right', bold: true});
+    text(ctx, 'T3 Gemstone O1', 745, 345, {align: 'center', bold: true});
+    text(ctx, 'RPLIDAR A1', 1202, 230, {align: 'center', bold: true, size: 18});
+    text(ctx, 'Varsayılan USB bağlantısı', 1202, 252, {align: 'center', color: colors.muted});
+    text(ctx, 'Ortak GND', 224, 320, {align: 'center', color: colors.ground, bold: true});
+  }
+
+  Promise.all(photoNames.map((name) => new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => { photos[name] = image; resolve(); };
+    image.onerror = reject;
+    image.src = `img/kablolama/${name}.webp`;
+  }))).then(() => {
+    drawDrive();
+    drawLine();
+    drawPower();
+    document.body.dataset.ready = 'true';
+  });
+</script>
+</body>
+</html>
