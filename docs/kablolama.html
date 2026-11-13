@@ -12,7 +12,7 @@
     h2 { margin: 0 0 4px; font-size: 23px; }
     p { margin: 7px 0 0; line-height: 1.45; }
     header { margin: 0 0 23px; }
-    header p, section p, footer { color: #445868; }
+    header p, section p { color: #445868; }
     section { margin: 14px 0; padding: 18px 20px 15px; border: 1px solid #cfdae2; border-radius: 12px; background: white; }
     .connection-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; margin-top: 12px; }
     .drawing { overflow-x: auto; }
@@ -27,7 +27,18 @@
     @media (max-width: 1110px) {
       .connection-layout { grid-template-columns: minmax(0, 1fr); }
     }
-    footer { padding: 3px 4px; font-size: 14px; }
+    @page { size: A4 landscape; margin: 10mm; }
+    @media print {
+      body { background: white; }
+      main { width: auto; padding: 0; }
+      header { margin-bottom: 12px; }
+      section { break-inside: avoid; }
+      section + section { break-before: page; }
+      .connection-layout { grid-template-columns: minmax(0, 1fr) 255px; gap: 14px; }
+      .drawing { overflow: visible; }
+      canvas { min-width: 0; }
+      .pin-list ul { font-size: 13px; }
+    }
     a { color: #145c91; }
   </style>
 </head>
@@ -127,14 +138,14 @@
     </div>
     <p>L298N üzerindeki 5V-EN köprüsünü modülünüzün besleme talimatına göre ayarlayın. Fotoğraftaki tipte, motor beslemesi 12 V’u aşarsa 5V-EN çıkarılır ve modülün lojik girişine ayrı regüle 5 V verilir. <a href="https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html">L298N modül belgesi</a></p>
   </section>
-  <footer>
-    <a href="donanim.md">Pin tabloları</a> · <a href="guvenlik.md">Pil ve kullanım güvenliği</a> ·
-    Fotoğraflar <a href="https://t3gemstone.org/tr/products/o1">T3 Gemstone</a>,
-    <a href="https://www.robotistan.com/deneyap-mini-v2-type-c-en">Robotistan</a>,
-    <a href="https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html">SunFounder</a>,
-    <a href="https://robu.in/product/waveshare-l-shaped-permanent-magnet-dc-gear-motor-magnetic-hall-encoder-all-metal-gear-motor/">Robu</a>,
-    <a href="https://make.net.za/product/0me1079/">Make Electronics</a> ve <a href="https://www.slamtec.com/en/lidar/a1">Slamtec</a>.
-  </footer>
+  <!-- Photo sources
+    Gemstone: https://t3gemstone.org/tr/products/o1
+    Deneyap: https://www.robotistan.com/deneyap-mini-v2-type-c-en
+    L298N: https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html
+    Motor: https://robu.in/product/waveshare-l-shaped-permanent-magnet-dc-gear-motor-magnetic-hall-encoder-all-metal-gear-motor/
+    Line sensor: https://make.net.za/product/0me1079/
+    Lidar: https://www.slamtec.com/en/lidar/a1
+  -->
 </main>
 <script>
   const colors = {

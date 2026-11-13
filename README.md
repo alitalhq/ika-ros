@@ -108,11 +108,11 @@ Sürüşü durdurmak için **ACİL DURDUR** düğmesini veya **Boşluk** tuşunu
 
 Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkoderli iki **Waveshare DCGM-3865** motor, **Deneyap Mini v2**, sekiz kanallı analog çizgi sensörü ve **RPLIDAR A1**’dir.
 
-[![Kart fotoğrafları üzerinde İKA robotunun motor, enkoder, çizgi sensörü, lidar ve güç bağlantıları](docs/img/ika-kablolama.png)](docs/img/ika-kablolama.png)
+[![Motor ve enkoder bağlantıları](docs/img/kablolama/motor-ve-enkoder.png)](docs/img/kablolama/motor-ve-enkoder.png)
 
-- [Motor ve enkoder bağlantıları](docs/img/kablolama/motor-ve-enkoder.png)
-- [Deneyap Mini v2 ve çizgi sensörü bağlantıları](docs/img/kablolama/deneyap-ve-cizgi-sensoru.png)
-- [Lidar ve güç bağlantıları](docs/img/kablolama/lidar-ve-guc.png)
+[![Deneyap Mini v2 ve çizgi sensörü bağlantıları](docs/img/kablolama/deneyap-ve-cizgi-sensoru.png)](docs/img/kablolama/deneyap-ve-cizgi-sensoru.png)
+
+[![Lidar ve güç bağlantıları](docs/img/kablolama/lidar-ve-guc.png)](docs/img/kablolama/lidar-ve-guc.png)
 
 [Fotoğraflı HTML şeması](docs/kablolama.html) · [Gemstone O1 40 pin yerleşimi](docs/img/pinout.svg) · [Kablolama tablosu ve donanım ayarları](docs/donanim.md) · [Yazılımdaki pin yapılandırması](src/ika_bringup/config/hardware.yaml)
 
@@ -141,3 +141,5 @@ Aşağıdaki pin numaraları Gemstone’un 40 pinli konnektöründeki **fiziksel
 ## Lisans
 
 [Apache-2.0](LICENSE). ICM-20948 sürücüsünün kaynak dosyaları T3 Foundation’a aittir ve Apache-2.0 lisansıyla dağıtılır.
+
+[Kablolama şemasını PDF olarak indir](docs/ika-kablolama.pdf)
