@@ -7,15 +7,26 @@
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; color: #172735; background: #eef2f5; font: 16px "Segoe UI", sans-serif; }
-    main { width: min(100%, 1440px); margin: auto; padding: 34px 28px; }
+    main { width: min(100%, 1600px); margin: auto; padding: 34px 28px; }
     h1 { margin: 0; font-size: 36px; letter-spacing: -.035em; }
     h2 { margin: 0 0 4px; font-size: 23px; }
     p { margin: 7px 0 0; line-height: 1.45; }
     header { margin: 0 0 23px; }
     header p, section p, footer { color: #445868; }
     section { margin: 14px 0; padding: 18px 20px 15px; border: 1px solid #cfdae2; border-radius: 12px; background: white; }
+    .connection-layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; margin-top: 12px; }
     .drawing { overflow-x: auto; }
-    canvas { display: block; width: 100%; min-width: 900px; height: auto; }
+    canvas { display: block; width: 100%; min-width: 760px; height: auto; }
+    .pin-list { padding: 12px 14px; border: 1px solid #cfdae2; border-radius: 8px; background: #f3f6f8; }
+    .pin-list h3 { margin: 0 0 10px; font-size: 17px; }
+    .pin-list h4 { margin: 10px 0 4px; font-size: 13px; color: #445868; }
+    .pin-list ul { margin: 0; padding-left: 17px; font-size: 14px; line-height: 1.45; }
+    .pin-list li + li { margin-top: 3px; }
+    .channel-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3px 15px; }
+    .channel-list li + li { margin-top: 0; }
+    @media (max-width: 1110px) {
+      .connection-layout { grid-template-columns: minmax(0, 1fr); }
+    }
     footer { padding: 3px 4px; font-size: 14px; }
     a { color: #145c91; }
   </style>
@@ -30,18 +41,90 @@
   <section>
     <h2>Motorlar ve enkoderler</h2>
     <p>Sağ ve sol, robotun arkasından önüne doğru bakıldığında belirlenir. L298N üzerindeki ENA ve ENB köprülerini çıkarın.</p>
-    <div class="drawing"><canvas id="drive" width="1320" height="638" aria-label="Motor, enkoder ve L298N bağlantıları"></canvas></div>
+    <div class="connection-layout">
+      <div class="drawing"><canvas id="drive" width="1320" height="638" aria-label="Motor, enkoder ve L298N bağlantıları"></canvas></div>
+      <aside class="pin-list" aria-labelledby="drive-pins">
+        <h3 id="drive-pins">Pin bağlantıları</h3>
+        <h4>Gemstone → L298N</h4>
+        <ul class="channel-list">
+          <li>Pin 15 → IN1</li><li>Pin 37 → IN3</li>
+          <li>Pin 11 → IN2</li><li>Pin 22 → IN4</li>
+          <li>Pin 32 → ENA</li><li>Pin 33 → ENB</li>
+        </ul>
+        <h4>L298N → motorlar</h4>
+        <ul>
+          <li>OUT1 → sağ M2, OUT2 → sağ M1</li>
+          <li>OUT3 → sol M2, OUT4 → sol M1</li>
+        </ul>
+        <h4>Gemstone ↔ sağ enkoder</h4>
+        <ul class="channel-list">
+          <li>Pin 1 → VCC</li><li>Pin 7 ← C1</li>
+          <li>Pin 9 → GND</li><li>Pin 29 ← C2</li>
+        </ul>
+        <h4>Gemstone ↔ sol enkoder</h4>
+        <ul class="channel-list">
+          <li>Pin 17 → VCC</li><li>Pin 13 ← C1</li>
+          <li>Pin 14 → GND</li><li>Pin 16 ← C2</li>
+        </ul>
+      </aside>
+    </div>
   </section>
   <section>
     <h2>Deneyap Mini v2 ve çizgi sensörü</h2>
     <p>Gemstone 5 V → Mini v2 5V. Şemada Gemstone’un 5 V uçlarından pin 2 kullanılır. Seri veri hattı /dev/ttyS3, 115200 baud.</p>
-    <div class="drawing"><canvas id="line" width="1320" height="505" aria-label="Gemstone, Deneyap Mini v2 ve çizgi sensörü bağlantıları"></canvas></div>
+    <div class="connection-layout">
+      <div class="drawing"><canvas id="line" width="1320" height="505" aria-label="Gemstone, Deneyap Mini v2 ve çizgi sensörü bağlantıları"></canvas></div>
+      <aside class="pin-list" aria-labelledby="line-pins">
+        <h3 id="line-pins">Pin bağlantıları</h3>
+        <h4>Gemstone ↔ Deneyap Mini v2</h4>
+        <ul>
+          <li>Pin 2 (5 V) → 5V</li>
+          <li>Pin 6 (GND) → GND</li>
+          <li>Pin 8 (TX) → RX / D0</li>
+          <li>Pin 10 (RX) ← TX / D1</li>
+        </ul>
+        <h4>Deneyap → çizgi sensörü beslemesi</h4>
+        <ul>
+          <li>3V3 → VCC ve IR</li>
+          <li>GND → GND</li>
+        </ul>
+        <h4>Çizgi sensörü → Deneyap</h4>
+        <ul class="channel-list">
+          <li>D1 → A0</li><li>D2 → A1</li>
+          <li>D3 → A2</li><li>D4 → A3</li>
+          <li>D5 → A4</li><li>D6 → A5</li>
+          <li>D7 → A6</li><li>D8 → A7</li>
+        </ul>
+      </aside>
+    </div>
     <p>Çizgi sensörünü 3,3 V ile besleyin ve karttaki 3.3V köprüsünü lehimleyin. Mini v2 bilgisayara USB ile bağlanacaksa Gemstone’dan gelen 5 V hattını ayırın.</p>
   </section>
   <section>
     <h2>Lidar ve güç dağıtımı</h2>
-    <div class="drawing"><canvas id="power" width="1320" height="360" aria-label="RPLIDAR A1 ve robotun güç dağıtımı"></canvas></div>
-    <p>Doğrudan UART lidar bağlantısında Gemstone pin 18 → lidar RX, pin 26 ← lidar TX, pin 12 → MOTOCTL. V5 ve VMOTO ortak 5 V hattına, iki GND ucu ortak toprağa bağlanır. <a href="donanim.md#lidar-bağlantısı-usb-veya-gpio">Gerekli kart ayarları</a></p>
+    <div class="connection-layout">
+      <div class="drawing"><canvas id="power" width="1320" height="360" aria-label="RPLIDAR A1 ve robotun güç dağıtımı"></canvas></div>
+      <aside class="pin-list" aria-labelledby="power-pins">
+        <h3 id="power-pins">Güç ve lidar bağlantıları</h3>
+        <h4>Güç dağıtımı</h4>
+        <ul>
+          <li>Pil + → sigorta ve anahtar</li>
+          <li>Anahtar çıkışı → L298N +12V ve DC regülatör IN+</li>
+          <li>Regülatör OUT+ → Gemstone J4+</li>
+          <li>Pil − → L298N GND, regülatör GND ve Gemstone J4−</li>
+        </ul>
+        <h4>USB lidar (varsayılan)</h4>
+        <ul><li>Gemstone USB-A → CP210x adaptör → RPLIDAR A1</li></ul>
+        <h4>Doğrudan UART lidar</h4>
+        <ul>
+          <li>Gemstone pin 18 (TX) → lidar RX</li>
+          <li>Gemstone pin 26 (RX) ← lidar TX</li>
+          <li>Gemstone pin 12 (PWM) → MOTOCTL</li>
+          <li>Gemstone 5 V (pin 2 veya 4) → V5 ve VMOTO</li>
+          <li>Ortak GND → lidarın iki GND ucu</li>
+        </ul>
+        <p><a href="donanim.md#lidar-bağlantısı-usb-veya-gpio">Doğrudan UART için kart ayarları</a></p>
+      </aside>
+    </div>
     <p>L298N üzerindeki 5V-EN köprüsünü modülünüzün besleme talimatına göre ayarlayın. Fotoğraftaki tipte, motor beslemesi 12 V’u aşarsa 5V-EN çıkarılır ve modülün lojik girişine ayrı regüle 5 V verilir. <a href="https://docs.sunfounder.com/projects/3in1-kit-v2/en/latest/components/component_l298n_module.html">L298N modül belgesi</a></p>
   </section>
   <footer>
