@@ -27,7 +27,7 @@ bash deploy/install-native.sh
 
 ### 3. Deneyap Mini v2’yi programlayın ve donanımı kontrol edin
 
-Bilgisayarda Arduino IDE’yi açın, kart olarak **Deneyap Mini v2** seçin ve `deneyap_line.ino` dosyasını yükleyin. COM portu görünmüyorsa **BUT** basılıyken **RES** tuşuna basıp bırakın, ardından **BUT** tuşunu bırakıp yeni portu kontrol edin. [Yükleme ve bağlantı adımları](firmware/deneyap_line/README.md)
+Bilgisayarınıza **Deneyap Kart IDE**’yi kurun. IDE’de `deneyap_line.ino` dosyasını açın, **Deneyap Mini v2** kartını ve bağlı portu seçin, ardından **Derle ve Yükle**’ye tıklayın. [Resmî IDE kurulum kılavuzu](https://docs.deneyapkart.org/tr/IDE/Deneyap-Kart-IDE-Setup) · [Mini v2 yükleme ayarları ve port kontrolü](firmware/deneyap_line/README.md)
 
 Güç kapalıyken [pin bağlantılarını](#donanım-ve-pin-bağlantıları) tamamlayın. Gemstone’da motor PWM hatları için [donanım ayarlarını](docs/donanim.md) uygulayın ve değişikliklerin ardından kartı yeniden başlatın. İlk sürüşten önce [pil ve kullanım güvenliği](docs/guvenlik.md) bölümünü okuyun, tekerlekleri yerden kaldırarak [saha testini](docs/saha-testi.md) yapın.
 

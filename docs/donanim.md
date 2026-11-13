@@ -106,7 +106,7 @@ Her iki kartın UART hatları 3,3 V lojik seviyesi kullanır.
   [Lidar bağlantı seçenekleri](#lidar-bağlantısı-usb-veya-gpio)
 
 [Mini v2 yazılımını yükleme](../firmware/deneyap_line/README.md). Aynı kaynak kod
-Deneyap Kart 1A v2 için de derlenebilir. Bu durumda Arduino IDE’de ilgili kartı
+Deneyap Kart 1A v2 için de derlenebilir. Bu durumda Deneyap Kart IDE’de ilgili kartı
 seçin ve o kartın pin etiketlerini izleyin.
 
 **Kalibrasyon** (robot çalışırken, robot `idle` modda). Kanal başına eşik beyaz ve

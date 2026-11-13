@@ -5,21 +5,26 @@ milivoltları saniyede yaklaşık 50 kez Gemstone'a UART üzerinden gönderir.
 Aynı JSON satırları USB seri monitörde de görülür. Motor kontrolü yapmaz;
 siyah/beyaz kalibrasyonu Gemstone'da saklanır.
 
-## Arduino IDE ile Mini v2'ye yükleme
+## Deneyap Kart IDE ile Mini v2’ye yükleme
 
-1. Bağlantıları değiştirmeden önce gücü kapatın. Yükleme sırasında Gemstone'a
+1. Bilgisayarınıza **Deneyap Kart IDE**’yi kurun. İlk açılışta **Geliştirme Ortamı
+   Hazırlanıyor** ekranındaki indirmelerin tamamlanmasını bekleyin.
+   [Deneyap Kart IDE kurulum kılavuzu](https://docs.deneyapkart.org/tr/IDE/Deneyap-Kart-IDE-Setup)
+2. Bağlantıları değiştirmeden önce gücü kapatın. Yükleme sırasında Gemstone’a
    giden TX/RX kablolarını çıkarın ve Mini v2’yi veri aktarabilen bir Mikro USB kablosuyla bilgisayara bağlayın.
-2. Arduino IDE tercihlerindeki ek kart yöneticisi URL'lerine
-   `https://raw.githubusercontent.com/deneyapkart/deneyapkart-arduino-core/master/package_deneyapkart_index.json`
-   ekleyin. Kart yöneticisinden **Deneyap Gelistirme Kartlari 2.1.1** kurun.
-3. `deneyap_line` klasöründeki **deneyap_line.ino** dosyasını açın.
-4. **Deneyap Mini v2** kartını seçin. **Upload Mode** ayarını **Internal USB**,
-   **USB CDC On Boot** ayarını **Enabled** yapın. Mini v2’nin portunu seçip
-   **Yükle** düğmesine basın.
+3. **Ayarlar → Dosya Aç** ile [`deneyap_line.ino`](deneyap_line.ino) dosyasını açın.
+   Üst araç çubuğunda **Deneyap Mini v2** kartını seçin.
+4. **Araçlar** menüsünde **Upload Mode** ayarını **Internal USB**, **USB CDC On
+   Boot** ayarını **Enabled** yapın. Mini v2’nin portunu seçin ve **Derle ve
+   Yükle**’ye tıklayın.
+   [Deneyap Kart IDE arayüz kılavuzu](https://docs.deneyapkart.org/tr/IDE/Deneyap-Kart-IDE-Introduction)
 5. Port görünmüyorsa **BUT** tuşunu basılı tutarken **RES** tuşuna basıp bırakın,
-   ardından **BUT** tuşunu bırakın. Yükleme modunda görünen yeni portu seçip
-   yeniden deneyin. [Deneyap Mini v2 sorun giderme kılavuzu](https://deneyapkart.org/docs/sorun-giderme-dymv2)
-6. Seri monitörü **115200 baud** açın. Beklenen çıktı:
+   ardından **BUT** tuşunu bırakın. **Portları Yenile** düğmesine tıklayın,
+   yükleme modunda görünen portu seçip yeniden deneyin.
+   [Deneyap Mini v2 sorun giderme kılavuzu](https://deneyapkart.org/docs/sorun-giderme-dymv2)
+6. Yükleme tamamlanınca **Seri Monitör** sekmesinde kartın portunu ve
+   **115200 baud** hızını seçip **Bağlan**’a tıklayın. Beklenen çıktı aşağıdaki
+   gibi bir JSON satırıdır.
 
    ```json
    {"ika_adc":1,"seq":123,"mv":[1200,1210,1220,1230,1240,1250,1260,1270]}

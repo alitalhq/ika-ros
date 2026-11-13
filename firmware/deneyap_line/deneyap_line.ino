@@ -1,6 +1,6 @@
 // Deneyap Mini v2 / Kart 1A v2: 8 kanallı analog çizgi sensörü -> Gemstone.
 //
-// Sensör D1..D8 -> A0..A7. Arduino IDE'de FİZİKSEL kartı seçerek derleyin:
+// Sensör D1..D8 -> A0..A7. Deneyap Kart IDE'de kullandığınız kartı seçin:
 //   Mini v2 (ESP32-S2): GPIO 7, 8, 9, 10, 11, 12, 13, 16.
 //   Kart 1A v2 (ESP32-S3): GPIO 4, 5, 6, 7, 15, 16, 17, 18.
 // İki kartın derlenmiş .bin dosyaları birbirinin yerine kullanılamaz.
