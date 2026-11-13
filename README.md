@@ -85,7 +85,7 @@ docker run --rm -p 8000:8000 -p 9090:9090 ika-ros:jazzy ros2 launch ika_bringup 
 
 [![İKA Kontrol ekranında harita, robot konumu, sürüş, sensör kalibrasyonu ve lidar panelleri](docs/img/ika-web-arayuzu.png)](docs/img/ika-web-arayuzu.png)
 
-*İKA Kontrol ekranı, örnek harita ve sensör verileriyle.*
+*İKA Kontrol ekranı, kayıtlı bir lidar taramasından aktarılan harita ve örnek sensör değerleriyle.*
 
 ### Arayüze nasıl bağlanılır?
 
