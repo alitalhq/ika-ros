@@ -1,8 +1,8 @@
 # İKA ROS
 
 <p align="center">
-  <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="240" alt="İKA robotunun tekerlekleri ve lidarı"></a>
-  <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="240" alt="İKA robotunun pili ve kabloları"></a>
+  <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="320" alt="İKA robotunun tekerlekleri ve lidarı"></a>
+  <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="320" alt="İKA robotunun pili ve kabloları"></a>
 </p>
 <p align="center">
   <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="240" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
