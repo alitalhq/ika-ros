@@ -80,6 +80,10 @@ docker run --rm -p 8000:8000 -p 9090:9090 ika-ros:jazzy ros2 launch ika_bringup 
 
 Robotun ana bileşenleri **T3 Gemstone O1**, **L298N** motor sürücüsü, enkoderli iki **Waveshare DCGM-3865** motor, **Deneyap Mini v2**, sekiz kanallı analog çizgi sensörü ve **RPLIDAR A1**’dir.
 
+| Çapraz görünüm | Arka görünüm | Ön görünüm |
+| :---: | :---: | :---: |
+| <a href="docs/img/ika-capraz.png"><img src="docs/img/ika-capraz.png" height="150" alt="İKA robotunun tekerleklerini ve lidarını gösteren çapraz görünüm"></a> | <a href="docs/img/ika-arka.png"><img src="docs/img/ika-arka.png" height="150" alt="İKA robotunun pilini ve kablolarını gösteren arka görünüm"></a> | <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="150" alt="İKA robotunun çizgi sensörünü ve motor sürücüsünü gösteren ön görünüm"></a> |
+
 [![İKA robotunun kablolama şeması. Gemstone O1, L298N, motorlar, enkoderler, Deneyap Mini v2, çizgi sensörü ve lidar.](docs/kablolama.svg)](docs/kablolama.svg)
 
 [Gemstone O1 40 pin yerleşimi](docs/img/pinout.svg) · [Kablolama tablosu ve donanım ayarları](docs/donanim.md) · [Yazılımdaki pin yapılandırması](src/ika_bringup/config/hardware.yaml)
