@@ -25,7 +25,7 @@
 Gemstone’da `sudo` yetkili bir kullanıcıyla aşağıdaki komutları çalıştırın. Kurulum betiği ROS 2 Jazzy’yi ve bağımlılıkları yükleyip çalışma alanını derler.
 
 ```bash
-git clone --branch codex/readme-donanim https://github.com/Emirsw/ika-ros.git ~/ika-ros
+git clone https://github.com/alitalhq/ika-ros.git ~/ika-ros
 cd ~/ika-ros
 bash deploy/install-native.sh
 ```
