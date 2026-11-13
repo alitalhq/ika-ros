@@ -8,7 +8,7 @@
   <a href="docs/img/ika-on.png"><img src="docs/img/ika-on.png" height="240" alt="İKA robotunun çizgi sensörü ve motor sürücüsü"></a>
 </p>
 
-İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotudur. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Aynı ağdaki bir bilgisayardan tarayıcıyla robotu sürebilir, harita çıkarabilir ve çizgi sensörünü kalibre edebilirsiniz.
+İKA ROS, T3 Gemstone O1 tabanlı, diferansiyel sürüşlü bir kara robotudur. Robot üzerinde **Ubuntu 24.04 ve ROS 2 Jazzy** çalışır. Robot çizgi izleyebilir, lidar ile çevresinin haritasını çıkarabilir ve Nav2 etkinleştirildiğinde kayıtlı harita üzerinde belirlenen bir hedefe gidebilir.
 
 - **Manuel sürüş** için klavye, ekrandaki yön tuşları veya gamepad kullanılır. Tekerlek hızı enkoderlerle ölçülür, odometri kart üzerindeki IMU ile birleştirilir.
 - **Çizgi izleme** için sekiz kanallı analog sensör Deneyap Mini v2 üzerinden okunur. Beyaz ve siyah zemin ölçümleri web arayüzünden kaydedilir.
